@@ -2,6 +2,27 @@
 
 Record of architectural, design, and structural decisions. Add dated entries in reverse-chronological order.
 
+## 2026-11-09: Glass Button Variant & Default Slightly-Rounded Shape
+- **Context:** Hero CTA buttons required a frosted glass aesthetic matching creative agency reference designs, slightly rounded corners by default, and larger button scale (`xl`).
+- **Alternatives Considered:**
+  1. Inline one-off tailwind classes on individual buttons.
+  2. Formalizing `glass`/`translucent` variants, `shape` prop (`default: rounded-lg`, `full: rounded-full`), and `xl`/`2xl` sizes in `button.tsx`.
+- **Outcome:** Added `variant="glass"`, `shape="default"|"full"`, and `size="xl"|"2xl"` directly to `buttonVariants`. Applied `size="xl"` and `variant="glass"` to hero buttons.
+
+## 2026-11-09: No Custom Borders & Contrast-First UI Philosophy
+- **Context:** Heavy border lines clutter modern dark aesthetic layouts.
+- **Alternatives Considered:**
+  1. Adding `border border-border/40` or subtle borders to cards and sections.
+  2. Relying on background-foreground tonal contrast, elevation, and surface shifts.
+- **Outcome:** Banned custom borders across the UI unless strictly necessary. Visual separation must rely on background-to-foreground contrast.
+
+## 2026-11-09: Strict Shadcn Component & Variant Standards
+- **Context:** Ensuring visual consistency and preventing UI bloat, inline design sprawl, custom borders, and ad-hoc button glows.
+- **Alternatives Considered:**
+  1. Hand-rolled custom utility classes on `<Link>` / `<button>`.
+  2. Strict usage of official Shadcn Base UI components with standard built-in variants only.
+- **Outcome:** Strictly use Shadcn components (e.g. `Button`) and standard variants (`default`, `secondary`, etc.). No inline fake variants or custom glows/borders. New variants created only upon explicit user command.
+
 ## 2026-11-09: Living Documentation & Total Flexibility Standard
 - **Context:** Project scope, backend contracts, design decisions, and assignment features evolve dynamically as development proceeds.
 - **Alternatives Considered:**

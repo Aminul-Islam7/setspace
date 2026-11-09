@@ -3,6 +3,7 @@ import './globals.css';
 import { Inter, Montserrat, Plus_Jakarta_Sans, Syne } from 'next/font/google';
 
 import type { Metadata } from 'next';
+import { ThemeProvider } from '@/components/theme-provider';
 import { cn } from '@/lib/utils';
 
 const montserratHeading = Montserrat({ subsets: ['latin'], variable: '--font-heading' });
@@ -28,8 +29,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
 	return (
-		<html lang="en" className={cn('h-full', 'antialiased', fontDisplay.variable, fontBody.variable, 'font-sans', inter.variable, montserratHeading.variable)} suppressHydrationWarning data-scroll-behavior="smooth">
-			<body className="min-h-full flex flex-col">{children}</body>
+		<html lang="en" className={cn('h-full antialiased font-sans', fontDisplay.variable, fontBody.variable, inter.variable, montserratHeading.variable)} suppressHydrationWarning data-scroll-behavior="smooth">
+			<body className="min-h-full flex flex-col">
+				<ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+					{children}
+				</ThemeProvider>
+			</body>
 		</html>
 	);
 }

@@ -11,7 +11,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 # SetSpace Agent Guidelines
 
 ## Docs Index & Living Documentation Principle
+
 No document is fixed or static (including AGENTS.md and PROJECT.md). Design decisions, backend APIs, schemas, and requirements evolve continuously. When user makes changes or requests updates, update all relevant docs.
+
 - **Before coding:** Always read and align with relevant docs for that area. Check `docs/BUGS.md` for known pitfalls.
 - **After coding:** In the same change, update all affected docs (`docs/TASKS.md`, `docs/DECISIONS.md`, `docs/BUGS.md`, `docs/PROGRESS.md`).
 - [docs/PROJECT.md](docs/PROJECT.md) — Scope, endpoints, data models, routes, grading rules.
@@ -23,6 +25,7 @@ No document is fixed or static (including AGENTS.md and PROJECT.md). Design deci
 - [docs/PROGRESS.md](docs/PROGRESS.md) — Chronological change logs, files touched, next steps.
 
 ## Tech Stack & Commands
+
 - **Stack:** Next.js 16 (App Router, Turbopack, React Compiler), React 19, TypeScript 5, Tailwind CSS v4, Base UI (`@base-ui/react`), Shadcn (`base-luma`), npm.
 - `npm run dev` — Dev server on `:3000`. Writes `.next/dev/types` and updates Next.js block in this file.
 - `npm run build` | `npm start` — Production build & serve.
@@ -31,23 +34,31 @@ No document is fixed or static (including AGENTS.md and PROJECT.md). Design deci
 - No test runner configured. Recommended single test: `npx vitest run <file>`.
 
 ## Next.js 16 Specifics
+
 - `cacheComponents`, `partialPrefetching`, and `reactCompiler` enabled in `next.config.ts`.
 - Dynamic calls (`cookies()`, `headers()`, `params`, `searchParams`) must be inside `<Suspense>` or cached scopes.
 - Route props are generated globals (e.g. `LayoutProps<'/'>`). Never manually write route parameter types.
 - App code lives in `src/`. Path alias `@/*` maps to `./src/*`.
 
 ## Forms & Validation Standards
+
 - Use `react-hook-form` + `@hookform/resolvers/zod` + `zod`.
 - Use composable `field.tsx` primitives (`FieldGroup`, `Field`, `FieldLabel`, `FieldDescription`, `FieldError`). No manual touched loops.
 - Client fetch directly to `process.env.NEXT_PUBLIC_API_URL`. Map backend errors via `form.setError(name, { type: 'server', message })` to `<FieldError>`.
 
-## Code Style
+## Code Style & UI Primitives
+
 - Match surrounding code: tabs (4-space width), single quotes, semicolons, trailing commas.
-- Keep Tailwind clean; reuse styles rather than hardcoding ad-hoc utility classes across components.
+- Keep Tailwind clean; reuse styles rather than hardcoding ad-hoc utility classes.
+- **Strict Shadcn-First Policy:** Always use official Shadcn / Base UI components (Button, Carousel, Dialog, Field, Input, etc.). Never write custom ad-hoc sliders or UI primitives when an official Shadcn component exists. Add via `npx shadcn add <component>`.
+- Use built-in variants only (`variant="default"`, `variant="secondary"`, etc.). Never write custom pseudo-variants or add new variants unless user commands.
+- **No Custom Borders Rule:** Never use custom borders anywhere unless absolutely necessary. Rely on background-foreground contrast, surface elevation, and tonal contrast for visual separation.
 
 ## Verification & Workflow Guardrails
+
 - **DO NOT TOUCH BACKEND:** Never create or edit files in `../setspace-api`. Frontend only. Assume missing endpoints exist.
 - **DO NOT COMMIT & PUSH:** Do not commit or push unless explicitly commanded by user.
 - **DO NOT TOUCH:** Keep `<!-- BEGIN:nextjs-agent-rules -->` block intact. Never edit `.next/` or `next-env.d.ts`.
 - **Verification:** Rely on `npx tsc --noEmit`, `npm run lint`, and `npm run build`. Avoid unnecessary browser screenshots.
 - **Docs Maintenance:** Check diffs first (user writes code too).
+

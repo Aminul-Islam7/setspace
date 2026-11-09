@@ -138,6 +138,13 @@
 	--sidebar-ring: var(--primary);
 }
 
+@utility text-gradient-primary {
+	background-image: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-400) 50%, var(--primary-200) 100%);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+}
+
 @layer base {
 	* {
 		@apply border-border outline-ring/50;
