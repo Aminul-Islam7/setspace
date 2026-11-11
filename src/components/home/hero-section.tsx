@@ -22,28 +22,28 @@ const HERO_SLIDES: StudioSlide[] = [
 	},
 	{
 		id: 'sound-stage',
-		imageUrl: 'https://images.unsplash.com/photo-1514306191717-452ec28c7814?q=80&w=1600&auto=format&fit=crop',
+		imageUrl: 'https://images.unsplash.com/photo-1612544409025-e1f6a56c1152?q=80&w=1600&auto=format&fit=crop',
 		alt: 'Dark cinematic soundstage with camera cranes and ceiling riggers',
 	},
 	{
 		id: 'podcast-lounge',
-		imageUrl: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?q=80&w=1600&auto=format&fit=crop',
-		alt: 'Acoustic dark broadcast podcast studio with broadcast microphones',
+		imageUrl: 'https://images.unsplash.com/photo-1783075668300-4592693896f1?q=80&w=1600&auto=format&fit=crop',
+		alt: 'Acoustic broadcast podcast studio with broadcast microphones',
 	},
 	{
 		id: 'music-suite',
-		imageUrl: 'https://images.unsplash.com/photo-1598653222000-6b7b7a552625?q=80&w=1600&auto=format&fit=crop',
+		imageUrl: 'https://images.unsplash.com/photo-1758336717046-c475fc6f45ce?q=80&w=1600&auto=format&fit=crop',
 		alt: 'Dark ambient music production control room with analog mixing console',
 	},
 	{
 		id: 'art-workshop',
-		imageUrl: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=1600&auto=format&fit=crop',
+		imageUrl: 'https://images.unsplash.com/photo-1501084817091-a4f3d1d19e07?q=80&w=1600&auto=format&fit=crop',
 		alt: 'Moodily lit industrial artist studio workshop with raw materials',
 	},
 	{
 		id: 'exhibition-hall',
-		imageUrl: 'https://images.unsplash.com/photo-1508997449629-303059a039c0?q=80&w=1600&auto=format&fit=crop',
-		alt: 'Dark brutalist architectural gallery hall with dramatic spotlighting',
+		imageUrl: 'https://images.unsplash.com/photo-1518998053901-5348d3961a04?q=80&w=1600&auto=format&fit=crop',
+		alt: 'Architectural gallery hall with dramatic spotlighting',
 	},
 ];
 
