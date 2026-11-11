@@ -5,6 +5,7 @@ import { Inter, Montserrat, Plus_Jakarta_Sans, Syne } from 'next/font/google';
 import { Footer } from '@/components/layout/footer';
 import type { Metadata } from 'next';
 import { Navbar } from '@/components/layout/navbar';
+import { Suspense } from 'react';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
 import { cn } from '@/lib/utils';
@@ -35,7 +36,9 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
 		<html lang="en" className={cn('h-full antialiased font-sans', fontDisplay.variable, fontBody.variable, inter.variable, montserratHeading.variable)} suppressHydrationWarning data-scroll-behavior="smooth">
 			<body className="min-h-full flex flex-col">
 				<ThemeProvider attribute="class" enableSystem disableTransitionOnChange>
-					<Navbar />
+					<Suspense fallback={<div className="h-16 sm:h-20 w-full bg-background/80" />}>
+						<Navbar />
+					</Suspense>
 					{children}
 					<Footer />
 					<Toaster />

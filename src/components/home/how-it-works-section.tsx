@@ -38,7 +38,7 @@ export function HowItWorksSection() {
 			{/* Steps Grid */}
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
 				{STEPS.map(item => (
-					<div key={item.step} className="rounded-2xl bg-secondary/60 dark:bg-card p-6 flex flex-col gap-3">
+					<div key={item.step} className="rounded-2xl bg-secondary/70 dark:bg-card p-6 flex flex-col gap-3">
 						<div className="flex items-center gap-3">
 							<span className="size-9 rounded-xl bg-foreground/5 dark:bg-foreground/10 text-foreground text-sm font-semibold flex items-center justify-center shrink-0">{item.step}</span>
 							<h3 className="text-lg sm:text-xl font-semibold text-foreground leading-snug">{item.title}</h3>

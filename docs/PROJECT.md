@@ -135,7 +135,7 @@ export interface Booking {
 
 - **Hero Slider / Interactive Banner:** High-resolution studio visuals, punchy headline, subtext, pagination indicators, and dual CTAs: `"Explore Studios"` (`/studios`) and `"Host Your Space"` (`/add-studio`).
 - **Category Browser:** 6 uniform cards linking to `/studios?category={category}` with pre-selection.
-- **Featured Studios Grid:** Dynamic fetch from API (`.limit(6)` sorted by `rankingScore: -1`). Cards must have uniform height/width, locked `16:10` image aspect ratio, category pill, rating badge, price pill (`$XX / hr`), location, and `"View Details"` CTA.
+- **Featured Studios Grid:** Dynamic fetch from API (`.limit(6)` sorted by `rankingScore: -1`). Cards must have uniform height/width, locked `aspect-video` (16:9) image aspect ratio, category pill, rating badge, price pill (`$XX / hr`), location, and `"View Details"` CTA.
 - **Extra Section 1 (Workflow):** 4-step booking workflow (`1. Discover Spaces` -> `2. Select Shoot Hours` -> `3. Book Instantly` -> `4. Create & Produce`).
 - **Extra Section 2 (Host Guarantee):** Platform trust assurances (liability coverage, verified creator profiles, equipment security, 24/7 support).
 

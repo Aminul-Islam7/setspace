@@ -2,6 +2,18 @@
 
 Log resolved issues, regressions, and lessons learned.
 
+## 2026-11-11: Gallery Thumbnails Ring Outline Clipped by overflow-x-auto
+- **Symptom:** In `StudioGallery`, the active thumbnail's rounded orange focus ring (`ring-2 ring-primary ring-offset-2`) had its top, left, and bottom edges clipped flat against the scroll container boundary.
+- **Root Cause:** The thumbnail strip container had `overflow-x-auto` with zero top and zero horizontal padding (`pb-1` only). The 4px spread of `ring-2 ring-offset-2` extended past the button edge and collided directly with the container's overflow clipping rect.
+- **Fix:** Added `p-1.5 -m-1.5` to the scroll strip container in [`src/components/studios/studio-gallery.tsx`](src/components/studios/studio-gallery.tsx) and removed `scale-95`. This provides 6px of breathing room around all outer edges, ensuring the 4px ring is completely visible and fully rounded without clipping.
+- **How to Avoid:** Whenever applying exterior focus/active rings (`ring-offset-*`) inside an `overflow: auto` or `overflow: hidden` container, always provide matching padding (e.g. `p-1.5` paired with negative margin `-m-1.5`) so rings are not clipped by the overflow boundary.
+
+## 2026-11-11: Next.js 16 Partial Prerendering Blocking on usePathname() Outside Suspense
+- **Symptom:** Next.js build error during page prerender: `Error: Route "/studios/[id]": Next.js encountered URL data usePathname() in a Client Component outside of <Suspense>`.
+- **Root Cause:** Next.js 16 with `cacheComponents` and `partialPrefetching` flags dynamic URL data in Client Components rendered in the root layout before static HTML prerender finishes.
+- **Fix:** In `src/app/layout.tsx`, wrapped `<Navbar />` inside `<Suspense fallback={<div className="h-16 sm:h-20 w-full bg-background/80" />}>`.
+- **How to Avoid:** Any layout-level Client Component reading `usePathname()`, `useSearchParams()`, or headers must be enclosed in `<Suspense>`.
+
 ## 2026-11-11: Theme Toggle Moon Black & Light Mode Reload State Glitch
 - **Symptom 1 (Black Moon):** In dark mode, the switch thumb appeared completely black and invisible inside the dark track.
   - **Root Cause:** In `src/components/theme-toggle.module.css`, `.switch__icon-part--1` (the white moon light body) was set to `var(--color-background, var(--background))`. In `.dark`, `--background` is dark charcoal (`oklch(0.147...)`). The outer ring (`part--3`) had a dark inset shadow, the cutout (`part--2`) was dark, and the moon body itself (`part--1`) was black. 100% of the moon was painted black.

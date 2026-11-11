@@ -2,6 +2,41 @@
 
 Record of architectural, design, and structural decisions. Add dated entries in reverse-chronological order.
 
+## 2026-11-11: Enforce Minimum 70% Opacity on Secondary Surface Backgrounds
+- **Context:** Low-opacity card backgrounds (`bg-secondary/20`, `bg-secondary/30`, `bg-secondary/40`, `bg-secondary/60`) produced insufficient contrast over pure white light-theme backgrounds, degrading readability and visual hierarchy.
+- **Alternatives Considered:**
+  1. Ad-hoc custom border lines.
+  2. Increase tonal surface contrast by strictly enforcing a minimum 70% opacity (`bg-secondary/70`) across all card and panel surfaces.
+- **Outcome:** Adopted Option 2 across all components. Replaced every instance of `bg-secondary/<70%` with `bg-secondary/70` across the codebase.
+
+## 2026-11-11: Inline Booking CTA with Studio Key Stats
+- **Context:** User requested removing the "Booking: Instant" stat and moving the "Book Now" CTA button into that 4th slot inline with the stats to save vertical space.
+- **Alternatives Considered:**
+  1. Full-width button stacked below the stats row with divider border.
+  2. Single compact row: Hourly Rate, Security Deposit, Capacity, and Book Now CTA button in a 4-column responsive grid (`grid-cols-2 sm:grid-cols-4 items-center`).
+- **Outcome:** Adopted Option 2 in [`src/components/studios/studio-details.tsx`](src/components/studios/studio-details.tsx). Eliminated the divider line and extra padding block, saving significant vertical screen space. Synced skeleton in [`src/app/studios/[slug]/loading.tsx`](src/app/studios/[slug]/loading.tsx).
+
+## 2026-11-11: Standardize Aspect-Video (16:9) Across Entire Application
+- **Context:** User requested replacing all `16/10` aspect ratio classes with standard `aspect-video` (16:9) across gallery carousels and skeletons.
+- **Alternatives Considered:**
+  1. Mixed aspect ratios (`aspect-[16/10]` for gallery, `aspect-video` for cards).
+  2. Universal standard `aspect-video` across all cards, carousels, and loading states.
+- **Outcome:** Adopted Option 2 across [`src/components/studios/studio-gallery.tsx`](src/components/studios/studio-gallery.tsx) and [`src/app/studios/[slug]/loading.tsx`](src/app/studios/[slug]/loading.tsx).
+
+## 2026-11-11: Slug URL Routing with Internal MongoDB ID Fetching & Zero Mock Data
+- **Context:** User requested completely removing mock studio data, strictly fetching live database records from `NEXT_PUBLIC_API_URL` (`http://localhost:5000`), displaying human-readable `slug` in the browser address bar (`/studios/[slug]`), and querying single studios by MongoDB `_id` internally to avoid BSON hex parsing errors in `../setspace-api`.
+- **Alternatives Considered:**
+  1. Passing slug directly to `/api/studios/:id` (fails with 500 error because backend strictly executes `new ObjectId(id)`).
+  2. Resolving studio ID from slug lookup via `/api/studios`, then fetching full studio document by `_id` from `/api/studios/:id`. If raw 24-hex ID is visited in address bar, redirect to `/studios/[slug]`.
+- **Outcome:** Adopted Option 2 in [`src/lib/studios.ts`](src/lib/studios.ts) and [`src/app/studios/[slug]/page.tsx`](src/app/studios/[slug]/page.tsx). Completely deleted `src/lib/mock-studios.ts`. 100% live database communication with 60s ISR caching.
+
+## 2026-11-11: Studio Details 2-Column Wireframe Architecture with Related Category Feed
+- **Context:** User provided a wireframe layout for the studio details page (`/studios/[id]`) specifying a left main column (hero image carousel with next/prev arrows, row of clickable featured + gallery thumbnails with active border, detailed specifications, "Book now" CTA, and verified reviews) alongside a right sidebar showing 6 related studios in the same category.
+- **Alternatives Considered:**
+  1. Full-width stacked layout.
+  2. 2-column layout matching wireframe: left column (`lg:col-span-7 xl:col-span-8`) for primary workspace media, specs, booking, and reviews; right column (`lg:col-span-5 xl:col-span-4`) with sticky vertical stack of 6 `StudioCard`s in the matching category.
+- **Outcome:** Implemented Option 2. Engineered [`src/components/studios/studio-gallery.tsx`](src/components/studios/studio-gallery.tsx), [`src/components/studios/studio-details.tsx`](src/components/studios/studio-details.tsx), [`src/components/studios/studio-booking-dialog.tsx`](src/components/studios/studio-booking-dialog.tsx), [`src/components/studios/studio-reviews.tsx`](src/components/studios/studio-reviews.tsx), and [`src/components/studios/related-studios.tsx`](src/components/studios/related-studios.tsx). Next.js 16 caching configured via `fetch` revalidate (60s) with local curated fallback, and pixel-perfect skeleton in `loading.tsx`.
+
 ## 2026-11-11: Restore Official Shadcn Embla Carousel on StudioCard
 - **Context:** User requested reverting to official Shadcn `Carousel` on `StudioCard` to restore native mobile touch-swipe drag, inertia, and click disambiguation.
 - **Alternatives Considered:**

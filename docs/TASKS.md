@@ -6,6 +6,10 @@ Track ongoing, planned, and completed tasks. Check off items as they finish.
 - [ ] Configure Base UI / Shadcn form primitives (`components/ui/field.tsx`)
 
 ## Completed
+- [x] Add review pagination (initial 3 reviews + "Show more reviews" button loading 3 more while remaining) (2026-11-11)
+- [x] Standardize image ratio to `aspect-video` across studio gallery and loading skeletons (2026-11-11)
+- [x] Connect live backend for studio details: slug URL routing (`/studios/[slug]`), internal MongoDB `_id` fetching, zero mock data, and 6 related category studios (2026-11-11)
+- [x] Build studio details page (`/studios/[id]`) matching wireframe: interactive gallery with thumbnail strip, spec breakdown, booking modal dialog, verified reviews, and 6 related category studios in right column (2026-11-11)
 - [x] Restore official Shadcn `Carousel` on `StudioCard` with clean touch-drag swipe and arrow navigation (2026-11-11)
 - [x] Streamline workflow & guarantee cards: titles beside step/icon, neutral palette, base description text, zero decorative clutter, and tighter section gap (2026-11-11)
 - [x] Redesign featured studio cards: Shadcn image carousel with hover arrows, whole-card click, 3-row details hierarchy, bigger category badge, and matching skeletons (2026-11-11)

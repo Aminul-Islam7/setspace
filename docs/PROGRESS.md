@@ -2,6 +2,147 @@
 
 Record daily or milestone progress entries. Keep concise and chronological.
 
+## 2026-11-11: Upgrade Surface Contrast to Minimum 70% Secondary Opacity
+- **What Changed:**
+  1. Audited the entire application for low-opacity `bg-secondary` surfaces (`/20`, `/30`, `/40`, `/60`).
+  2. Upgraded all instances to `bg-secondary/70`:
+     - [`src/components/home/how-it-works-section.tsx`](src/components/home/how-it-works-section.tsx)
+     - [`src/components/home/host-guarantee-section.tsx`](src/components/home/host-guarantee-section.tsx)
+     - [`src/components/studios/studio-details.tsx`](src/components/studios/studio-details.tsx)
+     - [`src/components/studios/studio-reviews.tsx`](src/components/studios/studio-reviews.tsx)
+     - [`src/components/studios/studio-booking-dialog.tsx`](src/components/studios/studio-booking-dialog.tsx)
+     - [`src/app/studios/[slug]/loading.tsx`](src/app/studios/[slug]/loading.tsx)
+  3. Restored solid tonal separation and high legibility over pure white backgrounds without adding custom borders.
+- **Files Touched:**
+  - `src/components/home/how-it-works-section.tsx`
+  - `src/components/home/host-guarantee-section.tsx`
+  - `src/components/studios/studio-details.tsx`
+  - `src/components/studios/studio-reviews.tsx`
+  - `src/components/studios/studio-booking-dialog.tsx`
+  - `src/app/studios/[slug]/loading.tsx`
+  - `docs/DECISIONS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (production build pass).
+
+## 2026-11-11: Add Mobile-Only Instant Booking Stat to Balance 2x2 Grid
+- **What Changed:**
+  1. Updated [`src/components/studios/studio-details.tsx`](src/components/studios/studio-details.tsx): added `Booking: Instant` stat with `sm:hidden`.
+  2. Completes the mobile 2x2 stats grid on small viewports (`Hourly Rate`, `Deposit`, `Capacity`, `Booking`) above the full-width Book Now button, while remaining completely hidden on `sm:` and up where the button is inline.
+  3. Mirrored in [`src/app/studios/[slug]/loading.tsx`](src/app/studios/[slug]/loading.tsx).
+- **Files Touched:**
+  - `src/components/studios/studio-details.tsx`
+  - `src/app/studios/[slug]/loading.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (production build pass).
+
+## 2026-11-11: Add Reviews Count Progress Indicator
+- **What Changed:**
+  1. Updated [`src/components/studios/studio-reviews.tsx`](src/components/studios/studio-reviews.tsx): added left-aligned small muted text indicator (`Showing X of Y reviews`) placed directly below the review cards and above the "Show more reviews" button.
+- **Files Touched:**
+  - `src/components/studios/studio-reviews.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors, 0 warnings), and `npm run build` (production build pass).
+
+## 2026-11-11: Integrate Inline Book Now CTA into Stats Row
+- **What Changed:**
+  1. Updated [`src/components/studios/studio-details.tsx`](src/components/studios/studio-details.tsx): removed "Booking: Instant" stat.
+  2. Moved "Book Now" CTA button inline into the 4th column (`col-span-2 sm:col-span-1`).
+  3. Removed the horizontal divider border and extra vertical padding block, condensing the stats and booking action into a single unified row.
+  4. Synced [`src/app/studios/[slug]/loading.tsx`](src/app/studios/[slug]/loading.tsx) skeleton geometry.
+- **Files Touched:**
+  - `src/components/studios/studio-details.tsx`
+  - `src/components/studios/studio-booking-dialog.tsx`
+  - `src/app/studios/[slug]/loading.tsx`
+  - `docs/DECISIONS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors, 0 warnings), and `npm run build` (production build pass).
+
+## 2026-11-11: Add Incremental Review Pagination to StudioReviews
+- **What Changed:**
+  1. Updated [`src/components/studios/studio-reviews.tsx`](src/components/studios/studio-reviews.tsx) without overwriting user changes or commented blocks.
+  2. Implemented `visibleCount` state initialized to 3.
+  3. Rendered `reviews.slice(0, visibleCount)` reviews.
+  4. Added a centered "Show more reviews" button below the reviews list that increments by 3 (`prev + 3`) and stays visible as long as `visibleCount < reviews.length`.
+  5. Cleaned up unused imports across `studio-reviews.tsx` and `studio-details.tsx`.
+- **Files Touched:**
+  - `src/components/studios/studio-reviews.tsx`
+  - `src/components/studios/studio-details.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors, 0 warnings), and `npm run build` (production build pass).
+
+## 2026-11-11: Fix Gallery Thumbnails Ring Outline Clipping
+- **What Changed:**
+  1. Updated [`src/components/studios/studio-gallery.tsx`](src/components/studios/studio-gallery.tsx): applied `p-1.5 -m-1.5` to the thumbnail scroll container and removed `scale-95` on the active state.
+  2. Fixed clipping of the active orange focus ring (`ring-2 ring-primary ring-offset-2`) against the `overflow-x-auto` viewport boundary.
+  3. Mirrored padding in [`src/app/studios/[slug]/loading.tsx`](src/app/studios/[slug]/loading.tsx).
+- **Files Touched:**
+  - `src/components/studios/studio-gallery.tsx`
+  - `src/app/studios/[slug]/loading.tsx`
+  - `docs/BUGS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (production build pass).
+
+## 2026-11-11: Standardize Aspect-Video Across Gallery and Skeletons
+- **What Changed:**
+  1. Replaced `aspect-[16/10]` in [`src/components/studios/studio-gallery.tsx`](src/components/studios/studio-gallery.tsx) with `aspect-video`.
+  2. Replaced `aspect-[16/10]` in [`src/app/studios/[slug]/loading.tsx`](src/app/studios/[slug]/loading.tsx) with `aspect-video`.
+  3. Updated [`docs/PROJECT.md`](docs/PROJECT.md) specification to `aspect-video`.
+- **Files Touched:**
+  - `src/components/studios/studio-gallery.tsx`
+  - `src/app/studios/[slug]/loading.tsx`
+  - `docs/PROJECT.md`
+  - `docs/DECISIONS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (production build pass).
+
+## 2026-11-11: Purge Mock Studios & Connect Live Backend via Slug Address Bar Routing
+- **What Changed:**
+  1. Deleted `src/lib/mock-studios.ts` completely. Zero mock data remaining.
+  2. Created [`src/lib/studios.ts`](src/lib/studios.ts):
+     - `fetchStudioBySlug(slug)`: resolves MongoDB `_id` from live `/api/studios` feed, then queries `/api/studios/:id` internally.
+     - `fetchRelatedStudios(category, currentId)`: queries live `/api/studios?category=...` and returns up to 6 matching category workspaces.
+     - `fetchAllStudioSlugs()`: queries all live slugs for `generateStaticParams`.
+  3. Renamed route from `src/app/studios/[id]` to `src/app/studios/[slug]`:
+     - Browser address bar shows the clean studio slug (e.g. `/studios/echochamber-minimalist-creator-pod-3n5q8x`).
+     - Automatic redirect from raw 24-character hex ID to slug if hit directly.
+  4. Fixed whitespace bug in `.env` (`NEXT_PUBLIC_API_URL=http://localhost:5000`).
+- **Files Touched:**
+  - `src/lib/studios.ts`
+  - `src/lib/mock-studios.ts` (deleted)
+  - `src/app/studios/[slug]/page.tsx`
+  - `src/app/studios/[slug]/loading.tsx`
+  - `.env`
+  - `docs/DECISIONS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (production build pass: all 20 live database studios compiled successfully).
+
+## 2026-11-11: Build Studio Details Page (/studios/[id]) with Wireframe Parity
+- **What Changed:**
+  1. Built interactive [`src/components/studios/studio-gallery.tsx`](src/components/studios/studio-gallery.tsx): main carousel with hover navigation arrows and clickable thumbnail strip with active border indicator.
+  2. Built [`src/components/studios/studio-details.tsx`](src/components/studios/studio-details.tsx): comprehensive spec cards (hourly rate, security deposit, capacity, instant booking), host verification card, space description, and full amenity checklist pills.
+  3. Built [`src/components/studios/studio-booking-dialog.tsx`](src/components/studios/studio-booking-dialog.tsx): accessible modal dialog with date/time pickers, dynamic total price calculation, and reservation submission (`POST /api/bookings`) with Sonner toast feedback.
+  4. Built [`src/components/studios/studio-reviews.tsx`](src/components/studios/studio-reviews.tsx): star rating summary, verified review cards, and interactive review creation form.
+  5. Built [`src/components/studios/related-studios.tsx`](src/components/studios/related-studios.tsx): right-column feed rendering 6 `StudioCard`s in the same category.
+  6. Added [`src/app/studios/[id]/loading.tsx`](src/app/studios/[id]/loading.tsx): branded skeleton with pixel-perfect geometry matching the wireframe.
+  7. Built [`src/app/studios/[id]/page.tsx`](src/app/studios/[id]/page.tsx): Next.js 16 Partial Prerendering and dynamic route handler with `generateStaticParams` and metadata.
+  8. Configured `images.unsplash.com` in `next.config.ts`.
+  9. Wrapped `<Navbar />` in `<Suspense>` in `src/app/layout.tsx` to satisfy Next.js 16 dynamic client hook requirements during prerender.
+- **Files Touched:**
+  - `src/lib/mock-studios.ts`
+  - `src/components/studios/studio-gallery.tsx`
+  - `src/components/studios/studio-details.tsx`
+  - `src/components/studios/studio-booking-dialog.tsx`
+  - `src/components/studios/studio-reviews.tsx`
+  - `src/components/studios/related-studios.tsx`
+  - `src/app/studios/[id]/loading.tsx`
+  - `src/app/studios/[id]/page.tsx`
+  - `src/app/layout.tsx`
+  - `next.config.ts`
+  - `docs/BUGS.md`
+  - `docs/DECISIONS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (production build with 49 static/partial prerendered routes).
+
 ## 2026-11-11: Revert StudioCard to Official Shadcn Carousel
 - **What Changed:**
   1. Reverted [`src/components/studios/studio-card.tsx`](src/components/studios/studio-card.tsx) to official Shadcn `Carousel`, `CarouselContent`, and `CarouselItem`.
