@@ -7,6 +7,7 @@ Track ongoing, planned, and completed tasks. Check off items as they finish.
 - [ ] Configure Base UI / Shadcn form primitives (`components/ui/field.tsx`)
 
 ## Completed
+- [x] Build global responsive footer with brand logo, mission statement, Studio Dispatch newsletter, social icons (new X logo), 6 category links, and legal links (2026-11-11)
 - [x] Create homepage categories section with 6 square buttons (6 cols on widescreen, 3 cols / 2 rows on mobile) (2026-11-10)
 - [x] Implement responsive sticky navigation header with lowkey active indicators, theme toggle, avatar dropdown, and mobile sheet (2026-11-10)
 - [x] Create homepage hero section with 6 dark aesthetic studio slides, left-to-right gradient overlay, and expanding pill dots (2026-11-09)

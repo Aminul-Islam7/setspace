@@ -2,6 +2,37 @@
 
 Record daily or milestone progress entries. Keep concise and chronological.
 
+## 2026-11-11: Align Input Component Radius with Site Standard (rounded-lg)
+- **What Changed:** Changed default radius in `src/components/ui/input.tsx` from `rounded-3xl` to `rounded-lg`. Aligns the newsletter input and all future form inputs with the site's standard `rounded-lg` button and control geometry.
+- **Files Touched:**
+  - `src/components/ui/input.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` and `npm run lint` (0 errors).
+
+## 2026-11-11: Replace Custom Footer SVGs with Standard React Icons
+- **What Changed:** Installed `react-icons` and replaced custom inline SVG definitions in `src/components/layout/footer.tsx` with standard icons from `react-icons/fa6` (`FaXTwitter`, `FaInstagram`, `FaYoutube`, `FaGithub`, `FaLinkedinIn`).
+- **Files Touched:**
+  - `package.json`
+  - `src/components/layout/footer.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified strictly with terminal tools per `AGENTS.md`: `npx tsc --noEmit`, `npm run lint`, and `npm run build` all pass with 0 errors.
+
+## 2026-11-11: Build Global Responsive Footer Component
+- **What Changed:** Built complete production-ready global footer in `src/components/layout/footer.tsx` and mounted in `src/app/layout.tsx`:
+  1. Brand Showcase: SetSpace logo with hover effect, realistic mission copy, and modern social links using custom SVGs (including the new X logo, Instagram, YouTube, GitHub, and LinkedIn).
+  2. Studio Dispatch Newsletter: Integrated with Shadcn `Input` + `Button` and Sonner toast; validates email, clears input, and reveals an in-place VIP confirmation state.
+  3. Navigation & Categorization: 4 clean columns linking to all 6 official studio categories (`Photo Studio`, `Sound Stage`, `Podcast Lounge`, `Music Suite`, `Art Workshop`, `Exhibition Hall`), platform features, company links, and Creator Safety trust indicators.
+  4. Bottom Bar: Copyright 2026 and legal links (Privacy, Terms, Cookies, Security).
+  5. Added `<Toaster />` from `src/components/ui/sonner.tsx` into `RootLayout`.
+- **Files Touched:**
+  - `src/components/layout/footer.tsx`
+  - `src/app/layout.tsx`
+  - `src/components/ui/input.tsx`
+  - `src/components/ui/sonner.tsx`
+  - `docs/TASKS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via Playwright in both Dark and Light modes: tested newsletter submission with valid/invalid inputs; verified layout rendering and responsive container constraints; `tsc` and `eslint` pass cleanly with 0 errors.
+
 ## 2026-11-11: Decouple Switch Track Background Speed from Morph Duration
 - **What Changed:** Decoupled track transition speed from the icon morph speed in `src/components/theme-toggle.module.css`. Configured `--switch-track-dur: 0.2s` and `--switch-dur: 0.8s`. Overrode universal switch selector with high-specificity `.switch.switch--ready .switch__input { transition-duration: var(--switch-track-dur) !important; }`, allowing instant/snappy 0.2s track background color response while preserving user's 0.8s slow, luxurious icon morphing animation. Preserved all custom CSS tweaks made by user.
 - **Files Touched:**
