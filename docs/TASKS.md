@@ -6,6 +6,7 @@ Track ongoing, planned, and completed tasks. Check off items as they finish.
 - [ ] Configure Base UI / Shadcn form primitives (`components/ui/field.tsx`)
 
 ## Completed
+- [x] Restore official Shadcn `Carousel` on `StudioCard` with clean touch-drag swipe and arrow navigation (2026-11-11)
 - [x] Streamline workflow & guarantee cards: titles beside step/icon, neutral palette, base description text, zero decorative clutter, and tighter section gap (2026-11-11)
 - [x] Redesign featured studio cards: Shadcn image carousel with hover arrows, whole-card click, 3-row details hierarchy, bigger category badge, and matching skeletons (2026-11-11)
 - [x] Design featured studios section with 3-col responsive grid, dynamic `/api/studios?top=6` fetch, locked 16:10 flush cover images, overlay pills, and minimal details (2026-11-11)

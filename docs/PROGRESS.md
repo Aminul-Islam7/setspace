@@ -2,6 +2,39 @@
 
 Record daily or milestone progress entries. Keep concise and chronological.
 
+## 2026-11-11: Revert StudioCard to Official Shadcn Carousel
+- **What Changed:**
+  1. Reverted [`src/components/studios/studio-card.tsx`](src/components/studios/studio-card.tsx) to official Shadcn `Carousel`, `CarouselContent`, and `CarouselItem`.
+  2. Restored real-time touch-swipe drag on mobile, pointer dragging on desktop, and smooth sliding inertia.
+  3. Structured cleanly to keep code approachable and readable for evaluation.
+- **Files Touched:**
+  - `src/components/studios/studio-card.tsx`
+  - `docs/DECISIONS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (production build pass).
+
+## 2026-11-11: Add GPU-Accelerated Sliding Track to StudioCard
+- **What Changed:**
+  1. Updated [`src/components/studios/studio-card.tsx`](src/components/studios/studio-card.tsx) with a CSS sliding track: `flex transition-transform duration-300 ease-out` mapped to `translateX(-${currentIndex * 100}%)`.
+  2. Restored smooth physical horizontal sliding animation without Embla or external libraries.
+- **Files Touched:**
+  - `src/components/studios/studio-card.tsx`
+  - `docs/DECISIONS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (production build pass).
+
+## 2026-11-11: Replace Embla Carousel in StudioCard with Lightweight useState
+- **What Changed:**
+  1. Refactored [`src/components/studios/studio-card.tsx`](src/components/studios/studio-card.tsx) to drop `Carousel`, `CarouselApi`, `CarouselContent`, `CarouselItem`, and `useEffect`.
+  2. Implemented lightweight `useState(0)` managing active gallery index.
+  3. Bound prev/next arrows to `handlePrev` / `handleNext` with bounds validation (`Math.max` / `Math.min`) and `stopPropagation()`.
+  4. Eliminated multi-engine DOM bloat and potential click conflict on card navigation.
+- **Files Touched:**
+  - `src/components/studios/studio-card.tsx`
+  - `docs/DECISIONS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (production build pass).
+
 ## 2026-11-11: Streamline Workflow & Guarantee Cards & Reduce Inter-Section Gap
 - **What Changed:**
   1. Purged decorative elements: stripped right-corner icons, diagram arrows, bottom badges, and metrics from cards.

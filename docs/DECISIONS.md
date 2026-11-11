@@ -2,6 +2,27 @@
 
 Record of architectural, design, and structural decisions. Add dated entries in reverse-chronological order.
 
+## 2026-11-11: Restore Official Shadcn Embla Carousel on StudioCard
+- **Context:** User requested reverting to official Shadcn `Carousel` on `StudioCard` to restore native mobile touch-swipe drag, inertia, and click disambiguation.
+- **Alternatives Considered:**
+  1. Hand-rolled touch swipe listener.
+  2. Official Shadcn `Carousel` component backed by Embla.
+- **Outcome:** Reverted to Option 2 in [`src/components/studios/studio-card.tsx`](src/components/studios/studio-card.tsx). Kept code clean, readable, and simple without convoluted patterns.
+
+## 2026-11-11: Hardware-Accelerated CSS Sliding Track for StudioCard
+- **Context:** Removing Embla previously reverted image changes to an instant swap. User needed the smooth physical horizontal sliding transition preserved without bringing back Embla's complex API subscriptions and listener overhead.
+- **Alternatives Considered:**
+  1. Re-import Embla Carousel and its hook listeners.
+  2. CSS `transform: translateX(-${currentIndex * 100}%)` with `transition-transform duration-300 ease-out`.
+- **Outcome:** Implemented Option 2 in [`src/components/studios/studio-card.tsx`](src/components/studios/studio-card.tsx). Provides fluid 60fps GPU-accelerated horizontal slide between gallery images while keeping zero carousel library dependencies.
+
+## 2026-11-11: Replace Embla Engine with Simple React State in StudioCard
+- **Context:** `StudioCard` previously mounted an Embla carousel instance (`@/components/ui/carousel`) and carousel API event subscriptions for each individual card on the grid. This introduced unnecessary bundle overhead, multiple engine instances, and potential touch/click collisions.
+- **Alternatives Considered:**
+  1. Retain Shadcn/Embla carousel inside cards.
+  2. Pure React `useState(0)` managing active gallery index with boundary bounds check (`Math.min` / `Math.max`).
+- **Outcome:** Replaced Embla with `useState(0)` in [`src/components/studios/studio-card.tsx`](src/components/studios/studio-card.tsx). Stripped all Embla imports, API listeners, and `useEffect` hooks. Reduced DOM elements and eliminated per-card carousel engine overhead.
+
 ## 2026-11-11: Minimalist Streamlined Card Structure for Workflow & Guarantee Sections
 - **Context:** User requested removing extra decorative items (corner icons, arrows, tags, badges), placing titles inline beside the main step number or icon, increasing title scale, setting description to base font size, using neutral icon colors, and tightening the vertical gap between the two sections.
 - **Alternatives Considered:**

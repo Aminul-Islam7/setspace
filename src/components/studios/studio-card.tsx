@@ -1,7 +1,7 @@
 'use client';
 
-import { ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
 import { Carousel, type CarouselApi, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import { ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -9,7 +9,7 @@ import { FaStar } from 'react-icons/fa6';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Studio } from '@/types';
-import { cn } from 'cn';
+import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 
 export interface StudioCardProps {
@@ -29,18 +29,18 @@ export function StudioCard({ studio, className }: StudioCardProps) {
 	useEffect(() => {
 		if (!api) return;
 
-		const onSelect = () => {
+		const updateSelection = () => {
 			setCanScrollPrev(api.canScrollPrev());
 			setCanScrollNext(api.canScrollNext());
 		};
 
-		onSelect();
-		api.on('select', onSelect);
-		api.on('reInit', onSelect);
+		updateSelection();
+		api.on('select', updateSelection);
+		api.on('reInit', updateSelection);
 
 		return () => {
-			api.off('select', onSelect);
-			api.off('reInit', onSelect);
+			api.off('select', updateSelection);
+			api.off('reInit', updateSelection);
 		};
 	}, [api]);
 
@@ -60,7 +60,13 @@ export function StudioCard({ studio, className }: StudioCardProps) {
 					<CarouselContent className="h-full ml-0">
 						{images.map((src, index) => (
 							<CarouselItem key={index} className="relative w-full h-full pl-0 aspect-video">
-								<Image src={src} alt={studio.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
+								<Image
+									src={src}
+									alt={studio.title}
+									fill
+									sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+									className="object-cover"
+								/>
 							</CarouselItem>
 						))}
 					</CarouselContent>
@@ -180,4 +186,3 @@ export function StudioCardSkeleton({ className }: { className?: string }) {
 		</div>
 	);
 }
-
