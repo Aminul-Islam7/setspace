@@ -62,7 +62,7 @@ export function Footer() {
 	};
 
 	return (
-		<footer className="w-full bg-neutral-900/5 dark:bg-neutral-950/40 text-foreground transition-colors" aria-label="SetSpace Footer">
+		<footer className="w-full bg-muted text-foreground transition-colors" aria-label="SetSpace Footer">
 			<div className="container py-12 sm:py-16 lg:py-20 space-y-12 sm:space-y-16">
 				{/* Brand & Newsletter */}
 				<div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
@@ -104,7 +104,7 @@ export function Footer() {
 								</div>
 							) : (
 								<form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2.5">
-									<Input name="email" type="email" required placeholder="creator@production.com" className="h-10 text-sm bg-background" aria-label="Email address for newsletter" />
+									<Input name="email" type="email" required placeholder="creator@production.com" className="h-10 text-sm bg-muted" aria-label="Email address for newsletter" />
 									<Button type="submit" size="lg" className="sm:shrink-0 gap-1.5">
 										<span>Subscribe</span>
 										<ArrowRight className="size-4" />
