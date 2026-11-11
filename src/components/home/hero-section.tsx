@@ -21,11 +21,6 @@ const HERO_SLIDES: StudioSlide[] = [
 		alt: 'Dark aesthetic photo cyclorama studio with professional grid lights',
 	},
 	{
-		id: 'sound-stage',
-		imageUrl: 'https://images.unsplash.com/photo-1612544409025-e1f6a56c1152?q=80&w=1600&auto=format&fit=crop',
-		alt: 'Dark cinematic soundstage with camera cranes and ceiling riggers',
-	},
-	{
 		id: 'podcast-lounge',
 		imageUrl: 'https://images.unsplash.com/photo-1783075668300-4592693896f1?q=80&w=1600&auto=format&fit=crop',
 		alt: 'Acoustic broadcast podcast studio with broadcast microphones',
@@ -39,6 +34,11 @@ const HERO_SLIDES: StudioSlide[] = [
 		id: 'art-workshop',
 		imageUrl: 'https://images.unsplash.com/photo-1501084817091-a4f3d1d19e07?q=80&w=1600&auto=format&fit=crop',
 		alt: 'Moodily lit industrial artist studio workshop with raw materials',
+	},
+	{
+		id: 'sound-stage',
+		imageUrl: 'https://images.unsplash.com/photo-1612544409025-e1f6a56c1152?q=80&w=1600&auto=format&fit=crop',
+		alt: 'Dark cinematic soundstage with camera cranes and ceiling riggers',
 	},
 	{
 		id: 'exhibition-hall',
@@ -58,7 +58,7 @@ export function HeroSection() {
 	}, []);
 
 	return (
-		<section className="container py-4 sm:py-6 lg:py-8" aria-label="SetSpace Hero Showcase">
+		<section className="container py-2 sm:py-4" aria-label="SetSpace Hero Showcase">
 			<div className="dark relative rounded-3xl overflow-hidden bg-neutral-950">
 				{/* Background Underlying Images */}
 				<div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -73,20 +73,20 @@ export function HeroSection() {
 				</div>
 
 				{/* Dark Gradient Overlay */}
-				<div className="absolute inset-0 z-10 pointer-events-none bg-linear-to-b from-neutral-950/90 via-neutral-950/80 to-neutral-950/20 lg:bg-linear-to-r lg:from-neutral-950/90 lg:via-neutral-950/80 lg:to-transparent" aria-hidden="true" />
+				<div className="absolute inset-0 z-10 pointer-events-none bg-linear-to-b from-neutral-950/95 via-neutral-950/85 to-neutral-950/25 lg:bg-linear-to-r lg:from-neutral-950/95 lg:via-neutral-950/85 lg:to-neutral-950/25" aria-hidden="true" />
 
 				{/* Foreground Content */}
-				<div className="relative z-20 flex flex-col justify-between p-6 sm:p-12 lg:p-16">
+				<div className="relative z-20 flex flex-col justify-between p-6 sm:p-8 lg:p-14 lg:pb-10">
 					<div className="max-w-2xl space-y-5 sm:space-y-6">
 						{/* Title */}
-						<h1 className="text-2xl min-[400px]:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white font-display leading-[1.2] sm:leading-[1.15]">
+						<h1 className="text-center sm:text-left text-2xl min-[400px]:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white font-display leading-[1.2] sm:leading-[1.15]">
 							<span className="inline-block">Book Iconic</span> <span className="inline-block text-gradient-primary">Production Spaces</span>
 							<br />
 							<span className="inline-block">By The Hour.</span>
 						</h1>
 
 						{/* Description */}
-						<p className="text-base sm:text-lg text-neutral-300 font-body leading-relaxed max-w-xl">Discover and reserve verified creative studios with transparent hourly rates and instant booking.</p>
+						<p className="text-center sm:text-left text-sm sm:text-base md:text-lg text-neutral-300 font-body leading-relaxed max-w-xl">Discover and reserve verified creative studios with transparent hourly rates and instant booking.</p>
 
 						{/* Action Buttons */}
 						<div className="flex flex-col sm:flex-row items-center gap-3 pt-2">

@@ -3,8 +3,8 @@ import './globals.css';
 import { Inter, Montserrat, Plus_Jakarta_Sans, Syne } from 'next/font/google';
 
 import type { Metadata } from 'next';
-import { ThemeProvider } from '@/components/theme-provider';
 import { Navbar } from '@/components/layout/navbar';
+import { ThemeProvider } from '@/components/theme-provider';
 import { cn } from '@/lib/utils';
 
 const montserratHeading = Montserrat({ subsets: ['latin'], variable: '--font-heading' });

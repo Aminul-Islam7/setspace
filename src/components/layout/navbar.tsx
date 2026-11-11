@@ -187,6 +187,7 @@ export function Navbar() {
 
 					<Sheet>
 						<SheetTrigger
+							nativeButton
 							render={
 								<Button variant="ghost" size="icon-sm" aria-label="Open mobile menu" />
 							}

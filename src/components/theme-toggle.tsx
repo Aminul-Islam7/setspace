@@ -2,34 +2,45 @@
 
 import { useSyncExternalStore } from 'react';
 import { useTheme } from 'next-themes';
-import { Moon, Sun } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import './theme-toggle.module.css';
 
 const emptySubscribe = () => () => {};
 
-export function ThemeToggle() {
+export function ThemeToggle({ className }: { className?: string }) {
 	const { resolvedTheme, setTheme } = useTheme();
 	const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
-	if (!mounted) {
-		return (
-			<Button variant="ghost" size="icon-sm" className="opacity-0 pointer-events-none" aria-hidden="true">
-				<Sun className="size-4" />
-			</Button>
-		);
-	}
-
-	const isDark = resolvedTheme === 'dark';
+	const isDark = mounted ? resolvedTheme === 'dark' : false;
 
 	return (
-		<Button
-			type="button"
-			variant="ghost"
-			size="icon-sm"
-			onClick={() => setTheme(isDark ? 'light' : 'dark')}
-			aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+		<label
+			className={cn('switch', mounted && 'switch--ready', className)}
+			title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
 		>
-			{isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}
-		</Button>
+			<input
+				className="switch__input"
+				type="checkbox"
+				role="switch"
+				checked={isDark}
+				onChange={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+				aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+				suppressHydrationWarning
+			/>
+			<span className="switch__icon" aria-hidden="true">
+				<span className="switch__icon-part switch__icon-part--1" />
+				<span className="switch__icon-part switch__icon-part--2" />
+				<span className="switch__icon-part switch__icon-part--3" />
+				<span className="switch__icon-part switch__icon-part--4" />
+				<span className="switch__icon-part switch__icon-part--5" />
+				<span className="switch__icon-part switch__icon-part--6" />
+				<span className="switch__icon-part switch__icon-part--7" />
+				<span className="switch__icon-part switch__icon-part--8" />
+				<span className="switch__icon-part switch__icon-part--9" />
+				<span className="switch__icon-part switch__icon-part--10" />
+				<span className="switch__icon-part switch__icon-part--11" />
+			</span>
+			<span className="switch__sr">{isDark ? 'Dark Mode' : 'Light Mode'}</span>
+		</label>
 	);
 }
