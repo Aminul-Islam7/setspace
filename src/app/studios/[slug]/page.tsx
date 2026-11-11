@@ -1,5 +1,5 @@
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
-import { fetchAllStudioSlugs, fetchRelatedStudios, fetchStudioBySlug } from '@/lib/studios';
+import { fetchRelatedStudios, fetchStudioBySlug } from '@/lib/studios';
 import { notFound, redirect } from 'next/navigation';
 
 import { Home } from 'lucide-react';
@@ -29,11 +29,6 @@ export async function generateMetadata(props: PageProps<'/studios/[slug]'>): Pro
 			images: studio.image ? [{ url: studio.image }] : [],
 		},
 	};
-}
-
-export async function generateStaticParams() {
-	const slugs = await fetchAllStudioSlugs();
-	return slugs.map(slug => ({ slug }));
 }
 
 export default async function StudioPage(props: PageProps<'/studios/[slug]'>) {

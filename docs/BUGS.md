@@ -2,6 +2,12 @@
 
 Log resolved issues, regressions, and lessons learned.
 
+## 2026-11-11: Vercel Cloud Build Failure: Empty generateStaticParams with Cache Components
+- **Symptom:** Vercel deployment build failed with error: `Error: When using Cache Components, all 'generateStaticParams' functions must return at least one result. This is to ensure that we can perform build-time validation that there is no other dynamic accesses that would cause a runtime error. Learn more: https://nextjs.org/docs/messages/empty-generate-static-params at generateStaticParams (src/app/studios/[slug]/page.tsx:34:8)`.
+- **Root Cause:** In the cloud CI environment (Vercel), `process.env.NEXT_PUBLIC_API_URL` either pointed to `localhost:5000` (developer's local machine) or was unreachable during the build phase. When `fetchAllStudioSlugs()` failed network fetch, it returned an empty array `[]`. Next.js 16 with `cacheComponents: true` strictly prohibits empty arrays from `generateStaticParams()`.
+- **Fix:** Removed `generateStaticParams()` from [`src/app/studios/[slug]/page.tsx`](src/app/studios/[slug]/page.tsx). Next.js 16 automatically treats `/studios/[slug]` as a Partial Prerendering (PPR) dynamic route (`◐`), generating static shells and streaming real studio data on-demand without requiring pre-build API availability.
+- **How to Avoid:** Do not export `generateStaticParams()` on routes that depend on external, non-build-time mock APIs. Rely on Next.js 16 PPR on-demand streaming instead.
+
 ## 2026-11-11: Next.js 16 Build Worker Heap Exhaustion / Exit Code 3221226505
 - **Symptom:** Running `npm run build` failed with `FATAL ERROR: Committing semi space failed. Allocation failed - JavaScript heap out of memory` during TypeScript checking or `⨯ Next.js build worker exited with code: 3221226505 and signal: null` during `Collecting page data using 8 workers`.
 - **Root Cause:** Stale cache artifacts and route types accumulated in `.next/` across route additions (`not-found.tsx`) and dynamic parameter modifications. When Next.js spawned parallel page collection workers on Windows, the stale cache caused worker V8 heap memory to overflow (`STATUS_STACK_BUFFER_OVERRUN` / `0xC0000409`).

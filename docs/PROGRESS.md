@@ -2,6 +2,18 @@
 
 Record daily or milestone progress entries. Keep concise and chronological.
 
+## 2026-11-11: Fix Vercel Cloud Build Failure by Removing Unreachable generateStaticParams
+- **What Changed:**
+  1. Updated [`src/app/studios/[slug]/page.tsx`](src/app/studios/[slug]/page.tsx): removed `generateStaticParams()`.
+  2. Fixed Vercel deployment crash where empty `slugs` array returned during build-time without local backend caused `Error: When using Cache Components, all 'generateStaticParams' functions must return at least one result`.
+  3. Preserved Next.js 16 Partial Prerendering (PPR `◐`) for `/studios/[slug]`, allowing static shell prerendering with on-demand streaming.
+  4. Documented root cause and solution in [`docs/BUGS.md`](docs/BUGS.md).
+- **Files Touched:**
+  - `src/app/studios/[slug]/page.tsx`
+  - `docs/BUGS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `$env:NEXT_PUBLIC_API_URL="http://localhost:9999"; npm run build` (build success with 0 errors).
+
 ## 2026-11-11: Add Custom Cinematic 404 Not Found Page
 - **What Changed:**
   1. Created [`src/app/not-found.tsx`](src/app/not-found.tsx):
