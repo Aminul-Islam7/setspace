@@ -17,7 +17,7 @@ export interface StudioSlide {
 const HERO_SLIDES: StudioSlide[] = [
 	{
 		id: 'photo-studio',
-		imageUrl: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=1600&auto=format&fit=crop',
+		imageUrl: 'https://images.unsplash.com/photo-1471341971476-ae15ff5dd4ea?q=80&w=1600&auto=format&fit=crop',
 		alt: 'Dark aesthetic photo cyclorama studio with professional grid lights',
 	},
 	{
@@ -58,7 +58,7 @@ export function HeroSection() {
 	}, []);
 
 	return (
-		<section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10" aria-label="SetSpace Hero Showcase">
+		<section className="container py-4 sm:py-6 lg:py-8" aria-label="SetSpace Hero Showcase">
 			<div className="dark relative rounded-3xl overflow-hidden bg-neutral-950">
 				{/* Background Underlying Images */}
 				<div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -73,7 +73,7 @@ export function HeroSection() {
 				</div>
 
 				{/* Dark Gradient Overlay */}
-				<div className="absolute inset-0 z-10 pointer-events-none bg-linear-to-b from-neutral-950/90 via-neutral-950/80 to-neutral-950/20 lg:bg-linear-to-r lg:from-neutral-950/85 lg:via-neutral-950/80 lg:to-transparent" aria-hidden="true" />
+				<div className="absolute inset-0 z-10 pointer-events-none bg-linear-to-b from-neutral-950/90 via-neutral-950/80 to-neutral-950/20 lg:bg-linear-to-r lg:from-neutral-950/90 lg:via-neutral-950/80 lg:to-transparent" aria-hidden="true" />
 
 				{/* Foreground Content */}
 				<div className="relative z-20 flex flex-col justify-between p-6 sm:p-12 lg:p-16">
@@ -90,14 +90,14 @@ export function HeroSection() {
 
 						{/* Action Buttons */}
 						<div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
-							<Button className="w-full sm:w-auto" size="xl" variant="default">
+							<Button flat3d className="w-full sm:w-auto" size="xl" variant="default">
 								<Link href="/studios">
 									<span>Explore Studios</span>
 									<ArrowRight />
 								</Link>
 							</Button>
 
-							<Button className="w-full sm:w-auto" size="xl" variant="glass">
+							<Button flat3d className="w-full sm:w-auto" size="xl" variant="glass">
 								<Link href="/add-studio">
 									<span>Host Your Space</span>
 								</Link>
@@ -110,7 +110,7 @@ export function HeroSection() {
 						<div className="flex items-center gap-2" role="tablist" aria-label="Studio Category Slider Controls">
 							{HERO_SLIDES.map((slide, index) => {
 								const isActive = index === activeSlide;
-								return <button key={slide.id} type="button" onClick={() => setActiveSlide(index)} className={cn('h-1.5 rounded-full transition-all duration-300 focus:outline-none focus-visible:ring-1 focus-visible:ring-neutral-400', isActive ? 'w-7 bg-neutral-200/80' : 'w-1.5 bg-neutral-600 hover:bg-neutral-400')} aria-label={`View slide ${index + 1}`} aria-selected={isActive} role="tab" />;
+								return <button key={slide.id} type="button" onClick={() => setActiveSlide(index)} className={cn('h-1.5 rounded-full transition-all focus:outline-none focus-visible:ring-1 focus-visible:ring-neutral-400', isActive ? 'w-7 bg-neutral-200/80' : 'w-1.5 bg-neutral-600 hover:bg-neutral-400')} aria-label={`View slide ${index + 1}`} aria-selected={isActive} role="tab" />;
 							})}
 						</div>
 					</div>

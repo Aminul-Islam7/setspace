@@ -2,6 +2,13 @@
 
 Record of architectural, design, and structural decisions. Add dated entries in reverse-chronological order.
 
+## 2026-11-10: Flat-3D Button Variant & Neutral Gradient Specification
+- **Context:** User requested a flat-3d button option inspired by YouTube Shorts action buttons featuring a neutral gradient background and crisp border.
+- **Alternatives Considered:**
+  1. Ad-hoc custom gradient classes on individual buttons.
+  2. First-class CVA variant (`variant="flat-3d"`) and boolean prop modifier (`flat3d`) in `src/components/ui/button.tsx`.
+- **Outcome:** Added `variant="flat-3d"` (and alias `flat3d`) plus a `flat3d: { true: "..." }` modifier to `buttonVariants`. Uses neutral top-to-bottom vertical gradient (`bg-linear-to-b`) with top highlight, bottom dark tone, and a crisp 1px border (`border-black/10 dark:border-white/15`) for tactile elevation across light and dark modes.
+
 ## 2026-11-09: Glass Button Variant & Default Slightly-Rounded Shape
 - **Context:** Hero CTA buttons required a frosted glass aesthetic matching creative agency reference designs, slightly rounded corners by default, and larger button scale (`xl`).
 - **Alternatives Considered:**

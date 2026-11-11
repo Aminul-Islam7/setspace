@@ -2,6 +2,18 @@
 
 Log resolved issues, regressions, and lessons learned.
 
+## 2026-11-10: Next.js 16 Dynamic Prerender Error on new Date()
+- **Symptom:** Next.js build error: "Route '/': Next.js encountered the unstable value `new Date()` in a Client Component. This value would be evaluated during the prerender, instead of recomputed on each visit."
+- **Root Cause:** Next.js 16 blocks evaluating dynamic time calls (`new Date()`, `Date.now()`) inside Client Component prerenders to guarantee deterministic HTML snapshots.
+- **Fix:** Replaced dynamic `new Date().getFullYear()` in `src/components/layout/navbar.tsx` with static copyright year constant (`2026`).
+- **How to Avoid:** Never read current time directly in Client Component render body; defer to `useEffect`, timing APIs, or use static values.
+
+## 2026-11-10: Base UI SheetClose nativeButton Accessibility Warning
+- **Symptom:** Console error: "Base UI: A component that acts as a button expected a native <button> because the `nativeButton` prop is true. Rendering a non-<button> removes native button semantics...".
+- **Root Cause:** In Shadcn/Base UI, `SheetPrimitive.Close` inherits `nativeButton=true` by default. Passing `<Link>` into `render` renders an anchor without disabling `nativeButton`.
+- **Fix:** In `src/components/ui/sheet.tsx`, defaulted `nativeButton={nativeButton ?? (props.render ? false : undefined)}`.
+- **How to Avoid:** Apply `nativeButton={false}` whenever delegating Base UI button/close triggers to anchor tags.
+
 ## 2026-11-09: Synchronous setState in useEffect for Mounted Theme Check
 - **Symptom:** ESLint flagged `react-hooks/set-state-in-effect` error on `setMounted(true)` inside `useEffect`.
 - **Root Cause:** Calling `setState` inside synchronous effect body triggers cascading renders in React 19.

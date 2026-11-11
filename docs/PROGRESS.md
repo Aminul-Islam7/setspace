@@ -2,6 +2,79 @@
 
 Record daily or milestone progress entries. Keep concise and chronological.
 
+## 2026-11-11: Fix Glass Button Dark Border Artifact
+- **What Changed:** Diagnosed and fixed dark border halo on "Host Your Space" (`variant="glass"`). Root cause: Base UI button base styles had `border border-transparent bg-clip-padding`, which clipped the translucent white fill inside the padding box, leaving a 1px transparent trench that exposed the dark backdrop beneath as a dark ring. Resolved by:
+  1. Adding `bg-clip-border` to `glass`/`translucent` variants so background extends to outer boundary.
+  2. Replacing transparent border with subtle complementary frosted rim (`border border-black/10 dark:border-white/15 dark:hover:border-white/25`) matching modern glassmorphism.
+  3. Fixed unitless `-0.5` shadow syntax in `@utility flat-3d` in `src/app/globals.css`.
+  4. Removed unused `Button` import from `src/app/page.tsx`.
+- **Files Touched:**
+  - `src/components/ui/button.tsx`
+  - `src/app/globals.css`
+  - `src/app/page.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified clean with `npx tsc --noEmit` and `npm run lint` (0 errors, 0 warnings).
+- **Next Step:** Implement featured studios grid (`limit(6)` sorted by `rankingScore: -1`).
+
+## 2026-11-10: Flat-3D Button Hover State & Inset Specular Depth
+- **What Changed:** Enhanced `variant="flat-3d"` and `flat3d` modifier in `src/components/ui/button.tsx` so the flat-3D tactile feel persists through hover color shifts. Paired vertical neutral gradient stops (`hover:from-... hover:to-...`) with specular top rim highlight and bottom edge shadow via inset box shadows (`shadow-[inset_0_1px_0_0_...,inset_0_-1px_0_0_...]`) that scale up on hover. Prevents background hover transitions from flattening 3D volume.
+- **Files Touched:**
+  - `src/components/ui/button.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified clean with `npx tsc --noEmit` and `npm run lint`.
+- **Next Step:** Implement featured studios grid (`limit(6)` sorted by `rankingScore: -1`).
+
+## 2026-11-10: Strip Custom Duration Classes & Enforce Default Transitions
+- **What Changed:** Audited codebase and removed unnecessary custom duration classes (e.g. `duration-300`, `duration-200`) across custom interactive elements, sticking to Tailwind default transition behaviors (`transition-all`, `transition-colors`). Documented transition default rule in `docs/DESIGN.md`.
+- **Files Touched:**
+  - `src/components/home/hero-section.tsx`
+  - `docs/DESIGN.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified clean with `npx tsc --noEmit` and `npm run lint`.
+- **Next Step:** Implement featured studios grid (`limit(6)` sorted by `rankingScore: -1`).
+
+## 2026-11-10: Standardize Layout Sections to Tailwind Container Utility
+- **What Changed:** Replaced all ad-hoc `max-w-7xl mx-auto px-4 ...` and `max-w-4xl mx-auto` wrappers across all layout components with standard `@utility container` configured in `src/app/globals.css`.
+  1. Added `@utility container { margin-inline: auto; padding-inline: 1rem; ... }` to `globals.css`.
+  2. Updated `src/components/layout/navbar.tsx` header wrapper to `container`.
+  3. Updated `src/components/home/hero-section.tsx` section wrapper to `container`.
+  4. Updated `src/components/home/category-section.tsx` section wrapper to `container` and stripped nested `max-w-4xl`, restoring clean `grid grid-cols-3 md:grid-cols-6`.
+  5. Documented Container Standard in `docs/DESIGN.md`.
+- **Files Touched:**
+  - `src/app/globals.css`
+  - `src/components/layout/navbar.tsx`
+  - `src/components/home/hero-section.tsx`
+  - `src/components/home/category-section.tsx`
+  - `docs/DESIGN.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified clean with `npx tsc --noEmit`, `npm run lint`, and production `next build`.
+- **Next Step:** Implement featured studios grid (`limit(6)` sorted by `rankingScore: -1`).
+
+## 2026-11-10: Homepage Categories Grid Section Refinement
+- **What Changed:** Refined `src/components/home/category-section.tsx` per user feedback:
+  1. Removed hover scale transforms (`scale-[1.03]` and `group-hover:scale-110`), using quiet `transition-colors duration-200` background shifts.
+  2. Increased separation between icon and title (`gap-3.5 sm:gap-4 md:gap-4.5`).
+  3. Reduced widescreen button footprint by constraining grid width (`max-w-4xl mx-auto`), scaling down icon sizes (`size-6 sm:size-7 md:size-8`), reducing internal button padding (`p-2 sm:p-2.5 md:p-3`), and shrinking section padding (`py-2 sm:py-3 md:py-4`).
+  4. Switched icons to neutral muted color (`text-muted-foreground` transitioning to `group-hover:text-foreground`).
+- **Files Touched:**
+  - `src/components/home/category-section.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified clean with `npx tsc --noEmit` and `npm run lint`.
+- **Next Step:** Implement featured studios grid (`limit(6)` sorted by `rankingScore: -1`).
+
+## 2026-11-10: Global Sticky Navbar Implementation
+- **What Changed:** Installed Shadcn `Avatar`, `DropdownMenu`, and `Sheet` components. Built `src/components/layout/navbar.tsx` and mounted it into `RootLayout` (`src/app/layout.tsx`). Features sticky layout, translucent body-matched background (`bg-background/80 backdrop-blur-md`), zero custom borders, brand icon and typography, lowkey active route indicators (`/`, `/studios`, `/#how-it-works`, `/#about-us`), mutually exclusive auth buttons vs. avatar dropdown (`My Bookings`, `My Studios Listings`, `Host My Studio`, `Sign out`), theme toggle, and mobile responsive navigation drawer via Shadcn `Sheet`.
+- **Files Touched:**
+  - `src/components/ui/avatar.tsx`
+  - `src/components/ui/dropdown-menu.tsx`
+  - `src/components/ui/sheet.tsx`
+  - `src/components/layout/navbar.tsx`
+  - `src/app/layout.tsx`
+  - `docs/TASKS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified clean with `npx tsc --noEmit` and `npm run lint`.
+- **Next Step:** Implement studio category filter tabs or featured studio grid on homepage.
+
 ## 2026-11-09: Direct Child Link Pattern for Button Component
 - **What Changed:** Enhanced `src/components/ui/button.tsx` to support `<Link>` directly as a child (e.g. `<Button><Link ...>...</Link></Button>`) by automatically detecting React elements with `href` or `asChild` and delegating to Base UI render polymorphism with `nativeButton={false}`. Replaced `render` prop in `hero-section.tsx` with direct `<Link>` children. Synced dots aria-label with user's simplified `StudioSlide` type.
 - **Files Touched:**
