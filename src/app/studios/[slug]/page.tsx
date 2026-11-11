@@ -1,6 +1,9 @@
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { fetchAllStudioSlugs, fetchRelatedStudios, fetchStudioBySlug } from '@/lib/studios';
 import { notFound, redirect } from 'next/navigation';
 
+import { Home } from 'lucide-react';
+import Link from 'next/link';
 import type { Metadata } from 'next';
 import { RelatedStudios } from '@/components/studios/related-studios';
 import { StudioDetails } from '@/components/studios/studio-details';
@@ -54,14 +57,32 @@ export default async function StudioPage(props: PageProps<'/studios/[slug]'>) {
 			{/* 2-Column Responsive Layout Matching Wireframe */}
 			<div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 xl:gap-12 items-start">
 				{/* Left Column (Gallery + Details + Reviews) */}
-				<div className="lg:col-span-7 xl:col-span-8 space-y-8 sm:space-y-10">
-					{/* Image Carousel & Featured Thumbnails */}
-					<StudioGallery
-						title={studio.title}
-						image={studio.image}
-						gallery={studio.gallery}
-						category={studio.category}
-					/>
+				<div className="lg:col-span-7 xl:col-span-8 space-y-6 sm:space-y-8">
+					<div className="space-y-2.5 sm:space-y-3">
+						{/* Breadcrumb Navigation */}
+						<Breadcrumb className="text-xs sm:text-sm">
+							<BreadcrumbList>
+								<BreadcrumbItem>
+									<BreadcrumbLink render={<Link href="/" />} className="inline-flex items-center" aria-label="Home">
+										<Home className="size-3.5 sm:size-4" />
+									</BreadcrumbLink>
+								</BreadcrumbItem>
+								<BreadcrumbSeparator />
+								<BreadcrumbItem>
+									<BreadcrumbLink render={<Link href="/studios" />}>Studios</BreadcrumbLink>
+								</BreadcrumbItem>
+								<BreadcrumbSeparator />
+								<BreadcrumbItem>
+									<BreadcrumbLink render={<Link href={`/studios?category=${encodeURIComponent(studio.category)}`} />} className="font-medium text-foreground/80 truncate max-w-50 sm:max-w-none">
+										{studio.category}
+									</BreadcrumbLink>
+								</BreadcrumbItem>
+							</BreadcrumbList>
+						</Breadcrumb>
+
+						{/* Image Carousel & Featured Thumbnails */}
+						<StudioGallery title={studio.title} image={studio.image} gallery={studio.gallery} category={studio.category} />
+					</div>
 
 					{/* Studio Specifications & Booking Action */}
 					<StudioDetails studio={studio} />
@@ -80,3 +101,4 @@ export default async function StudioPage(props: PageProps<'/studios/[slug]'>) {
 		</main>
 	);
 }
+

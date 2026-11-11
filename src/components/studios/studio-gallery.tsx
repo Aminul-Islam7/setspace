@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import Image from 'next/image';
+import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 export interface StudioGalleryProps {
@@ -54,28 +55,64 @@ export function StudioGallery({ title, image, gallery = [], category }: StudioGa
 						))}
 					</CarouselContent>
 
-					{/* Navigation Arrows */}
+					{/* Navigation Arrows with Clickable Gradient Bars */}
 					{images.length > 1 && (
 						<>
-							<button type="button" aria-label="Previous image" onClick={() => api?.scrollPrev()} className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-20 flex size-9 sm:size-10 items-center justify-center rounded-full bg-background/90 hover:bg-background text-foreground shadow-md backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 focus:outline-none">
-								<ChevronLeft className="size-5" />
+							{/* Previous Image Action Bar */}
+							<button
+								type="button"
+								aria-label="Previous image"
+								onClick={e => {
+									api?.scrollPrev();
+									if (e.detail > 0) {
+										e.currentTarget.blur();
+									}
+								}}
+								className="group/nav-prev absolute inset-y-0 left-0 z-20 flex w-16 sm:w-20 md:w-24 items-center justify-start pl-3 sm:pl-4 bg-gradient-to-r from-neutral-950/85 via-neutral-950/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 focus-visible:opacity-100 cursor-pointer outline-none"
+							>
+								<span
+									className={cn(
+										buttonVariants({ variant: 'glass', flat3d: true, shape: 'full', size: 'icon' }),
+										'relative z-10 pointer-events-none sm:size-10 shadow-sm !bg-white/20 !text-white transform-gpu transition-transform duration-200 group-hover/nav-prev:scale-105 group-hover/nav-prev:!bg-white/30 group-active/nav-prev:scale-95 group-focus-visible/nav-prev:ring-2 group-focus-visible/nav-prev:ring-ring'
+									)}
+								>
+									<ChevronLeft className="size-5" />
+								</span>
 							</button>
 
-							<button type="button" aria-label="Next image" onClick={() => api?.scrollNext()} className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 z-20 flex size-9 sm:size-10 items-center justify-center rounded-full bg-background/90 hover:bg-background text-foreground shadow-md backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 focus:outline-none">
-								<ChevronRight className="size-5" />
+							{/* Next Image Action Bar */}
+							<button
+								type="button"
+								aria-label="Next image"
+								onClick={e => {
+									api?.scrollNext();
+									if (e.detail > 0) {
+										e.currentTarget.blur();
+									}
+								}}
+								className="group/nav-next absolute inset-y-0 right-0 z-20 flex w-16 sm:w-20 md:w-24 items-center justify-end pr-3 sm:pr-4 bg-gradient-to-l from-neutral-950/85 via-neutral-950/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 focus-visible:opacity-100 cursor-pointer outline-none"
+							>
+								<span
+									className={cn(
+										buttonVariants({ variant: 'glass', flat3d: true, shape: 'full', size: 'icon' }),
+										'relative z-10 pointer-events-none sm:size-10 shadow-sm !bg-white/20 !text-white transform-gpu transition-transform duration-200 group-hover/nav-next:scale-105 group-hover/nav-next:!bg-white/30 group-active/nav-next:scale-95 group-focus-visible/nav-next:ring-2 group-focus-visible/nav-next:ring-ring'
+									)}
+								>
+									<ChevronRight className="size-5" />
+								</span>
 							</button>
 						</>
 					)}
 				</Carousel>
 
 				{/* Category Pill */}
-				<div className="absolute top-3.5 left-3.5 sm:top-4 sm:left-4 z-10 pointer-events-none">
+				<div className="absolute top-3.5 left-3.5 sm:top-4 sm:left-4 z-30 pointer-events-none">
 					<span className="rounded-full bg-background/85 px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-foreground backdrop-blur-md shadow-xs">{category}</span>
 				</div>
 
 				{/* Counter Pill */}
 				{images.length > 1 && (
-					<div className="absolute bottom-3.5 right-3.5 sm:bottom-4 sm:right-4 z-10 pointer-events-none">
+					<div className="absolute bottom-3.5 right-3.5 sm:bottom-4 sm:right-4 z-30 pointer-events-none">
 						<span className="rounded-full bg-background/80 px-2.5 py-1 text-xs font-medium text-foreground backdrop-blur-md">
 							{currentIndex + 1} / {images.length}
 						</span>

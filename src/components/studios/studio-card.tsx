@@ -9,6 +9,7 @@ import { FaStar } from 'react-icons/fa6';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Studio } from '@/types';
+import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 
@@ -71,7 +72,7 @@ export function StudioCard({ studio, className }: StudioCardProps) {
 						))}
 					</CarouselContent>
 
-					{/* Navigation Arrows */}
+					{/* Navigation Arrows with Clickable Gradient Bars */}
 					{hasGallery && images.length > 1 && (
 						<>
 							{canScrollPrev && (
@@ -82,10 +83,20 @@ export function StudioCard({ studio, className }: StudioCardProps) {
 										e.preventDefault();
 										e.stopPropagation();
 										api?.scrollPrev();
+										if (e.detail > 0) {
+											e.currentTarget.blur();
+										}
 									}}
-									className="absolute left-2.5 top-1/2 -translate-y-1/2 z-20 flex size-8 items-center justify-center rounded-full bg-background/95 hover:bg-background text-foreground shadow-md backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 focus:outline-none"
+									className="group/nav-prev absolute inset-y-0 left-0 z-20 flex w-12 sm:w-16 items-center justify-start pl-2 sm:pl-2.5 bg-gradient-to-r from-neutral-950/85 via-neutral-950/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 focus-visible:opacity-100 cursor-pointer outline-none"
 								>
-									<ChevronLeft className="size-4" />
+									<span
+										className={cn(
+											buttonVariants({ variant: 'glass', flat3d: true, shape: 'full', size: 'icon-sm' }),
+											'relative z-10 pointer-events-none shadow-sm !bg-white/20 !text-white transform-gpu transition-transform duration-200 group-hover/nav-prev:scale-105 group-hover/nav-prev:!bg-white/30 group-active/nav-prev:scale-95 group-focus-visible/nav-prev:ring-2 group-focus-visible/nav-prev:ring-ring'
+										)}
+									>
+										<ChevronLeft className="size-4" />
+									</span>
 								</button>
 							)}
 
@@ -97,10 +108,20 @@ export function StudioCard({ studio, className }: StudioCardProps) {
 										e.preventDefault();
 										e.stopPropagation();
 										api?.scrollNext();
+										if (e.detail > 0) {
+											e.currentTarget.blur();
+										}
 									}}
-									className="absolute right-2.5 top-1/2 -translate-y-1/2 z-20 flex size-8 items-center justify-center rounded-full bg-background/95 hover:bg-background text-foreground shadow-md backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 focus:outline-none"
+									className="group/nav-next absolute inset-y-0 right-0 z-20 flex w-12 sm:w-16 items-center justify-end pr-2 sm:pr-2.5 bg-gradient-to-l from-neutral-950/85 via-neutral-950/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 focus-visible:opacity-100 cursor-pointer outline-none"
 								>
-									<ChevronRight className="size-4" />
+									<span
+										className={cn(
+											buttonVariants({ variant: 'glass', flat3d: true, shape: 'full', size: 'icon-sm' }),
+											'relative z-10 pointer-events-none shadow-sm !bg-white/20 !text-white transform-gpu transition-transform duration-200 group-hover/nav-next:scale-105 group-hover/nav-next:!bg-white/30 group-active/nav-next:scale-95 group-focus-visible/nav-next:ring-2 group-focus-visible/nav-next:ring-ring'
+										)}
+									>
+										<ChevronRight className="size-4" />
+									</span>
 								</button>
 							)}
 						</>
@@ -108,7 +129,7 @@ export function StudioCard({ studio, className }: StudioCardProps) {
 				</Carousel>
 
 				{/* Category Badge */}
-				<div className="absolute top-3 left-3 z-10 pointer-events-none">
+				<div className="absolute top-3 left-3 z-30 pointer-events-none">
 					<span className="rounded-full bg-background/85 px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-foreground backdrop-blur-md shadow-xs">{studio.category}</span>
 				</div>
 			</div>

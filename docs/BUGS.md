@@ -2,6 +2,12 @@
 
 Log resolved issues, regressions, and lessons learned.
 
+## 2026-11-11: Gallery Navigation Arrows Jumping Down on Active Click
+- **Symptom:** In `StudioGallery`, clicking the gallery next/previous arrow buttons caused the button to jump downwards significantly (~20px) while pressed (`:active`).
+- **Root Cause:** The buttons were centered vertically via `top-1/2 -translate-y-1/2`. The Shadcn `Button` component in `src/components/ui/button.tsx` includes `active:not-aria-[haspopup]:translate-y-px`. When clicked, Tailwind's `active:translate-y-px` overwritten `--tw-translate-y: 1px`, wiping out `-translate-y-1/2` (-50% of button height) and shifting the button down by ~21px.
+- **Fix:** Switched vertical centering from `top-1/2 -translate-y-1/2` to `inset-y-0 my-auto` and added `active:translate-y-0` in [`src/components/studios/studio-gallery.tsx`](src/components/studios/studio-gallery.tsx). This centers the button purely via box model margins without transform translations and neutralizes the active displacement.
+- **How to Avoid:** Never use `top-1/2 -translate-y-1/2` on elements that use classes with `active:translate-y-*` or other transform-based micro-interactions. Use `inset-y-0 my-auto` for absolute vertical centering instead.
+
 ## 2026-11-11: Gallery Thumbnails Ring Outline Clipped by overflow-x-auto
 - **Symptom:** In `StudioGallery`, the active thumbnail's rounded orange focus ring (`ring-2 ring-primary ring-offset-2`) had its top, left, and bottom edges clipped flat against the scroll container boundary.
 - **Root Cause:** The thumbnail strip container had `overflow-x-auto` with zero top and zero horizontal padding (`pb-1` only). The 4px spread of `ring-2 ring-offset-2` extended past the button edge and collided directly with the container's overflow clipping rect.

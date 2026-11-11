@@ -6,14 +6,19 @@ export default function StudioLoading() {
 			<div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 xl:gap-12">
 				{/* Left Column (Main Details & Gallery) */}
 				<div className="lg:col-span-7 xl:col-span-8 space-y-6 sm:space-y-8">
-					{/* Carousel Skeleton */}
-					<div className="space-y-3">
-						<div className="w-full aspect-video rounded-2xl sm:rounded-3xl bg-muted" />
-						{/* Thumbnails Skeleton */}
-						<div className="flex gap-2.5 sm:gap-3 p-1.5 -m-1.5 overflow-x-auto scrollbar-none">
-							{Array.from({ length: 4 }).map((_, i) => (
-								<div key={i} className="size-16 sm:size-20 rounded-xl bg-muted shrink-0" />
-							))}
+					<div className="space-y-2.5 sm:space-y-3">
+						{/* Breadcrumbs Skeleton */}
+						<div className="h-4 w-44 rounded bg-muted" />
+
+						{/* Carousel Skeleton */}
+						<div className="space-y-3">
+							<div className="w-full aspect-video rounded-2xl sm:rounded-3xl bg-muted" />
+							{/* Thumbnails Skeleton */}
+							<div className="flex gap-2.5 sm:gap-3 p-1.5 -m-1.5 overflow-x-auto scrollbar-none">
+								{Array.from({ length: 4 }).map((_, i) => (
+									<div key={i} className="size-16 sm:size-20 rounded-xl bg-muted shrink-0" />
+								))}
+							</div>
 						</div>
 					</div>
 

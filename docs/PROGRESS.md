@@ -2,6 +2,99 @@
 
 Record daily or milestone progress entries. Keep concise and chronological.
 
+## 2026-11-11: Add Glass Button & Gradient Bar Setup to StudioCard
+- **What Changed:**
+  1. Updated [`src/components/studios/studio-card.tsx`](src/components/studios/studio-card.tsx):
+     - Added full-height clickable neutral gradient bars (`w-12 sm:w-16`) on both edges (`from-neutral-950/85 via-neutral-950/45 to-transparent`).
+     - Replaced raw button with Shadcn [`buttonVariants`](src/components/ui/button.tsx) (`variant="glass"`, `flat3d`, `shape="full"`, `size="icon-sm"`, `!bg-white/20 !text-white`).
+     - Added pointer blur (`e.detail > 0 && e.currentTarget.blur()`) and `focus-visible:opacity-100` to prevent mouse focus stickiness.
+     - Set `z-30` on category badge above gradient bars.
+- **Files Touched:**
+  - `src/components/studios/studio-card.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (production build pass).
+
+## 2026-11-11: Upgrade Gallery Gradients to Neutral Variables and Eliminate Arrow Pop-In Glitch
+- **What Changed:**
+  1. Updated [`src/components/studios/studio-gallery.tsx`](src/components/studios/studio-gallery.tsx):
+     - Replaced hardcoded black gradients with theme neutral variables: `from-neutral-950/85 via-neutral-950/45 to-transparent` (left) and `from-neutral-950/85 via-neutral-950/45 to-transparent` (right) for a deeper, stronger cinematic vignette.
+     - Fixed pop-in / behind-the-gradient glitch:
+       - Root cause: `variant="glass"` defaults to `bg-foreground/5` (dark charcoal in light mode), causing the arrow button to start dark and blend into the dark gradient before transitioning to white, appearing as if trapped behind the gradient.
+       - Fix: Locked the arrow surface to `!bg-white/20 !text-white` with `transform-gpu` and `relative z-10`, ensuring the button is rendered in the foreground with frosted glass contrast from frame 0 in perfect sync with the gradient.
+- **Files Touched:**
+  - `src/components/studios/studio-gallery.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (production build pass).
+
+## 2026-11-11: Clear Mouse Focus Stickiness on Gallery Navigation Bars
+- **What Changed:**
+  1. Updated [`src/components/studios/studio-gallery.tsx`](src/components/studios/studio-gallery.tsx):
+     - Replaced `focus:opacity-100` with `focus-visible:opacity-100` on both previous/next gradient bar buttons so mouse clicks do not leave the bar permanently visible when mouse leaves gallery.
+     - Added pointer blur (`if (e.detail > 0) e.currentTarget.blur()`) on click to drop focus on mouse clicks while preserving keyboard focus for Tab/Enter users.
+- **Files Touched:**
+  - `src/components/studios/studio-gallery.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors) and `npm run lint` (0 errors).
+
+## 2026-11-11: Add Clickable Dark Gradient Bars Behind Gallery Nav Arrows
+- **What Changed:**
+  1. Updated [`src/components/studios/studio-gallery.tsx`](src/components/studios/studio-gallery.tsx):
+     - Added full-height clickable gradient bars (`w-16 sm:w-20 md:w-24`) along both left (`bg-gradient-to-r from-black/60 via-black/25 to-transparent`) and right (`bg-gradient-to-l from-black/60 via-black/25 to-transparent`) edges.
+     - Entire gradient area is clickable for quick and easy slide navigation.
+     - Styled interior controls with Shadcn [`buttonVariants`](src/components/ui/button.tsx) (`variant="glass"`, `flat3d`, `shape="full"`, `size="icon"`, `text-white`), maintaining high contrast over any background image without jump.
+     - Bumped category and counter badge layers to `z-30` so they stay sharp above the gradient.
+- **Files Touched:**
+  - `src/components/studios/studio-gallery.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors) and `npm run lint` (0 errors).
+
+## 2026-11-11: Fix Active Click Jump on Gallery Navigation Arrows
+- **What Changed:**
+  1. Updated [`src/components/studios/studio-gallery.tsx`](src/components/studios/studio-gallery.tsx): changed vertical centering from `top-1/2 -translate-y-1/2` to `inset-y-0 my-auto` and added `active:translate-y-0`.
+  2. Fixed Tailwind transform collision where `Button`'s `active:translate-y-px` was overriding `-translate-y-1/2`, causing a 20px downward jump when pressed.
+  3. Documented in [`docs/BUGS.md`](docs/BUGS.md).
+- **Files Touched:**
+  - `src/components/studios/studio-gallery.tsx`
+  - `docs/BUGS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors) and `npm run lint` (0 errors).
+
+## 2026-11-11: Tighten Breadcrumb-to-Gallery Spacing
+- **What Changed:**
+  1. Updated [`src/app/studios/[slug]/page.tsx`](src/app/studios/[slug]/page.tsx): grouped `<Breadcrumb />` and `<StudioGallery />` in a dedicated `space-y-2.5 sm:space-y-3` container (down from previous `space-y-6 sm:space-y-8` inherited from column parent).
+  2. Mirrored in [`src/app/studios/[slug]/loading.tsx`](src/app/studios/[slug]/loading.tsx).
+- **Files Touched:**
+  - `src/app/studios/[slug]/page.tsx`
+  - `src/app/studios/[slug]/loading.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors) and `npm run lint` (0 errors).
+
+## 2026-11-11: Upgrade Gallery Navigation Arrows to Shadcn Glass Button with Flat-3D
+- **What Changed:**
+  1. Updated [`src/components/studios/studio-gallery.tsx`](src/components/studios/studio-gallery.tsx): replaced raw HTML `<button>` elements with official Shadcn [`Button`](src/components/ui/button.tsx).
+  2. Applied `variant="glass"`, `flat3d={true}`, `shape="full"`, and `size="icon"` to both previous and next gallery carousel controls.
+- **Files Touched:**
+  - `src/components/studios/studio-gallery.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (production build pass).
+
+## 2026-11-11: Add Lowkey Clickable Breadcrumbs to Studio Details Page
+- **What Changed:**
+  1. Added official Shadcn `Breadcrumb` component primitives (`src/components/ui/breadcrumb.tsx`).
+  2. Integrated lowkey, clickable breadcrumb navigation directly above `<StudioGallery />` in [`src/app/studios/[slug]/page.tsx`](src/app/studios/[slug]/page.tsx):
+     - `Home` icon linking to `/`
+     - Separator
+     - `Studios` linking to `/studios`
+     - Separator
+     - `[Category]` linking to `/studios?category=${category}`
+  3. Added matching skeleton placeholder in [`src/app/studios/[slug]/loading.tsx`](src/app/studios/[slug]/loading.tsx).
+- **Files Touched:**
+  - `src/components/ui/breadcrumb.tsx`
+  - `src/app/studios/[slug]/page.tsx`
+  - `src/app/studios/[slug]/loading.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (all 27/27 static/PPR pages built cleanly).
+
 ## 2026-11-11: Upgrade Surface Contrast to Minimum 70% Secondary Opacity
 - **What Changed:**
   1. Audited the entire application for low-opacity `bg-secondary` surfaces (`/20`, `/30`, `/40`, `/60`).
