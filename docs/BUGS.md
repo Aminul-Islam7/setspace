@@ -2,6 +2,12 @@
 
 Log resolved issues, regressions, and lessons learned.
 
+## 2026-11-11: Next.js 16 Build Worker Heap Exhaustion / Exit Code 3221226505
+- **Symptom:** Running `npm run build` failed with `FATAL ERROR: Committing semi space failed. Allocation failed - JavaScript heap out of memory` during TypeScript checking or `⨯ Next.js build worker exited with code: 3221226505 and signal: null` during `Collecting page data using 8 workers`.
+- **Root Cause:** Stale cache artifacts and route types accumulated in `.next/` across route additions (`not-found.tsx`) and dynamic parameter modifications. When Next.js spawned parallel page collection workers on Windows, the stale cache caused worker V8 heap memory to overflow (`STATUS_STACK_BUFFER_OVERRUN` / `0xC0000409`).
+- **Fix:** Cleared the `.next` directory completely via `Remove-Item -Recurse -Force .next`. Rebuilding from scratch resolved cleanly (27/27 static & PPR routes compiled).
+- **How to Avoid:** When adding root route handlers (like `not-found.tsx`), changing route segments, or seeing worker code `3221226505`, delete `.next` to flush stale compiler cache before running `next build`.
+
 ## 2026-11-11: Gallery Navigation Arrows Jumping Down on Active Click
 - **Symptom:** In `StudioGallery`, clicking the gallery next/previous arrow buttons caused the button to jump downwards significantly (~20px) while pressed (`:active`).
 - **Root Cause:** The buttons were centered vertically via `top-1/2 -translate-y-1/2`. The Shadcn `Button` component in `src/components/ui/button.tsx` includes `active:not-aria-[haspopup]:translate-y-px`. When clicked, Tailwind's `active:translate-y-px` overwritten `--tw-translate-y: 1px`, wiping out `-translate-y-1/2` (-50% of button height) and shifting the button down by ~21px.
