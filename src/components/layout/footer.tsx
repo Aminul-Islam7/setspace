@@ -64,9 +64,9 @@ export function Footer() {
 	return (
 		<footer className="w-full bg-neutral-900/5 dark:bg-neutral-950/40 text-foreground transition-colors" aria-label="SetSpace Footer">
 			<div className="container py-12 sm:py-16 lg:py-20 space-y-12 sm:space-y-16">
-				{/* Top Grid: Brand & Newsletter */}
+				{/* Brand & Newsletter */}
 				<div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-					{/* Brand Column */}
+					{/* Brand */}
 					<div className="lg:col-span-5 space-y-4 sm:space-y-5">
 						<Link href="/" className="inline-flex items-center gap-2.5 group">
 							<Image src="/logo.svg" alt="SetSpace Logo" width={32} height={32} className="size-8 transition-transform group-hover:scale-105" />
@@ -74,7 +74,7 @@ export function Footer() {
 						</Link>
 						<p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-md font-body">Discover, reserve, and host iconic production spaces. From high-end cyclorama photo lofts to cinematic soundstages and Dolby Atmos suites, SetSpace empowers creators with transparent hourly booking.</p>
 
-						{/* Social Media Links */}
+						{/* Social Links */}
 						<div className="pt-2 flex items-center gap-2">
 							{SOCIAL_LINKS.map(item => {
 								const Icon = item.icon;
@@ -87,7 +87,7 @@ export function Footer() {
 						</div>
 					</div>
 
-					{/* Newsletter Box */}
+					{/* Newsletter */}
 					<div className="lg:col-span-7 flex flex-col justify-center">
 						<div className="rounded-2xl p-6 sm:p-8 bg-card text-card-foreground shadow-xs space-y-4">
 							<div className="space-y-1.5">
@@ -115,9 +115,9 @@ export function Footer() {
 					</div>
 				</div>
 
-				{/* Middle Grid: Navigation Columns */}
+				{/* Navigation */}
 				<div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-4">
-					{/* Categories Column */}
+					{/* Categories */}
 					<div className="space-y-3.5">
 						<h4 className="font-display text-sm font-semibold tracking-wide text-foreground uppercase">Studio Categories</h4>
 						<ul className="space-y-2.5 text-sm font-body">
@@ -131,7 +131,7 @@ export function Footer() {
 						</ul>
 					</div>
 
-					{/* Platform Links */}
+					{/* Platform */}
 					<div className="space-y-3.5">
 						<h4 className="font-display text-sm font-semibold tracking-wide text-foreground uppercase">Platform</h4>
 						<ul className="space-y-2.5 text-sm font-body">
@@ -145,7 +145,7 @@ export function Footer() {
 						</ul>
 					</div>
 
-					{/* Company Links */}
+					{/* Company */}
 					<div className="space-y-3.5">
 						<h4 className="font-display text-sm font-semibold tracking-wide text-foreground uppercase">Company</h4>
 						<ul className="space-y-2.5 text-sm font-body">
@@ -159,14 +159,14 @@ export function Footer() {
 						</ul>
 					</div>
 
-					{/* Trust & Guarantee */}
+					{/* Trust */}
 					<div className="space-y-3.5">
 						<h4 className="font-display text-sm font-semibold tracking-wide text-foreground uppercase">Creator Safety</h4>
 						<p className="text-xs sm:text-sm text-muted-foreground font-body leading-relaxed">Every reservation is backed by transparent hourly billing, host identity verification, and direct studio messaging.</p>
 					</div>
 				</div>
 
-				{/* Bottom Bar: Copyright & Legal */}
+				{/* Legal */}
 				<div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground font-body">
 					<p>© 2026 SetSpace, Inc. All rights reserved.</p>
 					<div className="flex flex-wrap items-center gap-x-6 gap-y-2">

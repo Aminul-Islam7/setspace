@@ -2,11 +2,11 @@ import './globals.css';
 
 import { Inter, Montserrat, Plus_Jakarta_Sans, Syne } from 'next/font/google';
 
+import { Footer } from '@/components/layout/footer';
 import type { Metadata } from 'next';
 import { Navbar } from '@/components/layout/navbar';
-import { Footer } from '@/components/layout/footer';
-import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from '@/components/ui/sonner';
 import { cn } from '@/lib/utils';
 
 const montserratHeading = Montserrat({ subsets: ['latin'], variable: '--font-heading' });
@@ -34,7 +34,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
 	return (
 		<html lang="en" className={cn('h-full antialiased font-sans', fontDisplay.variable, fontBody.variable, inter.variable, montserratHeading.variable)} suppressHydrationWarning data-scroll-behavior="smooth">
 			<body className="min-h-full flex flex-col">
-				<ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+				<ThemeProvider attribute="class" enableSystem disableTransitionOnChange>
 					<Navbar />
 					{children}
 					<Footer />

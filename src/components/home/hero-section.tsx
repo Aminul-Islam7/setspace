@@ -16,33 +16,34 @@ export interface StudioSlide {
 
 const HERO_SLIDES: StudioSlide[] = [
 	{
-		id: 'photo-studio',
-		imageUrl: 'https://images.unsplash.com/photo-1471341971476-ae15ff5dd4ea?q=80&w=1600&auto=format&fit=crop',
-		alt: 'Dark aesthetic photo cyclorama studio with professional grid lights',
-	},
-	{
-		id: 'podcast-lounge',
-		imageUrl: 'https://images.unsplash.com/photo-1783075668300-4592693896f1?q=80&w=1600&auto=format&fit=crop',
-		alt: 'Acoustic broadcast podcast studio with broadcast microphones',
-	},
-	{
 		id: 'music-suite',
-		imageUrl: 'https://images.unsplash.com/photo-1758336717046-c475fc6f45ce?q=80&w=1600&auto=format&fit=crop',
+		imageUrl: 'https://i.ibb.co/xq3Fy9DF/hero-music-suite.png',
 		alt: 'Dark ambient music production control room with analog mixing console',
 	},
 	{
-		id: 'art-workshop',
-		imageUrl: 'https://images.unsplash.com/photo-1501084817091-a4f3d1d19e07?q=80&w=1600&auto=format&fit=crop',
-		alt: 'Moodily lit industrial artist studio workshop with raw materials',
-	},
-	{
 		id: 'sound-stage',
-		imageUrl: 'https://images.unsplash.com/photo-1612544409025-e1f6a56c1152?q=80&w=1600&auto=format&fit=crop',
+		imageUrl: 'https://i.ibb.co/JRfyRWsZ/hero-sound-stage.webp',
 		alt: 'Dark cinematic soundstage with camera cranes and ceiling riggers',
 	},
 	{
+		id: 'podcast-lounge',
+		imageUrl: 'https://i.ibb.co/b56B5jJQ/hero-podcast-lounge-v3.jpg',
+		alt: 'Acoustic broadcast podcast studio with broadcast microphones',
+	},
+	{
+		id: 'photo-studio',
+		imageUrl: 'https://i.ibb.co/S4VBWYXm/hero-photo-studio-v3.jpg',
+		alt: 'Dark aesthetic photo cyclorama studio with professional grid lights',
+	},
+	{
+		id: 'art-workshop',
+		imageUrl: 'https://i.ibb.co/XqBz4Vw/hero-art-workshop-v2.jpg',
+		alt: 'Moodily lit industrial artist studio workshop with raw materials',
+	},
+
+	{
 		id: 'exhibition-hall',
-		imageUrl: 'https://images.unsplash.com/photo-1518998053901-5348d3961a04?q=80&w=1600&auto=format&fit=crop',
+		imageUrl: 'https://i.ibb.co/39PjwwYT/hero-exhibition-hall-v2.jpg',
 		alt: 'Architectural gallery hall with dramatic spotlighting',
 	},
 ];
@@ -60,7 +61,7 @@ export function HeroSection() {
 	return (
 		<section className="container py-2 sm:py-4" aria-label="SetSpace Hero Showcase">
 			<div className="dark relative rounded-3xl overflow-hidden bg-neutral-950">
-				{/* Background Underlying Images */}
+				{/* Background Slides */}
 				<div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
 					{HERO_SLIDES.map((slide, index) => {
 						const isActive = index === activeSlide;
@@ -72,10 +73,10 @@ export function HeroSection() {
 					})}
 				</div>
 
-				{/* Dark Gradient Overlay */}
+				{/* Gradient Overlay */}
 				<div className="absolute inset-0 z-10 pointer-events-none bg-linear-to-b from-neutral-950/95 via-neutral-950/85 to-neutral-950/25 lg:bg-linear-to-r lg:from-neutral-950/95 lg:via-neutral-950/85 lg:to-neutral-950/25" aria-hidden="true" />
 
-				{/* Foreground Content */}
+				{/* Content */}
 				<div className="relative z-20 flex flex-col justify-between p-6 sm:p-8 lg:p-14 lg:pb-10">
 					<div className="max-w-2xl space-y-5 sm:space-y-6">
 						{/* Title */}
@@ -88,7 +89,7 @@ export function HeroSection() {
 						{/* Description */}
 						<p className="text-center sm:text-left text-sm sm:text-base md:text-lg text-neutral-300 font-body leading-relaxed max-w-xl">Discover and reserve verified creative studios with transparent hourly rates and instant booking.</p>
 
-						{/* Action Buttons */}
+						{/* Actions */}
 						<div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
 							<Button flat3d className="w-full sm:w-auto" size="xl" variant="default">
 								<Link href="/studios">

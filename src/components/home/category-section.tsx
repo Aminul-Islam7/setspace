@@ -49,8 +49,8 @@ export function CategorySection() {
 				{CATEGORIES.map(category => (
 					<Button key={category.name} flat3d variant="secondary" className="group h-auto w-full flex-col items-center justify-center gap-3 sm:gap-3.5 md:gap-4 p-2 sm:p-3.5 xs:p-4 md:p-5 rounded-xl sm:rounded-2xl whitespace-normal transition-colors">
 						<Link href={`/studios?category=${encodeURIComponent(category.name)}`} aria-label={`Browse ${category.name} listings`}>
-							<category.icon className="size-6 sm:size-7 md:size-10 text-muted-foreground transition-colors group-hover:text-foreground/80" />
-							<span className="text-[11px] sm:text-xs lg:text-base font-medium text-muted-foreground tracking-tight text-center leading-tight line-clamp-2 group-hover:text-foreground/80 transition-colors">{category.name}</span>
+							<category.icon className="size-6 sm:size-7 md:size-10 text-foreground/60 transition-colors group-hover:text-foreground/80" />
+							<span className="text-[11px] sm:text-xs lg:text-base font-medium text-foreground/60 tracking-tight text-center leading-tight line-clamp-2 group-hover:text-foreground/80 transition-colors">{category.name}</span>
 						</Link>
 					</Button>
 				))}

@@ -53,6 +53,7 @@ No document is fixed or static (including AGENTS.md and PROJECT.md). Design deci
 - **Strict Shadcn-First Policy:** Always use official Shadcn / Base UI components (Button, Carousel, Dialog, Field, Input, etc.). Never write custom ad-hoc sliders or UI primitives when an official Shadcn component exists. Add via `npx shadcn add <component>`.
 - Use built-in variants only (`variant="default"`, `variant="secondary"`, etc.). Never write custom pseudo-variants or add new variants unless user commands.
 - **No Custom Borders Rule:** Never use custom borders anywhere unless absolutely necessary. Rely on background-foreground contrast, surface elevation, and tonal contrast for visual separation.
+- **Clean Comments Only Rule:** Never parrot user instructions or justify prompt requirements in code comments (e.g. `{/* Studio Details Section (No background, No padding) */}`). Write only minimal headings of the code block (what it is or does, as short and concise as possible: e.g. `{/* Studio Details */}`, `{/* Title */}`). Zero extra commentary.
 
 ## Verification & Workflow Guardrails
 

@@ -10,7 +10,7 @@ export interface StudioReview {
 	_id?: string;
 	userName: string;
 	userAvatar?: string;
-	rating: number; // 1-5
+	rating: number;
 	comment: string;
 	createdAt: string;
 }
@@ -25,12 +25,12 @@ export interface Studio {
 	securityDeposit: number;
 	maxCapacity: number;
 	location: string;
-	image: string; // Primary cover image
-	gallery?: string[]; // 2-4 additional photos for carousel
+	image: string;
+	gallery?: string[];
 	amenities: string[];
-	rating: number; // Average rating (e.g. 4.9)
-	reviewCount: number; // Must strictly equal reviews.length
-	rankingScore: number; // rating * reviewCount (used for featured sorting)
+	rating: number;
+	reviewCount: number;
+	rankingScore: number;
 	reviews: StudioReview[];
 	ownerName: string;
 	ownerEmail: string;
@@ -49,8 +49,8 @@ export interface Booking {
 	studioImage: string;
 	userEmail: string;
 	userName: string;
-	date: string; // YYYY-MM-DD
-	startTime: string; // HH:00
+	date: string;
+	startTime: string;
 	durationHours: number;
 	totalPrice: number;
 	status: BookingStatus;

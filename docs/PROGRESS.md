@@ -2,12 +2,130 @@
 
 Record daily or milestone progress entries. Keep concise and chronological.
 
+## 2026-11-11: Full Codebase Audit & Purge of Explanatory Code Comments
+- **What Changed:**
+  1. Audited all TypeScript and TSX files across `src/`.
+  2. Purged all prompt-instruction parroting, requirement justifications, and verbose comments across `src/components/layout/navbar.tsx`, `src/components/layout/footer.tsx`, `src/components/home/hero-section.tsx`, `src/components/studios/studio-card.tsx`, and `src/types/index.ts`.
+  3. Reduced every remaining comment across the application to minimal 1-to-3 word structural headings only.
+- **Files Touched:**
+  - `src/components/layout/navbar.tsx`
+  - `src/components/layout/footer.tsx`
+  - `src/components/home/hero-section.tsx`
+  - `src/components/studios/studio-card.tsx`
+  - `src/types/index.ts`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (production build pass).
+
+## 2026-11-11: Enforce Clean Comments Rule & Strip Parroted Instruction Comments
+- **What Changed:**
+  1. Updated `AGENTS.md` Code Style & UI Primitives: codified strict **Clean Comments Only Rule** forbidding user instruction parroting, requirement justifications, or verbose commentary. Code comments must strictly be concise section headings stating only what the block is or does.
+  2. Cleaned [`src/components/studios/studio-card.tsx`](src/components/studios/studio-card.tsx): replaced verbose instruction comments with concise structural headings (`{/* Media Carousel */}`, `{/* Navigation Arrows */}`, `{/* Category Badge */}`, `{/* Studio Details */}`, `{/* Host & Rating */}`, `{/* Title */}`, `{/* Rate & Location */}`).
+  3. Cleaned [`src/components/home/featured-studios-section.tsx`](src/components/home/featured-studios-section.tsx) headings.
+- **Files Touched:**
+  - `AGENTS.md`
+  - `src/components/studios/studio-card.tsx`
+  - `src/components/home/featured-studios-section.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (production build pass).
+
+## 2026-11-11: Extract Reusable StudioCard and StudioCardSkeleton Component
+- **What Changed:**
+  1. Created [`src/components/studios/studio-card.tsx`](src/components/studios/studio-card.tsx) exporting `StudioCard` and `StudioCardSkeleton`.
+  2. Encapsulated carousel navigation, conditional gallery checks, hover arrows, 3-row layout, and click routing logic for cross-page reuse (e.g. `/studios`, related studios, profile).
+  3. Refactored [`src/components/home/featured-studios-section.tsx`](src/components/home/featured-studios-section.tsx) to consume `StudioCard` and `StudioCardSkeleton`.
+- **Files Touched:**
+  - `src/components/studios/studio-card.tsx`
+  - `src/components/home/featured-studios-section.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (production build pass).
+
+## 2026-11-11: Increase Vertical Spacing Between Featured Studio Cards
+- **What Changed:** In `src/components/home/featured-studios-section.tsx`:
+  1. Grid Row Spacing: Separated horizontal and vertical gap tokens. Updated from uniform `gap-6 sm:gap-7` to `gap-x-6 sm:gap-x-7 gap-y-10 sm:gap-y-12`.
+  2. Skeleton Parity: Applied matching `gap-y-10 sm:gap-y-12` to skeleton grid.
+- **Files Touched:**
+  - `src/components/home/featured-studios-section.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (production build pass).
+
+## 2026-11-11: Add Explore All Studios CTA After Featured Grid
+- **What Changed:** In `src/components/home/featured-studios-section.tsx`:
+  1. Added centered bottom CTA button after the 6-studio grid: `<Button flat3d size="lg" variant="secondary">` linking to `/studios`.
+  2. Spacing: `mt-8 sm:mt-10 md:mt-12 flex justify-center`.
+- **Files Touched:**
+  - `src/components/home/featured-studios-section.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (production build pass).
+
+## 2026-11-11: Flip Row 3 Order (Rate Left, Location Right) and Enlarge Rate Typography
+- **What Changed:** In `src/components/home/featured-studios-section.tsx`:
+  1. Position Flip: Moved hourly rate to left side and location to right side.
+  2. Rate Typography: Enlarged rate to `text-base sm:text-lg font-bold text-foreground` with `text-xs sm:text-sm` for `/hr`.
+  3. Skeleton Alignment: Mirrored the flipped layout in the loading skeleton (`h-5 w-16` on left, `h-4 w-28` on right).
+- **Files Touched:**
+  - `src/components/home/featured-studios-section.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (production build pass).
+
+## 2026-11-11: Fix Featured Studio Carousel Navigation & Polish Arrow Affordance
+- **What Changed:** Fixed carousel next/prev navigation in `src/components/home/featured-studios-section.tsx`:
+  1. Arrow Click Propagation Fix: Removed `onClickCapture` suppression and stretched link `after:` overlay collision. Extracted `FeaturedStudioCard` with direct `api.scrollNext()` and `api.scrollPrev()` calls on the Shadcn Embla carousel instance.
+  2. Conditional Gallery Arrows: Arrows only render when at least one gallery image exists (`studio.gallery?.length > 0 && images.length > 1`).
+  3. Visual Affordance: Scaled arrow buttons to `size-8` (32px) and increased background visibility (`bg-background/95 hover:bg-background text-foreground shadow-md backdrop-blur-md`).
+  4. Card Click Routing: Clean `handleCardClick` on `<article>` routes to studio page while ignoring button/anchor clicks.
+- **Files Touched:**
+  - `src/components/home/featured-studios-section.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (production build pass).
+
+## 2026-11-11: Redesign Featured Studio Cards (Carousel, Whole-Card Click, 3-Row Details, Skeletons)
+- **What Changed:** Complete architectural overhaul of studio cards in `src/components/home/featured-studios-section.tsx`:
+  1. Image & Details Separation: Image container is fully isolated with `rounded-2xl aspect-[16/10] overflow-hidden`. Details section has zero background and zero padding.
+  2. Shadcn Image Carousel: Embedded official `@/components/ui/carousel` with left and right navigation arrows (`CarouselPrevious`, `CarouselNext`). Initial state displays only right arrow (`disabled:hidden`). Hover reveal (`group-hover:opacity-100`). Arrow clicks stop propagation to avoid triggering card navigation.
+  3. Bigger Category Badge: Enlarged glass badge placed top-left of image (`px-3.5 py-1.5 text-xs sm:text-sm font-semibold`).
+  4. Whole-Card Clickability: Removed dedicated "View Details" button. Card title houses stretched link (`after:absolute after:inset-0 after:z-10`) making entire card surface clickable.
+  5. 3-Row Information Hierarchy:
+     - Row 1: Owner avatar (`Avatar`, `AvatarImage`, `AvatarFallback`) + owner name (left), rating with review count (right).
+     - Row 2: Title (`font-body font-bold text-base sm:text-lg text-foreground line-clamp-2 leading-snug`).
+     - Row 3: Location pin + city (left), hourly rate with unit (right).
+  6. Pixel-Perfect Skeletons: Updated loading skeleton states to replicate the 3-row layout and aspect-ratio geometry with exact pixel fidelity.
+- **Files Touched:**
+  - `src/components/home/featured-studios-section.tsx`
+  - `docs/PROGRESS.md`
+  - `docs/TASKS.md`
+- **Verification Done:** Verified strictly with terminal tools per `AGENTS.md`: `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), `npm run build` (0 errors, production build pass).
+
+## 2026-11-11: Build Featured Studios Homepage Grid Section
+- **What Changed:** Created `src/components/home/featured-studios-section.tsx` and mounted on `src/app/page.tsx`:
+  1. Responsive Layout: Strict `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3` layout with minimal spacing (`gap-6 sm:gap-7`).
+  2. Data Fetching: Live client fetch from `${apiUrl}/api/studios?top=6` with fallback to 6 curated production studios across all official categories to guarantee deterministic static build and offline resilience.
+  3. Image Treatment: Locked `aspect-[16/10]` image container completely flush to the card top/left/right boundaries with **zero outer/inner padding**, smooth 1.05x hover zoom, and overlaid glass pills for category and rating.
+  4. Minimal Details: Focused essential hierarchy — title, hourly rate (`$XX/hr`), location pin, max capacity, and `Button` with `flat3d` variant linking to studio details.
+  5. Clean Design: Zero extra borders or artificial padding; relies on tonal surface contrast and subtle elevation.
+- **Files Touched:**
+  - `src/components/home/featured-studios-section.tsx`
+  - `src/app/page.tsx`
+  - `docs/TASKS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified strictly with terminal tools per `AGENTS.md`: `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (successful production build).
+
 ## 2026-11-11: Align Input Component Radius with Site Standard (rounded-lg)
 - **What Changed:** Changed default radius in `src/components/ui/input.tsx` from `rounded-3xl` to `rounded-lg`. Aligns the newsletter input and all future form inputs with the site's standard `rounded-lg` button and control geometry.
 - **Files Touched:**
   - `src/components/ui/input.tsx`
   - `docs/PROGRESS.md`
 - **Verification Done:** Verified via `npx tsc --noEmit` and `npm run lint` (0 errors).
+
+## 2026-11-11: Remove Fallback Studios, Hover Lift & Fix Neutral Palette Mismatch
+- **What Changed:**
+  1. Removed `FALLBACK_STUDIOS` array and all fallback mechanisms completely from `src/components/home/featured-studios-section.tsx`. Live fetch to `/api/studios?top=6` with clean loading skeleton and empty state handling.
+  2. Removed card hover lift-up transition (`hover:-translate-y-1` and `transition-transform duration-300`). Cards remain flat and static.
+  3. Fixed neutral color clash in `src/app/globals.css`: replaced cool-slate `--secondary` (hue 286.033) with matching warm studio zinc (hue 43.1). Card background (`--card`) and secondary button (`--secondary`) now share the exact same warm hue family across both light and dark modes.
+- **Files Touched:**
+  - `src/components/home/featured-studios-section.tsx`
+  - `src/app/globals.css`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified strictly with terminal tools per `AGENTS.md`: `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (successful production build).
 
 ## 2026-11-11: Replace Custom Footer SVGs with Standard React Icons
 - **What Changed:** Installed `react-icons` and replaced custom inline SVG definitions in `src/components/layout/footer.tsx` with standard icons from `react-icons/fa6` (`FaXTwitter`, `FaInstagram`, `FaYoutube`, `FaGithub`, `FaLinkedinIn`).
