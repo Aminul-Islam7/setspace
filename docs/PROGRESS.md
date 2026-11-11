@@ -2,6 +2,51 @@
 
 Record daily or milestone progress entries. Keep concise and chronological.
 
+## 2026-11-11: Streamline Workflow & Guarantee Cards & Reduce Inter-Section Gap
+- **What Changed:**
+  1. Purged decorative elements: stripped right-corner icons, diagram arrows, bottom badges, and metrics from cards.
+  2. Aligned titles beside the main step number / icon (`flex items-center gap-3`).
+  3. Scaled up titles to `text-lg sm:text-xl font-semibold` and descriptions to `text-base text-muted-foreground`.
+  4. Switched icons to neutral palette (`text-muted-foreground`).
+  5. Reduced vertical gap between the two sections (`pb-4 sm:pb-6` on `HowItWorksSection`, `pt-4 sm:pt-6` on `HostGuaranteeSection`).
+- **Files Touched:**
+  - `src/components/home/how-it-works-section.tsx`
+  - `src/components/home/host-guarantee-section.tsx`
+  - `docs/DECISIONS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (production build pass).
+
+## 2026-11-11: Refactor to Separate Diagram-Style Workflow and Host Guarantee Sections
+- **What Changed:**
+  1. Replaced merged component with two dedicated modular sections:
+     - [`src/components/home/how-it-works-section.tsx`](src/components/home/how-it-works-section.tsx): 4-card diagrammatic workflow grid (`grid-cols-1 sm:grid-cols-2 lg:grid-cols-4`) with numeric step pills, sequential progression arrows, natural typography, and diagram tags.
+     - [`src/components/home/host-guarantee-section.tsx`](src/components/home/host-guarantee-section.tsx): 4-card diagrammatic assurance grid with metrics (`$1M Coverage`, `100% Verified`, `Secure Facilities`, `Live Standby`), feature icons, and status badges.
+  2. Removed artificial uppercase, excessive tracking, and custom typography overrides; adopted standard natural text styles and Shadcn contrast guidelines.
+  3. Integrated both sections into [`src/app/page.tsx`](src/app/page.tsx) with clean spacing and smooth scroll anchors (`#how-it-works`, `#host-guarantee`).
+- **Files Touched:**
+  - `src/components/home/how-it-works-section.tsx`
+  - `src/components/home/host-guarantee-section.tsx`
+  - `src/app/page.tsx`
+  - `docs/DECISIONS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (production build pass).
+
+## 2026-11-11: Implement Homepage Booking Workflow & Platform Guarantee Sections
+- **What Changed:**
+  1. Created [`src/components/home/workflow-guarantee-section.tsx`](src/components/home/workflow-guarantee-section.tsx) delivering both required sections:
+     - Section 1 (How Booking Works): 4-step workflow (`01. Discover Spaces` -> `02. Select Shoot Hours` -> `03. Book Instantly` -> `04. Create & Produce`) with dedicated `#how-it-works` scroll anchor.
+     - Section 2 (Host Guarantee & Creator Support): 4 assurance pillars (Liability Protection, Verified Profiles, Equipment Safety, 24/7 Host Support) with dedicated `#host-guarantee` scroll anchor.
+  2. Implemented side-by-side merged layout on widescreen (`grid-cols-1 lg:grid-cols-2`) and natural vertical stack on mobile/tablet.
+  3. Integrated into [`src/app/page.tsx`](src/app/page.tsx).
+  4. Styled with `bg-secondary/40 dark:bg-card` rounded-3xl panels, primary amber icons, and zero custom borders.
+- **Files Touched:**
+  - `src/components/home/workflow-guarantee-section.tsx`
+  - `src/app/page.tsx`
+  - `docs/TASKS.md`
+  - `docs/DECISIONS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (production build pass).
+
 ## 2026-11-11: Full Codebase Audit & Purge of Explanatory Code Comments
 - **What Changed:**
   1. Audited all TypeScript and TSX files across `src/`.

@@ -2,6 +2,27 @@
 
 Record of architectural, design, and structural decisions. Add dated entries in reverse-chronological order.
 
+## 2026-11-11: Minimalist Streamlined Card Structure for Workflow & Guarantee Sections
+- **Context:** User requested removing extra decorative items (corner icons, arrows, tags, badges), placing titles inline beside the main step number or icon, increasing title scale, setting description to base font size, using neutral icon colors, and tightening the vertical gap between the two sections.
+- **Alternatives Considered:**
+  1. Retain secondary diagram tags and badges.
+  2. Pure minimal card: header row with step number/neutral icon + title, base body text description below, and zero decorative noise.
+- **Outcome:** Adopted Option 2 across [`src/components/home/how-it-works-section.tsx`](src/components/home/how-it-works-section.tsx) and [`src/components/home/host-guarantee-section.tsx`](src/components/home/host-guarantee-section.tsx). Tightened spacing (`pb-4 sm:pb-6` on first section, `pt-4 sm:pt-6` on second).
+
+## 2026-11-11: Separate Diagrammatic Card Grids for Workflow and Host Guarantee
+- **Context:** User requested breaking the merged workflow/guarantee row into distinct, dedicated sections with diagram-like step cards, natural typography (no artificial uppercase, heavy tracking, or custom line-heights), and subtle diagram tags.
+- **Alternatives Considered:**
+  1. Single large merged panel.
+  2. Two distinct standalone sections each with a responsive 4-column diagram card grid (`grid-cols-1 sm:grid-cols-2 lg:grid-cols-4`).
+- **Outcome:** Split into [`src/components/home/how-it-works-section.tsx`](src/components/home/how-it-works-section.tsx) and [`src/components/home/host-guarantee-section.tsx`](src/components/home/host-guarantee-section.tsx). Clean typography, diagrammatic step progression arrows, metric pills, soft badge tags, and zero custom borders.
+
+## 2026-11-11: Merged Side-by-Side Row Layout for Workflow & Platform Guarantee
+- **Context:** User requested Section 1 (How Booking Works - 4 steps) and Section 2 (Host Guarantee & Creator Support - 4 assurances) on the homepage with an option to merge into a single row on big screens while keeping UI minimal.
+- **Alternatives Considered:**
+  1. Two separate full-width stacked sections, adding vertical page scroll.
+  2. Single responsive section with side-by-side 2-column grid (`lg:grid-cols-2`) on widescreen and vertical stack on mobile/tablet.
+- **Outcome:** Adopted Option 2. Wrapped both sections into [`src/components/home/workflow-guarantee-section.tsx`](src/components/home/workflow-guarantee-section.tsx) with anchors `#how-it-works` and `#host-guarantee`. Uses `bg-secondary/40 dark:bg-card` rounded-3xl panels, primary-accented Lucide icons, and zero custom borders.
+
 ## 2026-11-10: Flat-3D Button Variant & Neutral Gradient Specification
 - **Context:** User requested a flat-3d button option inspired by YouTube Shorts action buttons featuring a neutral gradient background and crisp border.
 - **Alternatives Considered:**

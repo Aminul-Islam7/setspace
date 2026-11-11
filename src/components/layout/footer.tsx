@@ -91,7 +91,7 @@ export function Footer() {
 					<div className="lg:col-span-7 flex flex-col justify-center">
 						<div className="rounded-2xl p-6 sm:p-8 bg-card text-card-foreground shadow-xs space-y-4">
 							<div className="space-y-1.5">
-								<h3 className="font-display text-lg sm:text-xl font-bold tracking-tight text-foreground">Subscribe to Studio Dispatch</h3>
+								<h3 className="font-display text-lg sm:text-xl font-bold tracking-tight text-foreground">Studio Dispatch (Newsletter)</h3>
 								<p className="text-xs sm:text-sm text-muted-foreground font-body leading-relaxed">Weekly curated space drops, host insights, and hourly rate spotlights for creative teams.</p>
 							</div>
 
