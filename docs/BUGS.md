@@ -2,6 +2,12 @@
 
 Log resolved issues, regressions, and lessons learned.
 
+## 2026-11-11: Vercel 308 Permanent Redirect CORS Failure on Trailing Slash API URL
+- **Symptom:** Browser failed with `net::ERR_FAILED 308 (Permanent Redirect)` and CORS error: `Access to fetch at 'https://setspace-api-v1.vercel.app//api/studios?top=6' from origin 'https://setspace-studios.vercel.app' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.`
+- **Root Cause:** In Vercel Environment Variables, `NEXT_PUBLIC_API_URL` was configured with a trailing slash (`https://setspace-api-v1.vercel.app/`). Concatenating `${apiUrl}/api/...` created a double-slash URL (`//api/studios?top=6`). Vercel's edge proxy intercepted the double slash before hitting the backend server and issued an HTTP 308 redirect to clean the path to `/api/studios?top=6`. Because the edge redirect response omitted CORS headers, the browser blocked the cross-origin redirect.
+- **Fix:** Sanitized all instances of `process.env.NEXT_PUBLIC_API_URL` using `.replace(/\/+$/, '')` across [`src/components/home/featured-studios-section.tsx`](src/components/home/featured-studios-section.tsx) and [`src/components/studios/studio-booking-dialog.tsx`](src/components/studios/studio-booking-dialog.tsx).
+- **How to Avoid:** Always sanitize base API URL environment variables by stripping trailing slashes with `.replace(/\/+$/, '')` before appending endpoint paths.
+
 ## 2026-11-11: Vercel Cloud Build Failure: Empty generateStaticParams with Cache Components
 - **Symptom:** Vercel deployment build failed with error: `Error: When using Cache Components, all 'generateStaticParams' functions must return at least one result. This is to ensure that we can perform build-time validation that there is no other dynamic accesses that would cause a runtime error. Learn more: https://nextjs.org/docs/messages/empty-generate-static-params at generateStaticParams (src/app/studios/[slug]/page.tsx:34:8)`.
 - **Root Cause:** In the cloud CI environment (Vercel), `process.env.NEXT_PUBLIC_API_URL` either pointed to `localhost:5000` (developer's local machine) or was unreachable during the build phase. When `fetchAllStudioSlugs()` failed network fetch, it returned an empty array `[]`. Next.js 16 with `cacheComponents: true` strictly prohibits empty arrays from `generateStaticParams()`.

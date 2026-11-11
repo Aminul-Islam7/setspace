@@ -2,6 +2,20 @@
 
 Record daily or milestone progress entries. Keep concise and chronological.
 
+## 2026-11-11: Fix 308 CORS Redirect on API Fetch and Restore Resilient generateStaticParams
+- **What Changed:**
+  1. Updated [`src/components/home/featured-studios-section.tsx`](src/components/home/featured-studios-section.tsx) and [`src/components/studios/studio-booking-dialog.tsx`](src/components/studios/studio-booking-dialog.tsx): stripped trailing slashes from `process.env.NEXT_PUBLIC_API_URL` (`replace(/\/+$/, '')`).
+     - Root cause of 308: Vercel environment variable `NEXT_PUBLIC_API_URL` had trailing slash (`https://setspace-api-v1.vercel.app/`), resulting in `//api/studios?top=6`. Vercel Edge normalized `//` to `/` with HTTP 308 redirect, but edge redirects lack CORS headers, causing browser to fail with CORS error.
+  2. Restored `generateStaticParams()` in [`src/app/studios/[slug]/page.tsx`](src/app/studios/[slug]/page.tsx) with seed slug fallback:
+     - Fetches live studio slugs from remote API for full static prerendering (`○`).
+     - Includes seed fallback so builds never crash if API is unreachable.
+- **Files Touched:**
+  - `src/components/home/featured-studios-section.tsx`
+  - `src/components/studios/studio-booking-dialog.tsx`
+  - `src/app/studios/[slug]/page.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` with remote API (27/27 pages generated).
+
 ## 2026-11-11: Fix Vercel Cloud Build Failure by Removing Unreachable generateStaticParams
 - **What Changed:**
   1. Updated [`src/app/studios/[slug]/page.tsx`](src/app/studios/[slug]/page.tsx): removed `generateStaticParams()`.

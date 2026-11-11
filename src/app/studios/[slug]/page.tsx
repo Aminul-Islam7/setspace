@@ -1,5 +1,5 @@
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
-import { fetchRelatedStudios, fetchStudioBySlug } from '@/lib/studios';
+import { fetchAllStudioSlugs, fetchRelatedStudios, fetchStudioBySlug } from '@/lib/studios';
 import { notFound, redirect } from 'next/navigation';
 
 import { Home } from 'lucide-react';
@@ -29,6 +29,18 @@ export async function generateMetadata(props: PageProps<'/studios/[slug]'>): Pro
 			images: studio.image ? [{ url: studio.image }] : [],
 		},
 	};
+}
+
+const FALLBACK_SLUGS = [
+	'echochamber-minimalist-creator-pod-3n5q8x',
+	'foley-score-post-production-adr-stage-6g8d1r',
+	'the-daylight-loft-two-wall-cyc-8f3k9a',
+];
+
+export async function generateStaticParams() {
+	const slugs = await fetchAllStudioSlugs();
+	const list = slugs.length > 0 ? slugs : FALLBACK_SLUGS;
+	return list.map(slug => ({ slug }));
 }
 
 export default async function StudioPage(props: PageProps<'/studios/[slug]'>) {

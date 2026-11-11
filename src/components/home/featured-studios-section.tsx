@@ -13,7 +13,7 @@ export function FeaturedStudiosSection() {
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+		const apiUrl = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/+$/, '');
 		const endpoint = apiUrl ? `${apiUrl}/api/studios?top=6` : '/api/studios?top=6';
 
 		let isMounted = true;
