@@ -4,7 +4,7 @@ import { ChevronDown, RotateCcw, Search, SlidersHorizontal, X } from 'lucide-rea
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import type { Studio, StudioCategory } from '@/types';
 import { StudioCard, StudioCardSkeleton } from '@/components/studios/studio-card';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
@@ -13,9 +13,9 @@ import { Slider } from '@/components/ui/slider';
 import { StudioBreadcrumb } from '@/components/studios/studio-breadcrumb';
 import { cn } from '@/lib/utils';
 
-const CATEGORIES: (StudioCategory | 'All')[] = ['All', 'Photo Studio', 'Sound Stage', 'Podcast Lounge', 'Music Suite', 'Art Workshop', 'Exhibition Hall'];
+export const CATEGORIES: (StudioCategory | 'All')[] = ['All', 'Photo Studio', 'Sound Stage', 'Podcast Lounge', 'Music Suite', 'Art Workshop', 'Exhibition Hall'];
 
-interface SortOption {
+export interface SortOption {
 	id: 'newest' | 'featured' | 'rating' | 'price-asc' | 'price-desc';
 	label: string;
 }
@@ -29,31 +29,149 @@ const SORT_OPTIONS: SortOption[] = [
 ];
 
 const PAGE_SIZE = 12;
+const MIN_PRICE = 20;
+const MAX_PRICE = 400;
+const PRICE_STEP = 10;
 
 export function StudiosExplorer() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 
-	const [rawStudios, setRawStudios] = useState<Studio[]>([]);
-	const [loading, setLoading] = useState(true);
-
+	// Read state from URL query parameters
 	const paramCategory = searchParams.get('category');
 	const selectedCategory = useMemo<StudioCategory | 'All'>(() => {
 		return paramCategory && CATEGORIES.includes(paramCategory as StudioCategory) ? (paramCategory as StudioCategory) : 'All';
 	}, [paramCategory]);
 
-	// Search & Filter State
-	const [searchInput, setSearchInput] = useState('');
-	const [submittedSearch, setSubmittedSearch] = useState('');
-	const [selectedSort, setSelectedSort] = useState<SortOption['id']>('newest');
-	const [priceRange, setPriceRange] = useState<[number, number] | null>(null);
-	const [isFilterOpen, setIsFilterOpen] = useState(false);
-	const [currentPage, setCurrentPage] = useState(1);
+	const paramSearch = searchParams.get('search') || '';
+	const paramSort = searchParams.get('sort') as SortOption['id'] | null;
+	const selectedSort = useMemo<SortOption['id']>(() => {
+		return paramSort && SORT_OPTIONS.some(o => o.id === paramSort) ? paramSort : 'newest';
+	}, [paramSort]);
 
-	// Initial data fetch from API
+	const paramMinPrice = searchParams.get('minPrice');
+	const paramMaxPrice = searchParams.get('maxPrice');
+	const priceRange = useMemo<[number, number] | null>(() => {
+		if (paramMinPrice !== null && paramMaxPrice !== null) {
+			const min = Number(paramMinPrice);
+			const max = Number(paramMaxPrice);
+			if (!isNaN(min) && !isNaN(max)) return [min, max];
+		}
+		return null;
+	}, [paramMinPrice, paramMaxPrice]);
+
+	const paramPage = searchParams.get('page');
+	const currentPage = useMemo(() => {
+		const parsed = parseInt(paramPage || '1', 10);
+		return isNaN(parsed) || parsed < 1 ? 1 : parsed;
+	}, [paramPage]);
+
+	// Local UI states
+	const [studios, setStudios] = useState<Studio[]>([]);
+	const [totalPages, setTotalPages] = useState(1);
+	const [loading, setLoading] = useState(true);
+	const [prevParamsKey, setPrevParamsKey] = useState('');
+
+	// Adjust searchInput state when URL query changes (React official render adjustment)
+	const [prevParamSearch, setPrevParamSearch] = useState(paramSearch);
+	const [searchInput, setSearchInput] = useState(paramSearch);
+	if (paramSearch !== prevParamSearch) {
+		setPrevParamSearch(paramSearch);
+		setSearchInput(paramSearch);
+	}
+
+	// Adjust sliderRange state when URL price query changes
+	const [prevPriceRange, setPrevPriceRange] = useState(priceRange);
+	const [sliderRange, setSliderRange] = useState<[number, number] | null>(priceRange);
+	if (priceRange !== prevPriceRange) {
+		setPrevPriceRange(priceRange);
+		setSliderRange(priceRange);
+	}
+
+	const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+	// Central URL query updater
+	const updateUrl = useCallback(
+		(updates: { category?: StudioCategory | 'All'; search?: string; sort?: SortOption['id']; minPrice?: number | null; maxPrice?: number | null; page?: number }) => {
+			const params = new URLSearchParams(searchParams.toString());
+
+			if (updates.category !== undefined) {
+				if (updates.category === 'All') params.delete('category');
+				else params.set('category', updates.category);
+			}
+
+			if (updates.search !== undefined) {
+				const trimmed = updates.search.trim();
+				if (!trimmed) params.delete('search');
+				else params.set('search', trimmed);
+			}
+
+			if (updates.sort !== undefined) {
+				if (updates.sort === 'newest') params.delete('sort');
+				else params.set('sort', updates.sort);
+			}
+
+			if (updates.minPrice !== undefined || updates.maxPrice !== undefined) {
+				if (updates.minPrice === null || updates.maxPrice === null) {
+					params.delete('minPrice');
+					params.delete('maxPrice');
+				} else {
+					if (updates.minPrice !== undefined) params.set('minPrice', String(updates.minPrice));
+					if (updates.maxPrice !== undefined) params.set('maxPrice', String(updates.maxPrice));
+				}
+			}
+
+			if (updates.page !== undefined) {
+				if (updates.page <= 1) params.delete('page');
+				else params.set('page', String(updates.page));
+			}
+
+			const queryString = params.toString();
+			const newUrl = queryString ? `/studios?${queryString}` : '/studios';
+			router.replace(newUrl, { scroll: false });
+		},
+		[searchParams, router],
+	);
+
+	// Debounce slider changes to update URL
 	useEffect(() => {
-		const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-		const endpoint = `${apiUrl}/api/studios?limit=100`;
+		if (!sliderRange) return;
+		const timer = setTimeout(() => {
+			if (priceRange?.[0] !== sliderRange[0] || priceRange?.[1] !== sliderRange[1]) {
+				updateUrl({
+					minPrice: sliderRange[0],
+					maxPrice: sliderRange[1],
+					page: 1,
+				});
+			}
+		}, 350);
+		return () => clearTimeout(timer);
+	}, [sliderRange, priceRange, updateUrl]);
+
+	// Fetch Studios from Backend when URL Query Parameters Change
+	const currentParamsKey = `${selectedCategory}-${paramSearch}-${selectedSort}-${priceRange?.[0]}-${priceRange?.[1]}-${currentPage}`;
+
+	useEffect(() => {
+		const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+		const params = new URLSearchParams();
+
+		if (selectedCategory !== 'All') {
+			params.set('category', selectedCategory);
+		}
+		if (paramSearch.trim()) {
+			params.set('search', paramSearch.trim());
+		}
+		if (selectedSort && selectedSort !== 'newest') {
+			params.set('sort', selectedSort);
+		}
+		if (priceRange) {
+			params.set('minPrice', String(priceRange[0]));
+			params.set('maxPrice', String(priceRange[1]));
+		}
+		params.set('page', String(currentPage));
+		params.set('limit', String(PAGE_SIZE));
+
+		const endpoint = `${apiUrl}/api/studios?${params.toString()}`;
 
 		let isMounted = true;
 
@@ -62,150 +180,88 @@ export function StudiosExplorer() {
 				if (!res.ok) throw new Error('Failed to fetch studios');
 				return res.json();
 			})
-			.then(data => {
-				if (isMounted) {
-					const list: Studio[] = Array.isArray(data) ? data : data.studios || [];
-					setRawStudios(list);
+			.then(json => {
+				if (!isMounted) return;
+				const list: Studio[] = Array.isArray(json) ? json : json.data || json.studios || [];
+				setStudios(list);
+
+				if (json && typeof json === 'object') {
+					if (typeof json.totalPages === 'number') {
+						setTotalPages(Math.max(1, json.totalPages));
+					} else if (typeof json.totalCount === 'number') {
+						setTotalPages(Math.max(1, Math.ceil(json.totalCount / PAGE_SIZE)));
+					} else {
+						setTotalPages(Math.max(1, Math.ceil(list.length / PAGE_SIZE)));
+					}
 				}
 			})
-			.catch(() => {
+			.catch(err => {
 				if (isMounted) {
-					setRawStudios([]);
+					console.error('Failed to fetch studios from backend:', err);
+					setStudios([]);
+					setTotalPages(1);
 				}
 			})
 			.finally(() => {
-				if (isMounted) setLoading(false);
+				if (isMounted) {
+					setLoading(false);
+					setPrevParamsKey(currentParamsKey);
+				}
 			});
 
 		return () => {
 			isMounted = false;
 		};
-	}, []);
-
-	// Category-scoped studios for dynamic bounds
-	const categoryStudios = useMemo(() => {
-		if (selectedCategory === 'All') return rawStudios;
-		return rawStudios.filter(s => s.category === selectedCategory);
-	}, [rawStudios, selectedCategory]);
-
-	// Dynamic Min/Max Hourly Rate Bounds from Currently Available Studios
-	const { minAvailableRate, maxAvailableRate } = useMemo(() => {
-		const rates = categoryStudios.map(s => s.hourlyRate).filter((r): r is number => typeof r === 'number' && !isNaN(r));
-		if (rates.length === 0) {
-			return { minAvailableRate: 0, maxAvailableRate: 350 };
-		}
-		const min = Math.min(...rates);
-		const max = Math.max(...rates);
-		return {
-			minAvailableRate: min,
-			maxAvailableRate: max === min ? min + 10 : max,
-		};
-	}, [categoryStudios]);
+	}, [selectedCategory, paramSearch, selectedSort, priceRange, currentPage, currentParamsKey]);
 
 	const currentPriceRange = useMemo<[number, number]>(() => {
-		if (!priceRange) {
-			return [minAvailableRate, maxAvailableRate];
-		}
-		return [Math.max(minAvailableRate, Math.min(priceRange[0], maxAvailableRate)), Math.min(maxAvailableRate, Math.max(priceRange[1], minAvailableRate))];
-	}, [priceRange, minAvailableRate, maxAvailableRate]);
-
-	// Filter and Sort Studios
-	const filteredStudios = useMemo(() => {
-		let result = [...categoryStudios];
-
-		// Search Filter
-		if (submittedSearch.trim()) {
-			const term = submittedSearch.trim().toLowerCase();
-			result = result.filter(s => s.title.toLowerCase().includes(term) || s.location.toLowerCase().includes(term) || s.description.toLowerCase().includes(term) || (s.amenities && s.amenities.some(a => a.toLowerCase().includes(term))));
-		}
-
-		// Price Filter
-		if (priceRange) {
-			result = result.filter(s => s.hourlyRate >= priceRange[0] && s.hourlyRate <= priceRange[1]);
-		}
-
-		// Sort
-		if (selectedSort === 'price-asc') {
-			result.sort((a, b) => a.hourlyRate - b.hourlyRate);
-		} else if (selectedSort === 'price-desc') {
-			result.sort((a, b) => b.hourlyRate - a.hourlyRate);
-		} else if (selectedSort === 'rating') {
-			result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-		} else if (selectedSort === 'featured') {
-			result.sort((a, b) => (b.rankingScore || 0) - (a.rankingScore || 0));
-		} else {
-			// newest
-			result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-		}
-
-		return result;
-	}, [categoryStudios, submittedSearch, priceRange, selectedSort]);
-
-	// Pagination
-	const totalPages = Math.ceil(filteredStudios.length / PAGE_SIZE);
-	const paginatedStudios = useMemo(() => {
-		const start = (currentPage - 1) * PAGE_SIZE;
-		return filteredStudios.slice(start, start + PAGE_SIZE);
-	}, [filteredStudios, currentPage]);
+		if (sliderRange) return sliderRange;
+		if (priceRange) return priceRange;
+		return [MIN_PRICE, MAX_PRICE];
+	}, [sliderRange, priceRange]);
 
 	const hasNextPage = currentPage < totalPages;
+	const isDataLoading = loading || prevParamsKey !== currentParamsKey;
 
 	// Handle Category Change
 	const handleCategoryChange = (category: StudioCategory | 'All') => {
-		setCurrentPage(1);
-		const params = new URLSearchParams(searchParams.toString());
-		if (category === 'All') {
-			params.delete('category');
-		} else {
-			params.set('category', category);
-		}
-		const newUrl = params.toString() ? `/studios?${params.toString()}` : '/studios';
-		router.replace(newUrl, { scroll: false });
+		updateUrl({ category, page: 1 });
 	};
 
 	// Handle Search Form Submit
 	const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		setSubmittedSearch(searchInput.trim());
-		setCurrentPage(1);
+		updateUrl({ search: searchInput, page: 1 });
 	};
 
 	const handleClearSearch = () => {
 		setSearchInput('');
-		setSubmittedSearch('');
-		setCurrentPage(1);
+		updateUrl({ search: '', page: 1 });
 	};
 
 	const handleSortChange = (sortId: SortOption['id']) => {
-		setSelectedSort(sortId);
-		setCurrentPage(1);
+		updateUrl({ sort: sortId, page: 1 });
 	};
 
 	const handlePriceChange = (value: number | readonly number[]) => {
 		if (Array.isArray(value) && value.length === 2) {
-			setPriceRange([value[0], value[1]]);
-			setCurrentPage(1);
+			setSliderRange([value[0], value[1]]);
 		}
 	};
 
 	const handleResetFilters = () => {
 		setSearchInput('');
-		setSubmittedSearch('');
-		setSelectedSort('newest');
-		setPriceRange(null);
-		setCurrentPage(1);
+		setSliderRange(null);
 		router.replace('/studios', { scroll: false });
 	};
 
 	const handlePageChange = (page: number) => {
 		if (page < 1 || page > totalPages) return;
-		setCurrentPage(page);
+		updateUrl({ page });
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
 
 	const currentSortLabel = SORT_OPTIONS.find(s => s.id === selectedSort)?.label || 'Newest';
-	const isPriceFiltered = priceRange !== null;
-	const hasActiveFilters = selectedCategory !== 'All' || Boolean(submittedSearch) || selectedSort !== 'newest' || isPriceFiltered;
 
 	return (
 		<div className="container pt-3 sm:pt-4 lg:pt-6 pb-8 sm:pb-10 lg:pb-12 space-y-6 sm:space-y-8">
@@ -283,7 +339,7 @@ export function StudiosExplorer() {
 										${currentPriceRange[0]} – ${currentPriceRange[1]} / hr
 									</span>
 								</div>
-								<Slider min={minAvailableRate} max={maxAvailableRate} step={5} value={currentPriceRange} onValueChange={handlePriceChange} className="py-1" />
+								<Slider min={MIN_PRICE} max={MAX_PRICE} step={PRICE_STEP} value={currentPriceRange} onValueChange={handlePriceChange} className="py-1" />
 							</div>
 						</div>
 					</div>
@@ -291,22 +347,22 @@ export function StudiosExplorer() {
 			</div>
 
 			{/* Studio Grid */}
-			{loading ? (
+			{isDataLoading ? (
 				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 sm:gap-x-7 gap-y-10 sm:gap-y-12">
 					{Array.from({ length: PAGE_SIZE }).map((_, i) => (
 						<StudioCardSkeleton key={i} />
 					))}
 				</div>
-			) : paginatedStudios.length > 0 ? (
+			) : studios.length > 0 ? (
 				<div className="space-y-10 sm:space-y-12">
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 sm:gap-x-7 gap-y-10 sm:gap-y-12">
-						{paginatedStudios.map((studio, index) => (
+						{studios.map((studio, index) => (
 							<StudioCard key={studio._id} studio={studio} priority={index < 3} />
 						))}
 					</div>
 
 					{/* Pagination */}
-					{(currentPage > 1 || hasNextPage) && (
+					{totalPages > 1 && (
 						<div className="flex items-center justify-center pt-4 sm:pt-6">
 							<Pagination>
 								<PaginationContent>

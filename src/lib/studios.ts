@@ -28,7 +28,8 @@ export async function fetchStudioBySlug(slug: string): Promise<Studio | null> {
 		});
 		if (!res.ok) return null;
 
-		const list: Studio[] = await res.json();
+		const json = await res.json();
+		const list: Studio[] = Array.isArray(json) ? json : json.data || [];
 		const matched = list.find(s => s.slug === slug);
 		if (!matched) return null;
 
@@ -47,7 +48,8 @@ export async function fetchRelatedStudios(category: string, currentId: string): 
 		});
 		if (!res.ok) return [];
 
-		const list: Studio[] = await res.json();
+		const json = await res.json();
+		const list: Studio[] = Array.isArray(json) ? json : json.data || [];
 		return list.filter(s => s._id !== currentId).slice(0, 6);
 	} catch (error) {
 		console.error(`Failed to fetch related studios for category ${category}:`, error);
@@ -62,7 +64,8 @@ export async function fetchAllStudioSlugs(): Promise<string[]> {
 		});
 		if (!res.ok) return [];
 
-		const list: Studio[] = await res.json();
+		const json = await res.json();
+		const list: Studio[] = Array.isArray(json) ? json : json.data || [];
 		return list.map(s => s.slug).filter(Boolean);
 	} catch {
 		return [];

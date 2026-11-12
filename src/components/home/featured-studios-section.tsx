@@ -24,7 +24,7 @@ export function FeaturedStudiosSection() {
 			})
 			.then(data => {
 				if (isMounted) {
-					const list = Array.isArray(data) ? data : data.studios || [];
+					const list = Array.isArray(data) ? data : data.data || data.studios || [];
 					setStudios(list.slice(0, 6));
 				}
 			})

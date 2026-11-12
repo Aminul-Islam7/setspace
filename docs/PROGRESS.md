@@ -2,6 +2,61 @@
 
 Record daily or milestone progress entries. Keep concise and chronological.
 
+## 2026-11-12: Fixed Global Platform Range for Hourly Rate Slider ($20 – $1000)
+- **What Changed:**
+  1. Updated [`src/components/studios/studios-explorer.tsx`](src/components/studios/studios-explorer.tsx):
+     - Replaced dynamic result-dependent bounds with a fixed platform range: `MIN_PRICE = 20`, `MAX_PRICE = 1000`, `PRICE_STEP = 10`.
+     - Completely solved shrinking bounds bug where filtered results collapsed the slider track inwards and locked the user out.
+     - Preserved full range from budget podcast booths ($20/hr) to commercial soundstages and virtual LED volumes ($1000/hr).
+- **Files Touched:**
+  - `src/components/studios/studios-explorer.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (28/28 pages static & PPR generated in 7.3s). Zero browser sessions opened.
+
+## 2026-11-12: Permanently Remove Min/Max Labels and Reset Button from Filter Panel
+- **What Changed:**
+  1. Updated [`src/components/studios/studios-explorer.tsx`](src/components/studios/studios-explorer.tsx):
+     - Removed `Min: $.../hr` and `Max: $.../hr` endpoints sub-text below the hourly rate slider.
+     - Removed the "Reset All Filters" button and its dividing border from the bottom of the filter dropdown panel.
+     - Removed unused filter calculation variables (`hasActiveFilters`, `isPriceFiltered`).
+- **Files Touched:**
+  - `src/components/studios/studios-explorer.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (28/28 pages static & PPR generated in 3.8s). Zero browser sessions opened.
+
+## 2026-11-12: Full Two-Way Address Bar Query Synchronization
+- **What Changed:**
+  1. Updated [`src/components/studios/studios-explorer.tsx`](src/components/studios/studios-explorer.tsx) to reflect all search, sort, and filter state in the frontend browser address bar:
+     - `category`: `category=Photo%20Studio` (omitted when 'All').
+     - `search`: `search=query` on search form submission / cleared on reset.
+     - `sort`: `sort=price-asc` (omitted when default 'newest').
+     - `minPrice` & `maxPrice`: `minPrice=50&maxPrice=250` updated on debounced slider drag.
+     - `page`: `page=2` (omitted when page 1).
+  2. Implemented seamless two-way URL state sync:
+     - Direct URL entry, browser Back/Forward navigation, and page refreshes restore all explorer controls accurately.
+     - Used React 19 render-time state adjustment pattern (`if (param !== prevParam)`) to eliminate cascading effect renders and satisfy ESLint rules.
+     - Resetting filters removes all queries and returns address bar cleanly to `/studios`.
+- **Files Touched:**
+  - `src/components/studios/studios-explorer.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (28/28 pages static & PPR generated in 6.6s). Zero browser sessions opened.
+
+## 2026-11-12: Full Backend Query Integration for Studios Explorer
+- **What Changed:**
+  1. Updated [`src/components/studios/studios-explorer.tsx`](src/components/studios/studios-explorer.tsx):
+     - Transitioned from monolithic initial fetch to live reactive querying: fetches `/api/studios?category=...&search=...&sort=...&minPrice=...&maxPrice=...&page=...&limit=12` directly on every filter, page, category, sort, and price change.
+     - Added 300ms debounce on double-ended price slider to avoid sending redundant network requests during dragging.
+     - Derived `rateBounds` dynamically from current result set rates in `useMemo`, eliminating cascading renders.
+     - Supported both `{ data: Studio[], totalPages, totalCount }` payload structure and raw array fallback.
+     - Kept tactile `flat3d`, neutral/secondary buttons, and clean section headings.
+  2. Updated [`src/lib/studios.ts`](src/lib/studios.ts) and [`src/components/home/featured-studios-section.tsx`](src/components/home/featured-studios-section.tsx) to support both `{ data: [...] }` and raw array responses.
+- **Files Touched:**
+  - `src/components/studios/studios-explorer.tsx`
+  - `src/lib/studios.ts`
+  - `src/components/home/featured-studios-section.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (28/28 pages static & PPR generated). Zero browser sessions opened.
+
 ## 2026-11-12: 404 Not Found Page Layout Alignment & Spacing Polish
 - **What Changed:**
   1. Updated [`src/app/not-found.tsx`](src/app/not-found.tsx):
