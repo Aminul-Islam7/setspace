@@ -2,6 +2,22 @@
 
 Record daily or milestone progress entries. Keep concise and chronological.
 
+## 2026-11-12: Harmonize Global Footer Background & Elevate Surface Hierarchy
+- **What Changed:**
+  1. Updated [`src/components/layout/footer.tsx`](src/components/layout/footer.tsx):
+     - Delineated footer using modern standard: subtle top boundary (`border-t border-border/40`) and soft tonal foundation (`bg-secondary/35 dark:bg-card/25`).
+     - Elevated newsletter card to `bg-card text-card-foreground shadow-xs`, sitting crisply above the footer base.
+     - Recessed newsletter input to `bg-background dark:bg-background/60`.
+     - Applied `flat3d` button variant to newsletter Subscribe CTA.
+     - Styled social link circles with `bg-secondary/70 dark:bg-card hover:bg-secondary dark:hover:bg-card/80`.
+     - Added official Base UI `<Separator className="opacity-40" />` above the bottom legal row.
+  2. Documented architectural design decision in [`docs/DECISIONS.md`](docs/DECISIONS.md).
+- **Files Touched:**
+  - `src/components/layout/footer.tsx`
+  - `docs/DECISIONS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and visual validation across dark & light themes in browser.
+
 ## 2026-11-11: Fix 308 CORS Redirect on API Fetch and Restore Resilient generateStaticParams
 - **What Changed:**
   1. Updated [`src/components/home/featured-studios-section.tsx`](src/components/home/featured-studios-section.tsx) and [`src/components/studios/studio-booking-dialog.tsx`](src/components/studios/studio-booking-dialog.tsx): stripped trailing slashes from `process.env.NEXT_PUBLIC_API_URL` (`replace(/\/+$/, '')`).

@@ -2,6 +2,14 @@
 
 Record of architectural, design, and structural decisions. Add dated entries in reverse-chronological order.
 
+## 2026-11-12: Harmonize Global Footer Background & Unified Surface Elevation Hierarchy
+- **Context:** Initial footer used `bg-muted` (`oklch(0.268)` in dark mode), creating an abrupt, harsh gray block at page bottom. Switching to pure `bg-background` removed all separation ("zero contrast"), leaving the footer ungrounded.
+- **Alternatives Considered:**
+  1. Pure `bg-background` with zero boundary (floating footer, zero grounding).
+  2. Heavy contrasting block (`bg-muted`, jarring 5x lightness jump).
+  3. Modern industry standard (Vercel, Linear, Stripe): subtle top border boundary (`border-t border-border/40`) paired with a soft tonal surface (`bg-secondary/35 dark:bg-card/25`), elevated newsletter card (`bg-card`), and recessed input (`bg-background dark:bg-background/60`).
+- **Outcome:** Adopted Option 3 in [`src/components/layout/footer.tsx`](src/components/layout/footer.tsx). Provides clean visual grounding without harshness in both dark and light modes.
+
 ## 2026-11-11: Enforce Minimum 70% Opacity on Secondary Surface Backgrounds
 - **Context:** Low-opacity card backgrounds (`bg-secondary/20`, `bg-secondary/30`, `bg-secondary/40`, `bg-secondary/60`) produced insufficient contrast over pure white light-theme backgrounds, degrading readability and visual hierarchy.
 - **Alternatives Considered:**

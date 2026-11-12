@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
+import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { useState } from 'react';
 
@@ -62,7 +63,7 @@ export function Footer() {
 	};
 
 	return (
-		<footer className="w-full bg-muted text-foreground transition-colors" aria-label="SetSpace Footer">
+		<footer className="w-full bg-secondary/35 dark:bg-card/25 text-foreground transition-colors" aria-label="SetSpace Footer">
 			<div className="container py-12 sm:py-16 lg:py-20 space-y-12 sm:space-y-16">
 				{/* Brand & Newsletter */}
 				<div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
@@ -79,7 +80,7 @@ export function Footer() {
 							{SOCIAL_LINKS.map(item => {
 								const Icon = item.icon;
 								return (
-									<a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer" className="size-9 rounded-full bg-foreground/5 hover:bg-foreground/10 text-muted-foreground hover:text-foreground inline-flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label={item.label}>
+									<a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer" className="size-9 rounded-full bg-secondary/70 dark:bg-card hover:bg-secondary dark:hover:bg-card/80 text-muted-foreground hover:text-foreground inline-flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label={item.label}>
 										<Icon className="size-4" />
 									</a>
 								);
@@ -104,7 +105,7 @@ export function Footer() {
 								</div>
 							) : (
 								<form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2.5">
-									<Input name="email" type="email" required placeholder="creator@production.com" className="h-10 text-sm bg-muted" aria-label="Email address for newsletter" />
+									<Input name="email" type="email" required placeholder="creator@production.com" className="h-10 text-sm bg-muted dark:bg-background/60" aria-label="Email address for newsletter" />
 									<Button type="submit" size="lg" className="sm:shrink-0 gap-1.5">
 										<span>Subscribe</span>
 										<ArrowRight className="size-4" />
@@ -166,8 +167,11 @@ export function Footer() {
 					</div>
 				</div>
 
+				{/* Divider */}
+				<Separator className="opacity-40" />
+
 				{/* Legal */}
-				<div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground font-body">
+				<div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground font-body">
 					<p>© 2026 SetSpace, Inc. All rights reserved.</p>
 					<div className="flex flex-wrap items-center gap-x-6 gap-y-2">
 						<Link href="/privacy" className="hover:text-foreground transition-colors">
