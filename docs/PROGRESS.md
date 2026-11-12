@@ -2,6 +2,259 @@
 
 Record daily or milestone progress entries. Keep concise and chronological.
 
+## 2026-11-12: 404 Not Found Page Layout Alignment & Spacing Polish
+- **What Changed:**
+  1. Updated [`src/app/not-found.tsx`](src/app/not-found.tsx):
+     - Center-aligned production categories container with `mx-auto max-w-xl` and flex `justify-center`.
+     - Standardized vertical spacing across icon, status badge, headings, primary action buttons, and category pill links (`space-y-8 sm:space-y-10`).
+     - Converted category buttons to `<Button asChild variant="secondary" flat3d shape="full" size="sm">` wrapping `<Link>`, preventing invalid nested interactive elements.
+     - Styled 404 status badge with `bg-secondary/70` adhering to tonal contrast / no-custom-borders rule.
+- **Files Touched:**
+  - `src/app/not-found.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (28/28 pages static & PPR generated in 2.7s). Zero browser sessions opened.
+
+## 2026-11-12: Fully Rounded Category Badges and Gallery Nav Buttons
+- **What Changed:**
+  1. Updated [`src/components/studios/studio-card.tsx`](src/components/studios/studio-card.tsx):
+     - Changed category badge border radius from `rounded-lg` to `rounded-full`.
+     - Set `shape="full"` on previous and next gallery chevron `<Button>` components.
+  2. Updated [`src/components/studios/studio-gallery.tsx`](src/components/studios/studio-gallery.tsx):
+     - Changed category badge border radius from `rounded-lg` to `rounded-full`.
+     - Set `shape="full"` on previous and next gallery chevron `<Button>` components.
+- **Files Touched:**
+  - `src/components/studios/studio-card.tsx`
+  - `src/components/studios/studio-gallery.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (28/28 pages static & PPR generated in 2.9s). Zero browser sessions opened.
+
+## 2026-11-12: Fix Studio Gallery Navigation Prev/Next Double Bubbling & Order Bug
+- **What Changed:**
+  1. Fixed erratic navigation in [`src/components/studios/studio-gallery.tsx`](src/components/studios/studio-gallery.tsx):
+     - Resolved event bubbling: Outer clickable gradient bar and inner `<Button>` were both executing `api?.scrollNext()` / `api?.scrollPrev()`. Added `e.stopPropagation()` in unified `handlePrev` and `handleNext` handlers so navigation executes strictly once per click.
+     - Changed `opts={{ loop: true }}` to `opts={{ loop: false }}` with `canScrollPrev` and `canScrollNext` tracking (matching `studio-card.tsx`), guaranteeing strictly sequential linear progression (1 to N, N to 1) without erratic wrap-around skips.
+     - Deduplicated `images` array via `Set` to prevent duplicate consecutive slides when backend includes cover image in `gallery`.
+     - Cleaned comments to minimal section headings.
+  2. Documented full postmortem in [`docs/BUGS.md`](docs/BUGS.md).
+- **Files Touched:**
+  - `src/components/studios/studio-gallery.tsx`
+  - `docs/BUGS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (28/28 pages static & PPR generated in 2.5s). Zero browser sessions opened.
+
+## 2026-11-12: Complete Studios Explorer Filtering Overhaul & Bug Fix
+- **What Changed:**
+  1. Diagnosed root cause for filters not filtering:
+     - Backend API (`../setspace-api/index.js`) leaves `search` and `sort` unimplemented and has a minus sign typo on maxPrice (`$lte: -maxPrice`). Frontend previously waited on backend queries that never executed filtering.
+  2. Implemented fast client-side reactive filtering pipeline in [`src/components/studios/studios-explorer.tsx`](src/components/studios/studios-explorer.tsx):
+     - `rawStudios`: Fetched on mount.
+     - `selectedCategory`: Derived cleanly from `searchParams.get('category')` via `useMemo` (preventing cascading `setState` in `useEffect`).
+     - `categoryStudios`: Filters by active category.
+     - Dynamic rate bounds (`minAvailableRate`, `maxAvailableRate`): Dynamically computed from available category studio rates.
+     - `filteredStudios`: Reactive `useMemo` applying keyword search (`title`, `location`, `description`, `amenities`), double-ended price range, and sort order (`price-asc`, `price-desc`, `rating`, `featured`, `newest`).
+     - `paginatedStudios`: 12 per page with pagination controls.
+  3. Replaced all native `<button>` tags with Shadcn `<Button>` component primitives (clear search button, submit search button, filter toggle, reset filters).
+  4. Verified all filters work synchronously and accurately.
+- **Files Touched:**
+  - `src/components/studios/studios-explorer.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (28/28 routes built cleanly). Zero browser sessions opened.
+
+## 2026-11-12: LCP Preload & Priority Optimization for Above-The-Fold Images
+- **What Changed:**
+  1. Added `priority?: boolean` prop to [`src/components/studios/studio-card.tsx`](src/components/studios/studio-card.tsx). When true, applies `priority={true}` to the first image in the card (`index === 0`), enabling Next.js image preloading and `loading="eager"`.
+  2. Passed `priority={index < 3}` in [`src/components/studios/studios-explorer.tsx`](src/components/studios/studios-explorer.tsx) and [`src/components/home/featured-studios-section.tsx`](src/components/home/featured-studios-section.tsx) for all above-the-fold cards, resolving the Next.js LCP warning.
+  3. Passed `priority={index === 0}` in [`src/components/studios/related-studios.tsx`](src/components/studios/related-studios.tsx) for the top related studio card.
+  4. Verified [`src/components/studios/studio-gallery.tsx`](src/components/studios/studio-gallery.tsx) already applies `priority={index === 0}` on the main studio viewport image.
+- **Files Touched:**
+  - `src/components/studios/studio-card.tsx`
+  - `src/components/studios/studios-explorer.tsx`
+  - `src/components/home/featured-studios-section.tsx`
+  - `src/components/studios/related-studios.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (28/28 pages static & PPR generated). Zero browser sessions opened.
+
+## 2026-11-12: Clean Minimal Headings for Comments (Enforce Clean Comments Rule)
+- **What Changed:**
+  1. Updated and formalized the **Clean Comments Only Rule** in [`AGENTS.md`](AGENTS.md): strictly forbids writing extra prompt details or style references (e.g. `(YouTube Style)`, `(No background, No padding)`). Comments must only function as minimal section headings (e.g. `{/* Search Bar */}`, `{/* Studio Details */}`).
+  2. Cleaned all verbose comments across:
+     - [`src/components/studios/studios-explorer.tsx`](src/components/studios/studios-explorer.tsx)
+     - [`src/app/studios/[slug]/page.tsx`](src/app/studios/[slug]/page.tsx)
+     - [`src/app/studios/[slug]/loading.tsx`](src/app/studios/[slug]/loading.tsx)
+     - [`src/app/studios/(explorer)/loading.tsx`](src/app/studios/(explorer)/loading.tsx)
+- **Files Touched:**
+  - `src/components/studios/studios-explorer.tsx`
+  - `src/app/studios/[slug]/page.tsx`
+  - `src/app/studios/[slug]/loading.tsx`
+  - `src/app/studios/(explorer)/loading.tsx`
+  - `AGENTS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (28/28 pages static & PPR generated). Zero browser sessions opened.
+
+## 2026-11-12: Route-Group Loading Isolation & Pixel-Perfect Skeleton Alignment
+- **What Changed:**
+  1. Resolved cross-route loading flicker bug where reloading `/studios/[slug]` rendered the Studio Explorer skeleton:
+     - Relocated explorer page and loading to route group: `src/app/studios/(explorer)/page.tsx` and `src/app/studios/(explorer)/loading.tsx`.
+     - Route group keeps the clean `/studios` URL while preventing the parent Suspense boundary from wrapping `/studios/[slug]`.
+  2. Fixed pixel alignment across all skeletons:
+     - [`src/app/studios/[slug]/loading.tsx`](src/app/studios/[slug]/loading.tsx): Aligned breadcrumb items (`StudioBreadcrumb`), removed phantom host card and phantom badges, matched description and amenities grid lines, and aligned right-column sticky related studios.
+     - [`src/app/studios/(explorer)/loading.tsx`](src/app/studios/(explorer)/loading.tsx): Aligned breadcrumbs, search input, and filter toggle dimensions.
+  3. Formulated and recorded strict new rules in [`AGENTS.md`](AGENTS.md) and [`docs/BUGS.md`](docs/BUGS.md):
+     - **Pixel-Perfect Skeleton Alignment Rule**: Skeletons must exactly copy real layout geometry without phantom elements or layout shifts.
+     - **Route-Scoped Loading Rule**: Never place parent `loading.tsx` above dynamic sub-routes; use route groups to scope loading boundaries.
+- **Files Touched:**
+  - `src/app/studios/(explorer)/page.tsx`
+  - `src/app/studios/(explorer)/loading.tsx`
+  - `src/app/studios/[slug]/loading.tsx`
+  - `AGENTS.md`
+  - `docs/BUGS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (28/28 pages static & PPR generated). Zero browser sessions opened.
+
+## 2026-11-12: Complete Search Bar Shadcn Button Replacement
+- **What Changed:**
+  1. Replaced the two remaining raw `<button>` elements inside the searchbar in [`src/components/studios/studios-explorer.tsx`](src/components/studios/studios-explorer.tsx) with official Shadcn `<Button>`:
+     - Clear search: `<Button type="button" variant="ghost" size="icon-xs" onClick={handleClearSearch} ...>`
+     - Submit search: `<Button type="submit" variant="ghost" shape="none" ...>`
+  2. Confirmed zero raw `<button>` elements remain in `studios-explorer.tsx`.
+- **Files Touched:**
+  - `src/components/studios/studios-explorer.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (28/28 pages static & PPR generated in 2.6s). Zero browser sessions opened.
+
+## 2026-11-12: Unified StudioBreadcrumb Component & BreadcrumbList Styling Fix
+- **What Changed:**
+  1. Created reusable [`src/components/studios/studio-breadcrumb.tsx`](src/components/studios/studio-breadcrumb.tsx) component.
+  2. Applied typography classes (`text-xs sm:text-sm`) directly to `<BreadcrumbList className="...">` because class names directly on root `<Breadcrumb>` (`<nav>`) have zero cascade effect on Base UI list typography.
+  3. Replaced breadcrumbs in both [`src/components/studios/studios-explorer.tsx`](src/components/studios/studios-explorer.tsx) and [`src/app/studios/[slug]/page.tsx`](src/app/studios/[slug]/page.tsx) with `<StudioBreadcrumb>`:
+     - Includes `<Home className="size-3.5 sm:size-4" />` with `aria-label="Home"`.
+     - Consistent chevron separators and truncated category formatting.
+     - Supports `categoryAsLink` for detail pages and active `<BreadcrumbPage>` for explorer.
+- **Files Touched:**
+  - `src/components/studios/studio-breadcrumb.tsx`
+  - `src/components/studios/studios-explorer.tsx`
+  - `src/app/studios/[slug]/page.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified strictly via terminal per guidelines: `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (28/28 pages static & PPR generated). Zero browser sessions opened.
+
+## 2026-11-12: Complete Shadcn Button Adoption (Search Bar & Gallery Controls)
+- **What Changed:**
+  1. Replaced all raw `<button>` elements in searchbar with official Shadcn `<Button>`:
+     - Search submit button: `<Button type="submit" variant="ghost" shape="none" ...>`.
+     - Clear search button: `<Button type="button" variant="ghost" size="icon-xs" ...>`.
+  2. Upgraded carousel gallery controls in [`src/components/studios/studio-card.tsx`](src/components/studios/studio-card.tsx) and [`src/components/studios/studio-gallery.tsx`](src/components/studios/studio-gallery.tsx) to official Shadcn `<Button variant="glass" flat3d ...>` primitives.
+  3. Replaced remaining `rounded-full` instances in studio gallery with corner-rounded `rounded-lg`.
+  4. Restored filter reset action inside collapsible filter drawer when active filters exist.
+- **Files Touched:**
+  - `src/components/studios/studios-explorer.tsx`
+  - `src/components/studios/studio-card.tsx`
+  - `src/components/studios/studio-gallery.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified strictly via terminal per guidelines: `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (28/28 pages static & PPR generated). Zero browser sessions opened.
+
+## 2026-11-12: Corner-Rounded Only UI, Neutral Flat3D Pills, Dynamic Slider Bounds & Focus State Fix
+- **What Changed:**
+  1. Removed all `rounded-full` classes from the explore experience:
+     - Searchbar container and skeletons changed to `rounded-lg`.
+     - Filter summary toggle and pill buttons changed to default corner radius (`rounded-lg`).
+     - Slider track and thumb changed to corner-rounded (`rounded-md`).
+     - Studio card category badge and carousel navigation buttons updated to `rounded-lg`.
+  2. Maintained tactile `flat3d` styling across all category and sort pills while retaining YouTube neutral color palette (`bg-foreground text-background` active, `bg-secondary` inactive).
+  3. Styled hourly rate slider with neutral colors (`bg-foreground/80 dark:bg-foreground/70` indicator, `bg-card` corner-rounded thumb with border ring).
+  4. Made slider min and max points dynamically calculate strictly from the minimum and maximum hourly rates among the currently fetched studios only (`minAvailableRate` and `maxAvailableRate`).
+  5. Placed Sort By pills and Hourly Rate Slider side-by-side in a responsive flex-row (`flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6`).
+  6. Fixed searchbar focus state to use the app-wide consistent focus ring (`focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/30`), eliminating the weird dark border.
+  7. Updated documentation in [`docs/DECISIONS.md`](docs/DECISIONS.md) and [`docs/PROGRESS.md`](docs/PROGRESS.md).
+- **Files Touched:**
+  - `src/components/ui/slider.tsx`
+  - `src/components/studios/studios-explorer.tsx`
+  - `src/components/studios/studio-card.tsx`
+  - `src/app/studios/loading.tsx`
+  - `docs/DECISIONS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified strictly via terminal per guidelines: `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (28/28 pages static & PPR generated in 3.0s). Zero browser sessions opened.
+
+## 2026-11-12: Server-Side Page/Limit Queries, YouTube Search & Collapsible Filters
+- **What Changed:**
+  1. Replaced 100-studio bulk fetch with backend paginated queries: `page=${currentPage}&limit=12` combined with `category`, `search`, `minprice`, `maxprice`, and `sort`.
+  2. Implemented YouTube-style search bar:
+     - Form submission on Enter / button click (removed realtime typing query triggers).
+     - Connected search button on the right with `Search` icon.
+     - Inline clear `X` button when search text exists.
+  3. Added inline summary toggle button after search bar showing active filters: `[Filter Icon] [Category] / [Sort By]`.
+  4. Made filter panel hidden by default; revealed on clicking summary toggle button.
+  5. Implemented double-ended price slider using official Shadcn [`<Slider>`](src/components/ui/slider.tsx) bound to `minprice` and `maxprice` queries.
+  6. Updated filter and sort pills to neutral/secondary YouTube styling (`bg-foreground text-background` active, `bg-secondary` inactive, zero primary amber).
+  7. Updated skeleton loading state in [`src/app/studios/loading.tsx`](src/app/studios/loading.tsx).
+  8. Documented decision in [`docs/DECISIONS.md`](docs/DECISIONS.md).
+- **Files Touched:**
+  - `src/components/ui/slider.tsx`
+  - `src/components/studios/studios-explorer.tsx`
+  - `src/app/studios/loading.tsx`
+  - `docs/DECISIONS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified strictly via terminal per guidelines: `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (28/28 pages static & PPR generated). Zero browser sessions opened.
+
+## 2026-11-12: Reduce Top Padding Below Navbar Across All Pages
+- **What Changed:**
+  1. Reduced top padding under sticky navbar to tighten layout and save vertical screen space:
+     - [`src/components/studios/studios-explorer.tsx`](src/components/studios/studios-explorer.tsx): `pt-3 sm:pt-4 lg:pt-6 pb-8 sm:pb-10 lg:pb-12` (down from `py-8 sm:py-10 lg:py-12`).
+     - [`src/app/studios/loading.tsx`](src/app/studios/loading.tsx): `pt-3 sm:pt-4 lg:pt-6 pb-8 sm:pb-10 lg:pb-12`.
+     - [`src/app/studios/[slug]/page.tsx`](src/app/studios/[slug]/page.tsx): `pt-3 sm:pt-4 lg:pt-6 pb-6 sm:pb-10 lg:pb-12` (down from `py-6 sm:py-10 lg:py-12`).
+     - [`src/app/studios/[slug]/loading.tsx`](src/app/studios/[slug]/loading.tsx): `pt-3 sm:pt-4 lg:pt-6 pb-6 sm:pb-10 lg:pb-12`.
+     - [`src/components/home/hero-section.tsx`](src/components/home/hero-section.tsx): `pt-1 sm:pt-2 pb-2 sm:pb-4`.
+     - [`src/app/not-found.tsx`](src/app/not-found.tsx): `pt-4 sm:pt-6 lg:pt-8 pb-12 sm:pb-16 lg:pb-20`.
+  2. Documented architectural decision in [`docs/DECISIONS.md`](docs/DECISIONS.md).
+- **Files Touched:**
+  - `src/components/studios/studios-explorer.tsx`
+  - `src/app/studios/loading.tsx`
+  - `src/app/studios/[slug]/page.tsx`
+  - `src/app/studios/[slug]/loading.tsx`
+  - `src/components/home/hero-section.tsx`
+  - `src/app/not-found.tsx`
+  - `docs/DECISIONS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors) and `npm run lint` (0 errors).
+
+## 2026-11-12: Flat Neutral Pagination Controls & Chevron-Only Buttons
+- **What Changed:**
+  1. Updated [`src/components/ui/pagination.tsx`](src/components/ui/pagination.tsx):
+     - Removed primary color from active page: active button now uses `variant="secondary"`, inactive uses `variant="ghost"`.
+     - Removed `flat3d` gradient styling from pagination; buttons are completely flat.
+     - Stripped "Previous" and "Next" text labels from `PaginationPrevious` and `PaginationNext`, rendering icon-only buttons (`size="icon"`) with `ChevronLeftIcon` and `ChevronRightIcon`.
+  2. Cleaned unused variable in [`src/components/studios/studios-explorer.tsx`](src/components/studios/studios-explorer.tsx).
+  3. Codified strict guardrails in [`AGENTS.md`](AGENTS.md): never overwrite user edits (always read file first), and strictly avoid browser/Playwright tools for visual verification unless commanded by user.
+  4. Documented architectural decision in [`docs/DECISIONS.md`](docs/DECISIONS.md).
+- **Files Touched:**
+  - `AGENTS.md`
+  - `src/components/ui/pagination.tsx`
+  - `src/components/studios/studios-explorer.tsx`
+  - `docs/DECISIONS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified strictly via terminal per guidelines: `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (28/28 pages static & PPR generated).
+
+## 2026-11-12: Build Studios Explore Page (/studios) with Flat3D Filters & 12-Per-Page Pagination
+- **What Changed:**
+  1. Built [`src/components/ui/pagination.tsx`](src/components/ui/pagination.tsx): official accessible Shadcn / Base UI pagination primitives (`Pagination`, `PaginationContent`, `PaginationItem`, `PaginationLink`, `PaginationPrevious`, `PaginationNext`, `PaginationEllipsis`) with `flat3d` button support.
+  2. Built [`src/components/studios/studios-explorer.tsx`](src/components/studios/studios-explorer.tsx):
+     - Interactive search bar with instant keyword filtering across title, city, category, description, and equipment.
+     - One-button category switches (`All Spaces` + 6 categories) using `<Button shape="full" flat3d size="sm">` with primary active states, synchronized bidirectionally with URL search params (`/studios?category=...`).
+     - One-button sort switches (`Featured`, `Top Rated`, `Newest`, `Price: Low to High`, `Price: High to Low`) with tactile `flat3d` active highlight.
+     - 12 studios per page pagination with previous/next bounds and smooth scroll-to-top.
+     - Aesthetic empty state with "Reset Filters" action when queries match 0 listings.
+  3. Created [`src/app/studios/page.tsx`](src/app/studios/page.tsx) with metadata and `<Suspense>` wrapper.
+  4. Created [`src/app/studios/loading.tsx`](src/app/studios/loading.tsx) with matching 12-item skeleton layout.
+  5. Updated [`docs/TASKS.md`](docs/TASKS.md) and [`docs/DECISIONS.md`](docs/DECISIONS.md).
+- **Files Touched:**
+  - `src/components/ui/pagination.tsx`
+  - `src/components/studios/studios-explorer.tsx`
+  - `src/app/studios/page.tsx`
+  - `src/app/studios/loading.tsx`
+  - `docs/TASKS.md`
+  - `docs/DECISIONS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), `npm run build` (28/28 pages compiled cleanly), and tested live in Playwright across sorting, filtering, searching, and pagination in both dark and light modes.
+
 ## 2026-11-12: Harmonize Global Footer Background & Elevate Surface Hierarchy
 - **What Changed:**
   1. Updated [`src/components/layout/footer.tsx`](src/components/layout/footer.tsx):

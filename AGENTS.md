@@ -53,13 +53,17 @@ No document is fixed or static (including AGENTS.md and PROJECT.md). Design deci
 - **Strict Shadcn-First Policy:** Always use official Shadcn / Base UI components (Button, Carousel, Dialog, Field, Input, etc.). Never write custom ad-hoc sliders or UI primitives when an official Shadcn component exists. Add via `npx shadcn add <component>`.
 - Use built-in variants only (`variant="default"`, `variant="secondary"`, etc.). Never write custom pseudo-variants or add new variants unless user commands.
 - **No Custom Borders Rule:** Never use custom borders anywhere unless absolutely necessary. Rely on background-foreground contrast, surface elevation, and tonal contrast for visual separation.
-- **Clean Comments Only Rule:** Never parrot user instructions or justify prompt requirements in code comments (e.g. `{/* Studio Details Section (No background, No padding) */}`). Write only minimal headings of the code block (what it is or does, as short and concise as possible: e.g. `{/* Studio Details */}`, `{/* Title */}`). Zero extra commentary.
+- **Pixel-Perfect Skeleton Alignment Rule:** Skeletons must always be pixel-perfect copies of the rendered component layouts. Every layout change (paddings, gaps, grid columns, heights, and card shapes) must immediately be mirrored in the corresponding skeleton. Skeletons must never contain phantom elements (elements that do not exist in the actual view) or mismatched aspect ratios to prevent layout shifts.
+- **Route-Scoped Loading Rule:** Never place a generic `loading.tsx` in a parent directory that has dynamic sibling sub-routes (e.g. `app/studios/loading.tsx` leaking into `app/studios/[slug]/`). Use route groups like `app/studios/(explorer)/loading.tsx` to isolate loading states strictly to their specific page.
+- **Clean Comments Only Rule:** Never parrot user instructions, styling references, or prompt details in code comments (e.g. `{/* YouTube Style Search Bar */}` or `{/* Studio Details Section (No background, No padding) */}`). Comments must strictly work as minimal section headings describing what the code is or what it does, as short and concise as possible (e.g. `{/* Search Bar */}`, `{/* Studio Details */}`). Zero extra or verbose commentary.
 
 ## Verification & Workflow Guardrails
 
 - **DO NOT TOUCH BACKEND:** Never create or edit files in `../setspace-api`. Frontend only. Assume missing endpoints exist.
 - **DO NOT COMMIT & PUSH:** Do not commit or push unless explicitly commanded by user.
+- **NEVER OVERWRITE USER WORK:** User writes and modifies code directly. Always read the file before editing. Never clobber or revert user modifications.
+- **NO BROWSER / PLAYWRIGHT VERIFICATION:** Do NOT open Playwright, Chrome DevTools, or headless browser for visual checks or screenshots unless the user explicitly asks for it. Rely strictly on terminal verification: `npx tsc --noEmit`, `npm run lint`, and `npm run build`.
 - **DO NOT TOUCH:** Keep `<!-- BEGIN:nextjs-agent-rules -->` block intact. Never edit `.next/` or `next-env.d.ts`.
-- **Verification:** Rely on `npx tsc --noEmit`, `npm run lint`, and `npm run build`. Avoid unnecessary browser screenshots.
 - **Docs Maintenance:** Check diffs first (user writes code too).
+
 

@@ -6,6 +6,7 @@ Track ongoing, planned, and completed tasks. Check off items as they finish.
 - [ ] Configure Base UI / Shadcn form primitives (`components/ui/field.tsx`)
 
 ## Completed
+- [x] Build studios explore page (`/studios`) with 12-per-page pagination, live search bar, flat3d one-button category & sort switches with active states, and empty state (2026-11-12)
 - [x] Add review pagination (initial 3 reviews + "Show more reviews" button loading 3 more while remaining) (2026-11-11)
 - [x] Standardize image ratio to `aspect-video` across studio gallery and loading skeletons (2026-11-11)
 - [x] Connect live backend for studio details: slug URL routing (`/studios/[slug]`), internal MongoDB `_id` fetching, zero mock data, and 6 related category studios (2026-11-11)

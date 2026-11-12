@@ -13,7 +13,7 @@ export function FeaturedStudiosSection() {
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		const apiUrl = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/+$/, '');
+		const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
 		const endpoint = apiUrl ? `${apiUrl}/api/studios?top=6` : '/api/studios?top=6';
 
 		let isMounted = true;
@@ -76,8 +76,8 @@ export function FeaturedStudiosSection() {
 			{studios.length > 0 && (
 				<>
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 sm:gap-x-7 gap-y-10 sm:gap-y-14">
-						{studios.map(studio => (
-							<StudioCard key={studio._id} studio={studio} />
+						{studios.map((studio, index) => (
+							<StudioCard key={studio._id} studio={studio} priority={index < 3} />
 						))}
 					</div>
 
@@ -95,3 +95,4 @@ export function FeaturedStudiosSection() {
 		</section>
 	);
 }
+

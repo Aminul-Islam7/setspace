@@ -14,18 +14,18 @@ const POPULAR_CATEGORIES: StudioCategory[] = ['Photo Studio', 'Sound Stage', 'Po
 
 export default function NotFound() {
 	return (
-		<main className="container flex min-h-[calc(100vh-10rem)] items-center justify-center py-12 sm:py-16 lg:py-20">
-			<div className="w-full max-w-2xl text-center space-y-8">
+		<main className="container flex min-h-[calc(100vh-10rem)] items-center justify-center pt-4 sm:pt-6 lg:pt-8 pb-12 sm:pb-16 lg:pb-20">
+			<div className="w-full max-w-2xl mx-auto text-center space-y-8 sm:space-y-10">
 				{/* Icon & Status */}
-				<div className="flex flex-col items-center gap-4">
-					<div className="flex size-20 sm:size-24 items-center justify-center rounded-3x text-primary shadow-xs">
-						<Clapperboard className="size-14 sm:size-20" />
+				<div className="flex flex-col items-center gap-3 sm:gap-4">
+					<div className="flex size-20 sm:size-24 items-center justify-center text-primary">
+						<Clapperboard className="size-16 sm:size-20" />
 					</div>
-					<span className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1 text-sm font-semibold text-muted-foreground">404 &bull; STUDIO NOT FOUND</span>
+					<span className="inline-flex items-center gap-1.5 rounded-full bg-secondary/70 px-3.5 py-1 text-xs sm:text-sm font-semibold text-muted-foreground">404 &bull; STUDIO NOT FOUND</span>
 				</div>
 
 				{/* Headings */}
-				<div className="space-y-3">
+				<div className="space-y-2.5 sm:space-y-3">
 					<h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-foreground font-display">Cut! This Set Doesn&apos;t Exist</h1>
 					<p className="mx-auto max-w-lg text-sm sm:text-base text-muted-foreground leading-relaxed font-body">The studio you&apos;re looking for may have wrapped production, moved to a different soundstage, or the URL was entered incorrectly.</p>
 				</div>
@@ -47,13 +47,13 @@ export default function NotFound() {
 				</div>
 
 				{/* Production Categories */}
-				<div className="rounded-2xl sm:rounded-3xl bg-secondary/70 dark:bg-card p-5 sm:p-6 space-y-3 text-left">
-					<div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Jump to a Production Category</div>
-					<div className="flex flex-wrap gap-2">
+				<div className="mx-auto max-w-xl space-y-3 pt-2 sm:pt-4">
+					<p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Jump to a Production Category</p>
+					<div className="flex flex-wrap items-center justify-center gap-2">
 						{POPULAR_CATEGORIES.map(category => (
-							<Link key={category} href={`/studios?category=${encodeURIComponent(category)}`} className="rounded-full bg-background/80 hover:bg-background text-foreground/90 hover:text-foreground px-3.5 py-1.5 text-xs sm:text-sm font-medium transition-colors shadow-xs">
-								{category}
-							</Link>
+							<Button key={category} asChild variant="secondary" flat3d size="sm">
+								<Link href={`/studios?category=${encodeURIComponent(category)}`}>{category}</Link>
+							</Button>
 						))}
 					</div>
 				</div>

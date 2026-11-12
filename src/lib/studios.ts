@@ -1,6 +1,6 @@
 import type { Studio } from '@/types';
 
-const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000').replace(/\/+$/, '');
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function fetchStudioById(id: string): Promise<Studio | null> {
 	try {
@@ -68,3 +68,4 @@ export async function fetchAllStudioSlugs(): Promise<string[]> {
 		return [];
 	}
 }
+

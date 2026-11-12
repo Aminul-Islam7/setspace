@@ -9,16 +9,17 @@ import { FaStar } from 'react-icons/fa6';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Studio } from '@/types';
-import { buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 
 export interface StudioCardProps {
 	studio: Studio;
 	className?: string;
+	priority?: boolean;
 }
 
-export function StudioCard({ studio, className }: StudioCardProps) {
+export function StudioCard({ studio, className, priority = false }: StudioCardProps) {
 	const router = useRouter();
 	const [api, setApi] = useState<CarouselApi>();
 	const [canScrollPrev, setCanScrollPrev] = useState(false);
@@ -65,6 +66,7 @@ export function StudioCard({ studio, className }: StudioCardProps) {
 									src={src}
 									alt={studio.title}
 									fill
+									priority={priority && index === 0}
 									sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
 									className="object-cover"
 								/>
@@ -76,53 +78,65 @@ export function StudioCard({ studio, className }: StudioCardProps) {
 					{hasGallery && images.length > 1 && (
 						<>
 							{canScrollPrev && (
-								<button
-									type="button"
-									aria-label="Previous image"
+								<div
 									onClick={e => {
 										e.preventDefault();
 										e.stopPropagation();
 										api?.scrollPrev();
-										if (e.detail > 0) {
-											e.currentTarget.blur();
-										}
 									}}
-									className="group/nav-prev absolute inset-y-0 left-0 z-20 flex w-12 sm:w-16 items-center justify-start pl-2 sm:pl-2.5 bg-gradient-to-r from-neutral-950/85 via-neutral-950/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 focus-visible:opacity-100 cursor-pointer outline-none"
+									className="group/nav-prev absolute inset-y-0 left-0 z-20 flex w-12 sm:w-16 items-center justify-start pl-2 sm:pl-2.5 bg-gradient-to-r from-neutral-950/85 via-neutral-950/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
 								>
-									<span
-										className={cn(
-											buttonVariants({ variant: 'glass', flat3d: true, shape: 'full', size: 'icon-sm' }),
-											'relative z-10 pointer-events-none shadow-sm !bg-white/20 !text-white transform-gpu transition-transform duration-200 group-hover/nav-prev:scale-105 group-hover/nav-prev:!bg-white/30 group-active/nav-prev:scale-95 group-focus-visible/nav-prev:ring-2 group-focus-visible/nav-prev:ring-ring'
-										)}
+									<Button
+										type="button"
+										variant="glass"
+										flat3d
+										shape="full"
+										size="icon-sm"
+										aria-label="Previous image"
+										onClick={e => {
+											e.preventDefault();
+											e.stopPropagation();
+											api?.scrollPrev();
+											if (e.detail > 0) {
+												e.currentTarget.blur();
+											}
+										}}
+										className="shadow-sm !bg-white/20 !text-white transform-gpu transition-transform duration-200 group-hover/nav-prev:scale-105 group-hover/nav-prev:!bg-white/30 group-active/nav-prev:scale-95"
 									>
 										<ChevronLeft className="size-4" />
-									</span>
-								</button>
+									</Button>
+								</div>
 							)}
 
 							{canScrollNext && (
-								<button
-									type="button"
-									aria-label="Next image"
+								<div
 									onClick={e => {
 										e.preventDefault();
 										e.stopPropagation();
 										api?.scrollNext();
-										if (e.detail > 0) {
-											e.currentTarget.blur();
-										}
 									}}
-									className="group/nav-next absolute inset-y-0 right-0 z-20 flex w-12 sm:w-16 items-center justify-end pr-2 sm:pr-2.5 bg-gradient-to-l from-neutral-950/85 via-neutral-950/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 focus-visible:opacity-100 cursor-pointer outline-none"
+									className="group/nav-next absolute inset-y-0 right-0 z-20 flex w-12 sm:w-16 items-center justify-end pr-2 sm:pr-2.5 bg-gradient-to-l from-neutral-950/85 via-neutral-950/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
 								>
-									<span
-										className={cn(
-											buttonVariants({ variant: 'glass', flat3d: true, shape: 'full', size: 'icon-sm' }),
-											'relative z-10 pointer-events-none shadow-sm !bg-white/20 !text-white transform-gpu transition-transform duration-200 group-hover/nav-next:scale-105 group-hover/nav-next:!bg-white/30 group-active/nav-next:scale-95 group-focus-visible/nav-next:ring-2 group-focus-visible/nav-next:ring-ring'
-										)}
+									<Button
+										type="button"
+										variant="glass"
+										flat3d
+										shape="full"
+										size="icon-sm"
+										aria-label="Next image"
+										onClick={e => {
+											e.preventDefault();
+											e.stopPropagation();
+											api?.scrollNext();
+											if (e.detail > 0) {
+												e.currentTarget.blur();
+											}
+										}}
+										className="shadow-sm !bg-white/20 !text-white transform-gpu transition-transform duration-200 group-hover/nav-next:scale-105 group-hover/nav-next:!bg-white/30 group-active/nav-next:scale-95"
 									>
 										<ChevronRight className="size-4" />
-									</span>
-								</button>
+									</Button>
+								</div>
 							)}
 						</>
 					)}
@@ -130,7 +144,7 @@ export function StudioCard({ studio, className }: StudioCardProps) {
 
 				{/* Category Badge */}
 				<div className="absolute top-3 left-3 z-30 pointer-events-none">
-					<span className="rounded-full bg-background/85 px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-foreground backdrop-blur-md shadow-xs">{studio.category}</span>
+					<span className="rounded-full bg-background/85 px-3 py-1 text-xs sm:text-sm font-semibold text-foreground backdrop-blur-md shadow-xs">{studio.category}</span>
 				</div>
 			</div>
 

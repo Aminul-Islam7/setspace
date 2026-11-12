@@ -76,7 +76,7 @@ export function StudioBookingDialog({ studio, trigger }: StudioBookingDialogProp
 			status: 'Pending',
 		};
 
-		const apiUrl = process.env.NEXT_PUBLIC_API_URL?.trim().replace(/\/+$/, '');
+		const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 		try {
 			if (apiUrl) {

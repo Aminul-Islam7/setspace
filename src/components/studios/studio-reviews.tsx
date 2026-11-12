@@ -20,7 +20,7 @@ export function StudioReviews({ studio }: StudioReviewsProps) {
 	// const [comment, setComment] = useState('');
 	// const [isSubmitting, setIsSubmitting] = useState(false);
 
-	const avgRating = studio.rating;
+	const avgRating = studio.rating.toFixed(1);
 	const visibleReviews = reviews.slice(0, visibleCount);
 	const hasMoreReviews = visibleCount < reviews.length;
 

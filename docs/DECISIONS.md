@@ -2,6 +2,41 @@
 
 Record of architectural, design, and structural decisions. Add dated entries in reverse-chronological order.
 
+## 2026-11-12: Corner-Rounded Only UI, Neutral Flat3D Pills, Dynamic Slider Bounds & Unified Focus Ring
+- **Context:** User requested no fully rounded (`rounded-full`) shapes anywhere in the app (strictly corner-rounded `rounded-lg` / `rounded-md`), keeping `flat3d` tactile styling for all category and sort pills, neutral/secondary coloring for the hourly rate slider, dynamic slider bounds based strictly on the currently fetched studios only, flex-row alignment of Sort By and Price Slider in the filter drawer, and fixing the searchbar focus state to match the app-wide primary ring (`--ring`).
+- **Alternatives Considered:**
+  1. Full-pill `rounded-full` styling, static $0-$350 price bounds, stacked slider row, and dark border focus.
+  2. Corner-rounded (`rounded-lg`) throughout, neutral tactile `flat3d` pill switches (`bg-foreground text-background` active, `bg-secondary` inactive), dynamic `minAvailableRate` and `maxAvailableRate` computed from `studios.map(s => s.hourlyRate)` for slider bounds, side-by-side flex-row layout for Sort By and Slider, and app-consistent `focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/30`.
+- **Outcome:** Adopted Option 2 across [`src/components/studios/studios-explorer.tsx`](src/components/studios/studios-explorer.tsx), [`src/components/ui/slider.tsx`](src/components/ui/slider.tsx), [`src/app/studios/loading.tsx`](src/app/studios/loading.tsx), and [`src/components/studios/studio-card.tsx`](src/components/studios/studio-card.tsx). Ensures strict visual consistency and corner-rounded design language across the explore experience.
+
+## 2026-11-12: Server-Side Page/Limit Fetching, YouTube Search & Collapsible Filters
+- **Context:** Fetching entire list of studios client-side defeated pagination purpose. Realtime search caused excessive render cycles, and always-visible filter pills occupied too much vertical space with high-contrast primary colors.
+- **Alternatives Considered:**
+  1. Realtime keystroke filtering over full dataset with static filter rows.
+  2. Server-side paginated queries (`page=${page}&limit=12`) combined with `category`, `search`, `minprice`, `maxprice`, and `sort`. YouTube-style pill search bar with explicit search trigger button, neutral YouTube-style pill filter buttons (no primary color), double-ended Shadcn `<Slider>` for price bounds, and an inline collapsible filter toggle button showing current active filters (`[V] Photo Studio / Top Rated`).
+- **Outcome:** Adopted Option 2 in [`src/components/studios/studios-explorer.tsx`](src/components/studios/studios-explorer.tsx). Drastically reduces payload over the wire, hides detailed filters behind a compact summary toggle by default, and adds double-ended price filtering.
+
+## 2026-11-12: Reduce Top Padding Below Navbar Across All Pages
+- **Context:** Because sticky navbar shares the exact same background and tonal surface as the page canvas, excessive top padding (`py-6` to `py-12`) between navbar and initial body content created unnecessary dead vertical space.
+- **Alternatives Considered:**
+  1. Retain legacy `py-8` to `py-12` margins.
+  2. Tighten top padding universally to `pt-3 sm:pt-4 lg:pt-6` while preserving comfortable bottom scroll margin (`pb-8` to `pb-12`).
+- **Outcome:** Adopted Option 2 across [`src/components/studios/studios-explorer.tsx`](src/components/studios/studios-explorer.tsx), [`src/app/studios/loading.tsx`](src/app/studios/loading.tsx), [`src/app/studios/[slug]/page.tsx`](src/app/studios/[slug]/page.tsx), [`src/app/studios/[slug]/loading.tsx`](src/app/studios/[slug]/loading.tsx), [`src/components/home/hero-section.tsx`](src/components/home/hero-section.tsx), and [`src/app/not-found.tsx`](src/app/not-found.tsx). Eliminates empty vertical space while keeping clean section breathing room.
+
+## 2026-11-12: Flat Neutral Pagination Controls (No Primary Color, Chevron-Only Nav)
+- **Context:** Pagination previously used primary amber background for active pages, tactile `flat3d` gradients, and explicit "Previous"/"Next" text labels.
+- **Alternatives Considered:**
+  1. Primary active button with text labels and 3D bevel.
+  2. Minimalist, flat, neutral pagination: active button uses `secondary` variant, inactive uses `ghost`, buttons are standard flat (no `flat3d`), and previous/next navigation buttons display chevrons only (`size="icon"`).
+- **Outcome:** Adopted Option 2 in [`src/components/ui/pagination.tsx`](src/components/ui/pagination.tsx). Eliminates primary color dominance, strips redundant text labels, and provides compact, elegant chevron-only paging.
+
+## 2026-11-12: Studios Explore Page Architecture with URL-Synchronized Filtering & Flat3D Controls
+- **Context:** User requested a dedicated explore page (`/studios`) featuring 12 studios per page pagination, real-time search, one-button switches with `flat3d` and active states for all category and sort options, and zero layout drift.
+- **Alternatives Considered:**
+  1. Server-side query parameter refetch on every keystroke/pill click.
+  2. Single client fetch of active listings with client-side reactive filtering/sorting, URL query synchronization for category persistence (`?category=...`), and official Shadcn `Pagination` controls (`12` per page).
+- **Outcome:** Adopted Option 2 in [`src/components/studios/studios-explorer.tsx`](src/components/studios/studios-explorer.tsx) wrapped in `<Suspense>` in [`src/app/studios/page.tsx`](src/app/studios/page.tsx) and backed by [`src/app/studios/loading.tsx`](src/app/studios/loading.tsx). Category selection derives from `useSearchParams()` with `router.replace(..., { scroll: false })`, eliminating `useEffect` setState cascading renders. Sort switches (`featured`, `rating`, `newest`, `price-asc`, `price-desc`) and categories render as tactile `<Button shape="full" flat3d size="sm" variant={isActive ? "default" : "secondary"}>` pills.
+
 ## 2026-11-12: Harmonize Global Footer Background & Unified Surface Elevation Hierarchy
 - **Context:** Initial footer used `bg-muted` (`oklch(0.268)` in dark mode), creating an abrupt, harsh gray block at page bottom. Switching to pure `bg-background` removed all separation ("zero contrast"), leaving the footer ungrounded.
 - **Alternatives Considered:**

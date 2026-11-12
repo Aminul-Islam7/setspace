@@ -59,7 +59,7 @@ export function HeroSection() {
 	}, []);
 
 	return (
-		<section className="container py-2 sm:py-4" aria-label="SetSpace Hero Showcase">
+		<section className="container pt-1 sm:pt-2 pb-2 sm:pb-4" aria-label="SetSpace Hero Showcase">
 			<div className="dark relative rounded-3xl overflow-hidden bg-neutral-950">
 				{/* Background Slides */}
 				<div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
