@@ -6,10 +6,7 @@ const nextConfig: NextConfig = {
 		agentFeedback: true,
 	},
 	images: {
-		remotePatterns: [
-			{ protocol: 'https', hostname: 'i.ibb.co' },
-			{ protocol: 'https', hostname: 'images.unsplash.com' },
-		],
+		remotePatterns: [{ protocol: 'https', hostname: 'i.ibb.co' }],
 	},
 
 	cacheComponents: true,

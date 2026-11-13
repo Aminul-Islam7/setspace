@@ -2,16 +2,17 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Building2, Calendar, Compass, HelpCircle, Home, LogOut, Menu, PlusCircle } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { signOut, useSession } from '@/lib/auth-client';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Skeleton } from '@/components/ui/skeleton';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { cn } from '@/lib/utils';
-import { usePathname } from 'next/navigation';
-import { useState } from 'react';
 
 interface NavLinkItem {
 	label: string;
@@ -27,7 +28,26 @@ const NAV_LINKS: NavLinkItem[] = [
 
 export function Navbar() {
 	const pathname = usePathname();
-	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const router = useRouter();
+	const { data: session, isPending } = useSession();
+	const user = session?.user;
+	const isLoggedIn = !!user;
+
+	const handleSignOut = async () => {
+		await signOut();
+		router.push('/');
+		router.refresh();
+	};
+
+	const getUserInitials = (name?: string | null) => {
+		if (!name) return 'SS';
+		return name
+			.split(' ')
+			.map(part => part[0])
+			.slice(0, 2)
+			.join('')
+			.toUpperCase();
+	};
 
 	const isLinkActive = (href: string) => {
 		if (href === '/') return pathname === '/';
@@ -60,48 +80,64 @@ export function Navbar() {
 				<div className="hidden md:flex items-center gap-3">
 					<ThemeToggle />
 
-					{isLoggedIn ? (
+					{isPending ? (
+						<Skeleton className="size-9 rounded-full shrink-0" />
+					) : isLoggedIn ? (
 						<DropdownMenu>
-							<DropdownMenuTrigger render={<Button variant="ghost" size="icon" shape="full" className="p-0 size-9 overflow-hidden" />}>
+							<DropdownMenuTrigger render={<Button variant="ghost" size="icon" shape="full" className="p-0 size-9 overflow-hidden cursor-pointer" aria-label="Open user menu" />}>
 								<Avatar size="default">
-									<AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop" alt="Aminul Islam avatar" />
-									<AvatarFallback>AI</AvatarFallback>
+									{user?.image ? <AvatarImage src={user.image} alt={user?.name || 'User avatar'} /> : null}
+									<AvatarFallback>{getUserInitials(user?.name)}</AvatarFallback>
 								</Avatar>
 							</DropdownMenuTrigger>
-							<DropdownMenuContent align="end" className="w-56">
-								<DropdownMenuLabel className="font-normal">
-									<div className="flex flex-col space-y-1">
-										<p className="text-sm font-semibold leading-none text-foreground">Aminul Islam</p>
-										<p className="text-xs leading-none text-muted-foreground">aminul@setspace.io</p>
-									</div>
-								</DropdownMenuLabel>
-								<DropdownMenuSeparator />
+							<DropdownMenuContent align="end" className="w-60">
 								<DropdownMenuItem
 									render={
-										<Link href="/my-bookings" className="flex items-center gap-2.5 w-full">
-											<Calendar className="size-4" />
-											<span>My Bookings</span>
-										</Link>
-									}
-								/>
-								<DropdownMenuItem
-									render={
-										<Link href="/my-listings" className="flex items-center gap-2.5 w-full">
-											<Building2 className="size-4" />
-											<span>My Studios Listings</span>
-										</Link>
-									}
-								/>
-								<DropdownMenuItem
-									render={
-										<Link href="/add-studio" className="flex items-center gap-2.5 w-full">
-											<PlusCircle className="size-4" />
-											<span>Host My Studio</span>
+										<Link href="/profile" className="flex items-center gap-3 w-full py-1 text-left cursor-pointer group">
+											<Avatar size="default" className="size-9 shrink-0">
+												{user?.image ? <AvatarImage src={user.image} alt={user?.name || 'User avatar'} /> : null}
+												<AvatarFallback className="text-xs font-semibold">{getUserInitials(user?.name)}</AvatarFallback>
+											</Avatar>
+											<div className="flex flex-col space-y-1 text-left min-w-0 flex-1">
+												<p className="text-sm font-semibold leading-none text-foreground truncate group-hover:text-primary transition-colors">{user?.name || 'Creator'}</p>
+												<p className="text-xs leading-none text-muted-foreground truncate">{user?.email}</p>
+											</div>
 										</Link>
 									}
 								/>
 								<DropdownMenuSeparator />
-								<DropdownMenuItem variant="destructive" onClick={() => setIsLoggedIn(false)} className="flex items-center gap-2.5 cursor-pointer">
+								<DropdownMenuGroup>
+									<DropdownMenuItem
+										render={
+											<Link href="/my-bookings" className="flex items-center gap-2.5 w-full">
+												<Calendar className="size-4" />
+												<span>My Bookings</span>
+											</Link>
+										}
+									/>
+									<DropdownMenuItem
+										render={
+											<Link href="/my-listings" className="flex items-center gap-2.5 w-full">
+												<Building2 className="size-4" />
+												<span>My Studios Listings</span>
+											</Link>
+										}
+									/>
+									<DropdownMenuItem
+										render={
+											<Link href="/add-studio" className="flex items-center gap-2.5 w-full">
+												<PlusCircle className="size-4" />
+												<span>Host My Studio</span>
+											</Link>
+										}
+									/>
+								</DropdownMenuGroup>
+								<DropdownMenuSeparator />
+								<DropdownMenuItem
+									variant="destructive"
+									onClick={handleSignOut}
+									className="flex items-center gap-2.5 cursor-pointer hover:text-destructive focus:text-destructive data-highlighted:text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/20 data-highlighted:bg-destructive/10 dark:data-highlighted:bg-destructive/20"
+								>
 									<LogOut className="size-4" />
 									<span>Sign out</span>
 								</DropdownMenuItem>
@@ -154,18 +190,26 @@ export function Navbar() {
 
 							{/* Drawer Footer */}
 							<div className="pt-4 space-y-4">
-								{isLoggedIn ? (
+								{isPending ? (
+									<div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-foreground/5 animate-pulse">
+										<Skeleton className="size-9 rounded-full shrink-0" />
+										<div className="flex flex-col gap-1.5 flex-1 min-w-0">
+											<Skeleton className="h-4 w-24 rounded" />
+											<Skeleton className="h-3 w-32 rounded" />
+										</div>
+									</div>
+								) : isLoggedIn ? (
 									<div className="space-y-3">
-										<div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-foreground/5">
-											<Avatar size="sm">
-												<AvatarImage src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop" alt="Aminul Islam" />
-												<AvatarFallback>AI</AvatarFallback>
+										<SheetClose render={<Link href="/profile" className="flex items-center gap-3 px-3 py-2 rounded-lg bg-foreground/5 hover:bg-foreground/10 transition-colors group" />}>
+											<Avatar>
+												{user?.image ? <AvatarImage src={user.image} alt={user?.name || 'User avatar'} /> : null}
+												<AvatarFallback>{getUserInitials(user?.name)}</AvatarFallback>
 											</Avatar>
 											<div className="flex flex-col min-w-0">
-												<p className="text-sm font-semibold text-foreground truncate">Aminul Islam</p>
-												<p className="text-xs text-muted-foreground truncate">aminul@setspace.io</p>
+												<p className="text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors">{user?.name || 'Creator'}</p>
+												<p className="text-xs text-muted-foreground truncate">{user?.email}</p>
 											</div>
-										</div>
+										</SheetClose>
 
 										<div className="flex flex-col space-y-1">
 											<SheetClose render={<Link href="/my-bookings" className="flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg" />}>
@@ -182,7 +226,7 @@ export function Navbar() {
 											</SheetClose>
 										</div>
 
-										<Button variant="destructive" size="sm" className="w-full mt-2" onClick={() => setIsLoggedIn(false)}>
+										<Button variant="destructive" size="sm" className="w-full mt-2 py-4" onClick={handleSignOut}>
 											<LogOut className="size-4" />
 											<span>Sign out</span>
 										</Button>

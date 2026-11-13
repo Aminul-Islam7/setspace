@@ -2,6 +2,22 @@
 
 Record of architectural, design, and structural decisions. Add dated entries in reverse-chronological order.
 
+## 2026-11-13: Icon-Driven Auth Showcase Highlights Replacing Paragraph Testimonials
+- **Context:** Wordy quotes took too much visual weight and felt passive. Following modern creator/ticketing reference designs (e.g. tickify), the split-screen auth showcase needed shorter, punchier text with primary color headline accents and clear icon bullet points.
+- **Alternatives Considered:**
+  1. Long editorial blockquote with author avatar and citation.
+  2. Kicker badge (`WELCOME BACK` / `JOIN SETSPACE`), high-contrast display headline with primary highlight, 1-line subtext, and 3 icon feature points in circular badges (`bg-primary/15 text-primary`).
+- **Outcome:** Adopted Option 2 across [`src/components/auth/auth-split-layout.tsx`](src/components/auth/auth-split-layout.tsx), [`src/app/(auth)/login/page.tsx`](src/app/(auth)/login/page.tsx), and [`src/app/(auth)/register/page.tsx`](src/app/(auth)/register/page.tsx). Preserved user's left-side showcase positioning, `rounded-r-4xl` surface, and form structure.
+
+
+## 2026-11-12: Split-Design Authentication Architecture with Better Auth, Zod & React Hook Form
+- **Context:** User requested split-design authentication pages (form on one side, design on other half) supporting strictly email-password and Google OAuth, using Tailwind v4 token variables, modular reusable components, latest Zod + RHF techniques, and session reactivity across the app.
+- **Alternatives Considered:**
+  1. Centered floating modal or isolated card without split artwork.
+  2. Responsive split layout (`AuthSplitLayout`): Left form container on mobile/desktop, right-side atmospheric studio showcase with editorial quote and feature pills on `lg:` screens.
+- **Outcome:** Adopted Option 2 across [`src/components/auth/auth-split-layout.tsx`](src/components/auth/auth-split-layout.tsx), [`src/components/auth/login-form.tsx`](src/components/auth/login-form.tsx), [`src/components/auth/register-form.tsx`](src/components/auth/register-form.tsx), and [`src/components/auth/auth-social-buttons.tsx`](src/components/auth/auth-social-buttons.tsx). Better Auth handler mounted at `src/app/api/auth/[...all]/route.ts`. Strict password requirements (min 6 chars, uppercase, lowercase) enforced via Zod schema. `Navbar` directly hooked up to `useSession()` and `signOut()` for real-time authentication persistence and avatar rendering. Added route redirects for `/sign-in` and `/sign-up`.
+
+
 ## 2026-11-12: Corner-Rounded Only UI, Neutral Flat3D Pills, Dynamic Slider Bounds & Unified Focus Ring
 - **Context:** User requested no fully rounded (`rounded-full`) shapes anywhere in the app (strictly corner-rounded `rounded-lg` / `rounded-md`), keeping `flat3d` tactile styling for all category and sort pills, neutral/secondary coloring for the hourly rate slider, dynamic slider bounds based strictly on the currently fetched studios only, flex-row alignment of Sort By and Price Slider in the filter drawer, and fixing the searchbar focus state to match the app-wide primary ring (`--ring`).
 - **Alternatives Considered:**

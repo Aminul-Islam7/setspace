@@ -3,9 +3,13 @@
 Track ongoing, planned, and completed tasks. Check off items as they finish.
 
 ## Active & Upcoming
-- [ ] Configure Base UI / Shadcn form primitives (`components/ui/field.tsx`)
+- [ ] Implement Add Studio listing form (`/add-studio`) with multi-step/rich media inputs
+- [ ] Implement My Listings page (`/my-listings`) with edit/delete actions
+- [ ] Implement My Bookings page (`/my-bookings`) with cancellation and status indicators
 
 ## Completed
+- [x] Build split-design authentication pages (`/login` & `/register`) with Better Auth, Google OAuth, Email/Password, Zod + RHF validation, and session-reactive Navbar (2026-11-12)
+- [x] Configure Base UI / Shadcn form primitives (`components/ui/field.tsx`) (2026-11-12)
 - [x] Build studios explore page (`/studios`) with 12-per-page pagination, live search bar, flat3d one-button category & sort switches with active states, and empty state (2026-11-12)
 - [x] Add review pagination (initial 3 reviews + "Show more reviews" button loading 3 more while remaining) (2026-11-11)
 - [x] Standardize image ratio to `aspect-video` across studio gallery and loading skeletons (2026-11-11)

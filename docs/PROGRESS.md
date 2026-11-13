@@ -2,6 +2,207 @@
 
 Record daily or milestone progress entries. Keep concise and chronological.
 
+## 2026-11-13: Instant Navbar Paint & Seamless Auth Loading Skeleton
+- **What Changed:**
+  1. Updated [`src/app/layout.tsx`](src/app/layout.tsx):
+     - Removed redundant `<Suspense fallback={<div className="h-16 sm:h-20 w-full bg-background/80" />}>` wrapper around `<Navbar />`.
+     - Allows Next.js static / PPR prerendering to include the full navbar shell (logo, site title, nav links, theme toggle) directly in the initial HTML for instant 0ms visual paint on page reload, matching GitHub.
+  2. Created [`src/components/ui/skeleton.tsx`](src/components/ui/skeleton.tsx):
+     - Added official Shadcn skeleton primitive with `@/lib/utils` `cn` import.
+  3. Updated [`src/components/layout/navbar.tsx`](src/components/layout/navbar.tsx):
+     - Handled `isPending` state from `useSession()`.
+     - Rendered a pixel-perfect `size-9 rounded-full` Skeleton matching the avatar trigger button on desktop and drawer card on mobile while the session is being verified.
+     - Completely eliminated the flash of "Sign in" and "Sign up" buttons on page refresh for logged-in users, preventing Cumulative Layout Shift (CLS).
+- **Files Touched:**
+  - `src/app/layout.tsx`
+  - `src/components/ui/skeleton.tsx`
+  - `src/components/layout/navbar.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build`. Zero browser sessions opened.
+
+## 2026-11-13: Red Hover Styling on Dropdown Sign Out Item
+- **What Changed:**
+  1. Updated [`src/components/ui/dropdown-menu.tsx`](src/components/ui/dropdown-menu.tsx):
+     - Removed aggressive override `**:data-[variant=destructive]:text-accent-foreground!` and `**:text-accent-foreground!` from `DropdownMenuContent` which was preventing destructive items from turning red.
+     - Added comprehensive red styling on destructive menu items for all active interaction states: `data-[variant=destructive]:hover:text-destructive!`, `data-[variant=destructive]:data-highlighted:text-destructive!`, `data-[variant=destructive]:focus:text-destructive!`, plus red icon tinting `*:[svg]:text-destructive!` and subtle red hover backgrounds (`bg-destructive/10!`, `dark:bg-destructive/20!`).
+     - Kept neutral resting color (`text-foreground`) so the item only lights up in warning red upon hovering/keyboard navigation.
+  2. Updated [`src/components/layout/navbar.tsx`](src/components/layout/navbar.tsx):
+     - Explicitly bound `hover:text-destructive focus:text-destructive data-highlighted:text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/20` to the sign out dropdown menu item.
+- **Files Touched:**
+  - `src/components/ui/dropdown-menu.tsx`
+  - `src/components/layout/navbar.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (33/33 routes compiled). Zero browser sessions opened.
+
+## 2026-11-13: Restore Direct Translucent Backdrop Blur on Dropdown Menu
+- **What Changed:**
+  1. Updated [`src/components/ui/dropdown-menu.tsx`](src/components/ui/dropdown-menu.tsx):
+     - Removed broken pseudo-element backdrop hack (`before:backdrop-blur-2xl before:-z-1`) which was getting clipped by `overflow-y-auto` and causing transparent see-through dropdowns without blur.
+     - Applied direct `bg-popover/80 backdrop-blur-2xl backdrop-saturate-150` on `DropdownMenuContent` and `DropdownMenuSubContent`.
+     - Restored rich, translucent frosted glass aesthetic matching the navbar and theme tokens.
+- **Files Touched:**
+  - `src/components/ui/dropdown-menu.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (33/33 routes static & PPR compiled in 3.5s). Zero browser sessions opened.
+
+
+## 2026-11-13: Restore Circular Profile Pic Trigger in Navbar
+- **What Changed:**
+  1. Updated [`src/components/layout/navbar.tsx`](src/components/layout/navbar.tsx):
+     - Restored the user avatar trigger button to circular icon format (`variant="ghost" size="icon" shape="full" className="p-0 size-9 overflow-hidden cursor-pointer"`).
+     - Removed name text from the trigger while keeping the left-aligned avatar + name + email row inside the dropdown menu intact.
+- **Files Touched:**
+  - `src/components/layout/navbar.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (33/33 routes static & PPR compiled in 4.6s). Zero browser sessions opened.
+
+
+## 2026-11-13: Left-Aligned Profile Header with Avatar in Dropdown Menu
+- **What Changed:**
+  1. Updated [`src/components/layout/navbar.tsx`](src/components/layout/navbar.tsx):
+     - Enhanced the dropdown's user profile item: included the user's avatar (`size-9 shrink-0`), with initials fallback and profile photo support.
+     - Structured layout as a clean horizontal row (`flex items-center gap-3 w-full py-1 text-left`).
+     - Aligned full name and email strictly to the left (`text-left`) with clean text truncation.
+     - Adjusted dropdown content width to `w-60` for comfortable breathing room.
+- **Files Touched:**
+  - `src/components/layout/navbar.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (33/33 routes static & PPR compiled in 4.2s). Zero browser sessions opened.
+
+
+## 2026-11-13: Rounded Dropdown Items, First-Name Rounded Trigger, & Clickable Profile Link
+- **What Changed:**
+  1. Updated [`src/components/ui/dropdown-menu.tsx`](src/components/ui/dropdown-menu.tsx):
+     - Changed dropdown items radius from `rounded-2xl` to corner-rounded `rounded-lg` (`DropdownMenuItem`, `DropdownMenuSubTrigger`, `DropdownMenuCheckboxItem`, `DropdownMenuRadioItem`).
+     - Added `cursor-pointer` to all interactive items on hover.
+     - Changed popup container to `rounded-xl`.
+  2. Updated [`src/components/layout/navbar.tsx`](src/components/layout/navbar.tsx):
+     - Transformed trigger button into a rounded rectangle (`rounded-lg`, `h-9`, `px-2 sm:px-2.5`) with user avatar (`size-6 sm:size-7`) and truncated first name (`getFirstName`).
+     - Converted name+email section into a clickable `<DropdownMenuItem render={<Link href="/profile" ... />}>` that closes the menu on click and navigates to the user's profile.
+     - Also made the mobile drawer user card clickable linking to `/profile`.
+  3. Created [`src/app/profile/page.tsx`](src/app/profile/page.tsx):
+     - Built dedicated account profile view showing user avatar, name, email, verified badge, and quick action cards (`/my-bookings`, `/my-listings`, `/add-studio`).
+- **Files Touched:**
+  - `src/components/ui/dropdown-menu.tsx`
+  - `src/components/layout/navbar.tsx`
+  - `src/app/profile/page.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (33/33 routes compiled cleanly). Zero browser sessions opened.
+
+
+## 2026-11-13: Fix DropdownMenu MenuGroupContext Runtime Crash
+- **What Changed:**
+  1. Updated [`src/components/ui/dropdown-menu.tsx`](src/components/ui/dropdown-menu.tsx):
+     - Refactored `DropdownMenuLabel` from `MenuPrimitive.GroupLabel` to a standalone styled `<div>` with `data-slot="dropdown-menu-label"`.
+     - Completely solved runtime crash `MenuGroupContext is missing` when clicking avatar dropdown with user info header.
+  2. Updated [`src/components/layout/navbar.tsx`](src/components/layout/navbar.tsx):
+     - Wrapped authenticated menu navigation items inside `<DropdownMenuGroup>`.
+  3. Documented postmortem in [`docs/BUGS.md`](docs/BUGS.md).
+- **Files Touched:**
+  - `src/components/ui/dropdown-menu.tsx`
+  - `src/components/layout/navbar.tsx`
+  - `docs/BUGS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (32/32 routes compiled cleanly). Zero browser sessions opened.
+
+
+## 2026-11-13: Replace Auth Toasts with Contextual In-UI Alerts
+- **What Changed:**
+  1. Updated [`src/components/auth/login-form.tsx`](src/components/auth/login-form.tsx):
+     - Removed all `toast` notifications from `sonner`.
+     - Added in-UI alert banner for backend errors (`bg-destructive/10 text-destructive`) with `AlertCircle` icon.
+     - Added in-UI status banner for info notices (`bg-secondary/80 text-muted-foreground`) with `Info` icon.
+     - Preserved user's button styles (`py-5`) and eye toggle positioning.
+  2. Updated [`src/components/auth/register-form.tsx`](src/components/auth/register-form.tsx):
+     - Removed all `toast` notifications from `sonner`.
+     - Added in-UI alert banner for backend errors with `AlertCircle` icon.
+     - Added in-UI success banner for account creation redirect with `CheckCircle2` icon.
+     - Preserved user's button styles (`py-5`) and eye toggle positioning.
+  3. Updated [`src/components/auth/auth-social-buttons.tsx`](src/components/auth/auth-social-buttons.tsx):
+     - Removed `toast` import; wired errors through `onError` callback into parent in-UI banner.
+     - Preserved user's `shape="full"`, `variant="secondary"`, and `py-5` styling.
+- **Files Touched:**
+  - `src/components/auth/login-form.tsx`
+  - `src/components/auth/register-form.tsx`
+  - `src/components/auth/auth-social-buttons.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (32/32 routes static & PPR generated in 3.5s). Zero browser sessions opened.
+
+
+## 2026-11-13: Fix Password Visibility Eye Toggle Downward Jump
+- **What Changed:**
+  1. Updated [`src/components/auth/login-form.tsx`](src/components/auth/login-form.tsx) and [`src/components/auth/register-form.tsx`](src/components/auth/register-form.tsx):
+     - Replaced `top-1/2 -translate-y-1/2` with `inset-y-0 my-auto active:translate-y-0`.
+     - Completely eliminated active transform collision where `Button`'s `active:translate-y-px` was overriding `-translate-y-1/2` and jumping the eye icon down by ~17px.
+  2. Documented in [`docs/BUGS.md`](docs/BUGS.md).
+- **Files Touched:**
+  - `src/components/auth/login-form.tsx`
+  - `src/components/auth/register-form.tsx`
+  - `docs/BUGS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (32/32 routes static & PPR generated in 3.8s). Zero browser sessions opened.
+
+
+## 2026-11-13: Upgrade Auth Split Showcase with Icon Feature List & Clearer Messaging
+- **What Changed:**
+  1. Updated [`src/components/auth/auth-split-layout.tsx`](src/components/auth/auth-split-layout.tsx):
+     - Replaced paragraph quote testimonial with tickify-style high-clarity feature section.
+     - Added uppercase kicker badge, punchy headline with primary accent highlight, concise subtext, and 3 icon feature bullet points.
+     - Styled icon bullets with circular tonal accents (`flex size-7 items-center justify-center rounded-full bg-primary/15 text-primary`).
+     - Preserved user's left-side showcase positioning, `rounded-r-4xl` border radius, and form styling.
+  2. Updated [`src/app/(auth)/login/page.tsx`](src/app/(auth)/login/page.tsx):
+     - Configured sign-in highlights: `WELCOME BACK`, `Every great production starts with the right space.`, and icons (`Calendar`, `ShieldCheck`, `CheckCircle2`).
+  3. Updated [`src/app/(auth)/register/page.tsx`](src/app/(auth)/register/page.tsx):
+     - Configured sign-up highlights: `JOIN SETSPACE`, `Where vision meets production-ready sets.`, and icons (`Building2`, `ShieldCheck`, `CheckCircle2`).
+- **Files Touched:**
+  - `src/components/auth/auth-split-layout.tsx`
+  - `src/app/(auth)/login/page.tsx`
+  - `src/app/(auth)/register/page.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (32/32 routes static & PPR generated in 7.0s). Zero browser sessions opened.
+
+
+## 2026-11-12: Build Split-Design Auth Pages with Better Auth, Zod & React Hook Form
+- **What Changed:**
+  1. Built modular split-design layout [`src/components/auth/auth-split-layout.tsx`](src/components/auth/auth-split-layout.tsx):
+     - Form container on mobile/desktop, right-side atmospheric studio photography with vignette overlay, quote endorsement, and verified badges on `lg:` screens.
+     - Strictly uses existing Tailwind v4 theme tokens (`bg-card`, `bg-secondary/80`, `text-muted-foreground`, `font-display`).
+  2. Implemented Google OAuth button in [`src/components/auth/auth-social-buttons.tsx`](src/components/auth/auth-social-buttons.tsx):
+     - Official Shadcn `<Button variant="outline" flat3d>` with `react-icons/fc` Google icon.
+     - Calls `authClient.signIn.social({ provider: 'google', callbackURL })`.
+  3. Built sign in form in [`src/components/auth/login-form.tsx`](src/components/auth/login-form.tsx):
+     - Zod schema (`email`, `password`) + `react-hook-form` via `zodResolver`.
+     - Composable Base UI / Shadcn form primitives (`FieldGroup`, `Field`, `FieldLabel`, `Input`, `FieldError`, `FieldSeparator`).
+     - Password visibility toggle (`Eye` / `EyeOff`), `sonner` toast feedback, and router redirect.
+  4. Built registration form in [`src/components/auth/register-form.tsx`](src/components/auth/register-form.tsx):
+     - Zod schema validating Name, Email, optional Photo URL, and strict Password rules (min 6 characters, at least 1 uppercase, at least 1 lowercase).
+     - Inline validation messages, toggleable password field, and `authClient.signUp.email()`.
+  5. Mounted Better Auth App Router API handler in [`src/app/api/auth/[...all]/route.ts`](src/app/api/auth/[...all]/route.ts).
+  6. Created auth routes:
+     - [`src/app/(auth)/login/page.tsx`](src/app/(auth)/login/page.tsx)
+     - [`src/app/(auth)/register/page.tsx`](src/app/(auth)/register/page.tsx)
+     - Redirect aliases [`src/app/(auth)/sign-in/page.tsx`](src/app/(auth)/sign-in/page.tsx) and [`src/app/(auth)/sign-up/page.tsx`](src/app/(auth)/sign-up/page.tsx).
+  7. Connected [`src/components/layout/navbar.tsx`](src/components/layout/navbar.tsx) to Better Auth `useSession()`:
+     - Real-time reactive session state, dynamic initials/avatar rendering, and `signOut()` handler.
+- **Files Touched:**
+  - `src/app/api/auth/[...all]/route.ts`
+  - `src/lib/auth-client.ts`
+  - `src/lib/auth.ts`
+  - `src/components/auth/auth-split-layout.tsx`
+  - `src/components/auth/auth-social-buttons.tsx`
+  - `src/components/auth/login-form.tsx`
+  - `src/components/auth/register-form.tsx`
+  - `src/app/(auth)/login/page.tsx`
+  - `src/app/(auth)/register/page.tsx`
+  - `src/app/(auth)/sign-in/page.tsx`
+  - `src/app/(auth)/sign-up/page.tsx`
+  - `src/components/layout/navbar.tsx`
+  - `docs/TASKS.md`
+  - `docs/DECISIONS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (32/32 routes static, dynamic & PPR compiled cleanly). Zero browser sessions opened.
+
+
 ## 2026-11-12: Fixed Global Platform Range for Hourly Rate Slider ($20 – $1000)
 - **What Changed:**
   1. Updated [`src/components/studios/studios-explorer.tsx`](src/components/studios/studios-explorer.tsx):

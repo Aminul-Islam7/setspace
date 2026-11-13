@@ -2,6 +2,22 @@
 
 Log resolved issues, regressions, and lessons learned.
 
+## 2026-11-13: Base UI MenuGroupContext Missing on DropdownMenuLabel Click
+- **Symptom:** Clicking the profile avatar dropdown button crashed the application with runtime error: `Base UI: MenuGroupContext is missing. Menu group parts must be used within <Menu.Group> or <Menu.RadioGroup> at DropdownMenuLabel`.
+- **Root Cause:** In Base UI (`@base-ui/react`), `MenuPrimitive.GroupLabel` requires an enclosing `MenuPrimitive.Group` providing `MenuGroupContext` for accessible `aria-labelledby` association. Using `DropdownMenuLabel` (mapped directly to `MenuPrimitive.GroupLabel`) outside `<DropdownMenuGroup>` caused Base UI's internal hook `useMenuGroupContext()` to throw.
+- **Fix:** 
+  1. Updated [`src/components/ui/dropdown-menu.tsx`](src/components/ui/dropdown-menu.tsx): Defined `DropdownMenuLabel` as a standard polymorphic container `<div>` with `data-slot="dropdown-menu-label"` and matching text styling. This guarantees it can be rendered anywhere inside dropdowns (including standalone user profile headers) without requiring group context.
+  2. Updated [`src/components/layout/navbar.tsx`](src/components/layout/navbar.tsx): Wrapped action items in `<DropdownMenuGroup>` for proper semantic structure.
+- **How to Avoid:** Never use primitive group labels (`Menu.GroupLabel`) for generic free-standing header text inside popups unless enclosed within an accessible group container.
+
+
+## 2026-11-13: Password Visibility Eye Icon Downward Shift on Active Click
+- **Symptom:** In `LoginForm` and `RegisterForm`, clicking or holding down the password visibility toggle (eye icon button) caused the icon to jump downwards by ~17px.
+- **Root Cause:** The button was vertically centered using `top-1/2 -translate-y-1/2`. The Shadcn `Button` component in `src/components/ui/button.tsx` applies `active:not-aria-[haspopup]:translate-y-px`. When clicked, Tailwind's `active:translate-y-px` overrode `--tw-translate-y: 1px`, wiping out `-translate-y-1/2` (-50% of button height) and shifting the button down by ~17px.
+- **Fix:** Switched vertical centering from `top-1/2 -translate-y-1/2` to `inset-y-0 my-auto` and added `active:translate-y-0` in [`src/components/auth/login-form.tsx`](src/components/auth/login-form.tsx) and [`src/components/auth/register-form.tsx`](src/components/auth/register-form.tsx). Centers the button purely via box-model margins and neutralizes active displacement.
+- **How to Avoid:** Never use `top-1/2 -translate-y-1/2` on elements with `active:translate-y-*` or other transform-based micro-interactions. Use `inset-y-0 my-auto active:translate-y-0` for absolute vertical centering instead.
+
+
 ## 2026-11-12: Studio Gallery Prev/Next Double Event Bubbling & Looping Oscillation
 
 - **Symptom:** In `StudioGallery`, clicking the Previous or Next navigation buttons behaved erratically: it skipped slides, jumped in reverse or unpredictable order (e.g. 0 -> 2 -> 1 -> 0), or oscillated back and forth between two images instead of moving strictly one image forward or backward.
