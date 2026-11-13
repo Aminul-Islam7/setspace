@@ -2,6 +2,56 @@
 
 Record daily or milestone progress entries. Keep concise and chronological.
 
+## 2026-11-13: Align Password Change Validation with Registration Criteria
+- **What Changed:**
+  1. Updated [`src/app/profile/page.tsx`](src/app/profile/page.tsx):
+     - Replaced generic 8-character check with original registration criteria: minimum 6 characters, at least one uppercase letter (`/[A-Z]/`), and at least one lowercase letter (`/[a-z]/`).
+     - Aligned in-UI error feedback messages word-for-word with [`src/components/auth/register-form.tsx`](src/components/auth/register-form.tsx).
+     - Added inline helper text describing the exact password requirements under the New Password input.
+- **Files Touched:**
+  - `src/app/profile/page.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build`. Zero browser sessions opened.
+
+## 2026-11-13: Optimize Mobile Profile UX & Fix Sticky Scroll Overlap
+- **What Changed:**
+  1. Updated [`src/app/profile/page.tsx`](src/app/profile/page.tsx):
+     - Scoped sticky sidebar strictly to desktop (`hidden md:block md:col-span-4 lg:col-span-3 md:sticky md:top-24`), preventing sidebar from floating over and swallowing the profile card on mobile viewports during scrolling.
+     - Redesigned mobile UX: placed profile content front and center at the top of the mobile screen.
+     - Added a top segmented tab switcher on mobile (`Profile & Account` | `Password & Security`) for instant section toggling without vertical scrolling.
+     - Positioned secondary links (My Bookings, My Studio Listings, Host Studio, Browse Spaces, Sign out) below the active card on mobile in a dedicated quick navigation card.
+     - Updated skeleton loading state to mirror the responsive layout changes.
+- **Files Touched:**
+  - `src/app/profile/page.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build`. Zero browser sessions opened.
+
+## 2026-11-13: Refine Profile Page Card Shadows, Avatar Border, and Text Alignment
+- **What Changed:**
+  1. Updated [`src/app/profile/page.tsx`](src/app/profile/page.tsx):
+     - Removed orange ring/border (`ring-2 ring-primary/20`) around the profile avatar in the profile information section.
+     - Fixed vertical positioning of name and email beside the big profile avatar: replaced `sm:items-start` with centered flex alignment `items-center` and balanced spacing `space-y-1.5`.
+     - Added extra small shadow in light mode (`shadow-xs dark:shadow-none`) to the left sidebar card and main rightside cards (profile info & password cards).
+     - Removed unused `ShieldCheck` import after user's modifications.
+- **Files Touched:**
+  - `src/app/profile/page.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build`. Zero browser sessions opened.
+
+## 2026-11-13: Comprehensive Profile Page Overhaul
+- **What Changed:**
+  1. Updated [`src/app/profile/page.tsx`](src/app/profile/page.tsx):
+     - Wrapped layout in `container py-8 sm:py-12` with responsive 12-column grid (`grid-cols-1 md:grid-cols-12 gap-8`).
+     - Added sticky left sidebar (`md:col-span-4 lg:col-span-3`) containing user summary, tab navigation ("Profile & Account", "Password & Security"), quick links (My Bookings, My Studio Listings, Host My Studio, Browse Spaces), and Sign Out button with red hover.
+     - Implemented profile picture camera hover overlay with Base UI Dialog modal to update avatar via direct image URL (supporting reset to initials, live preview, and in-UI feedback).
+     - Implemented Base UI Dialog modal to update user's display name.
+     - Implemented password change form with current password, new password, confirm password, eye visibility toggles, and instant execution without email verification via `changePassword`.
+     - Added pixel-perfect skeleton mirror for profile layout during `isPending`.
+- **Files Touched:**
+  - `src/app/profile/page.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build`. Zero browser sessions opened.
+
 ## 2026-11-13: Instant Navbar Paint & Seamless Auth Loading Skeleton
 - **What Changed:**
   1. Updated [`src/app/layout.tsx`](src/app/layout.tsx):
