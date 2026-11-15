@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useSession } from '@/lib/auth-client';
+import { getTokenFromClient } from '@/lib/getTokenFromClient';
 import { toast } from 'sonner';
 
 import { createStudioSchema, type CreateStudioFormValues } from './types';
@@ -89,9 +90,13 @@ export function CreateStudioForm() {
 			const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 			if (apiUrl) {
+				const token = await getTokenFromClient();
 				const res = await fetch(`${apiUrl}/api/studios`, {
 					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
+					headers: {
+						'Content-Type': 'application/json',
+						authorization: `Bearer ${token}`,
+					},
 					body: JSON.stringify(payload),
 				});
 

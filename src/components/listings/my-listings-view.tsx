@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import { isImgbbUrl } from '@/components/studios/create/types';
 import { useSession } from '@/lib/auth-client';
+import { getTokenFromClient } from '@/lib/getTokenFromClient';
 
 export function MyListingsView() {
 	const { data: session, isPending: isSessionPending } = useSession();
@@ -31,10 +32,16 @@ export function MyListingsView() {
 		let isMounted = true;
 		const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
-		fetch(`${apiUrl}/api/users/me/studios?email=${encodeURIComponent(userEmail)}`, {
-			headers: { 'x-user-email': userEmail },
-			cache: 'no-store',
-		})
+		getTokenFromClient()
+			.then(token =>
+				fetch(`${apiUrl}/api/users/me/studios?email=${encodeURIComponent(userEmail)}`, {
+					headers: {
+						'x-user-email': userEmail,
+						authorization: `Bearer ${token}`,
+					},
+					cache: 'no-store',
+				})
+			)
 			.then(res => {
 				if (res.ok) {
 					return res.json() as Promise<ApiResponse<Studio[]>>;

@@ -2,6 +2,44 @@
 
 Record of architectural, design, and structural decisions. Add dated entries in reverse-chronological order.
 
+## 2026-11-15: Direct Instructor-Style JWT Retrieval (`getTokenFromClient` & `getTokenFromServer`)
+- **Context:** Course specification and instructor reference require minimal, un-opinionated JWT extraction helpers directly using Better Auth's `authClient.token()` on the client and `auth.api.getToken({ headers: await headers() })` on the server.
+- **Alternatives Considered:**
+  1. Custom in-memory caching and complex wrappers with clock-skew calculations (Rejected: unnecessary complexity; course standards prioritize direct, readable code).
+  2. Direct minimal helper functions matching instructor reference:
+     - [`src/lib/getTokenFromClient.ts`](src/lib/getTokenFromClient.ts):
+       ```typescript
+       import { authClient } from "./auth-client";
+       export const getTokenFromClient = async () => {
+         const { data } = await authClient.token();
+         return data?.token;
+       };
+       ```
+     - [`src/lib/getTokenFromServer.ts`](src/lib/getTokenFromServer.ts):
+       ```typescript
+       import { headers } from "next/headers";
+       import { auth } from "./auth";
+       export const getTokenFromServer = async () => {
+         const jwtToken = await auth.api.getToken({ headers: await headers() });
+         return jwtToken?.token;
+       };
+       ```
+     - Component fetch calls pass `authorization: `Bearer ${token}`` directly.
+- **Outcome:** Adopted Option 2 across all private API endpoints. Zero boilerplate, zero caching overhead, perfectly aligns with course curriculum.
+
+
+## 2026-11-15: Modular JWT Retrieval (Client & Server) with Bearer Authorization Injection
+- **Context:** User integrated Better Auth `jwt` plugin (`session.cookieCache.strategy = 'jwt'`). Private backend endpoints require JWT verification via `Authorization: Bearer <token>`.
+- **Alternatives Considered:**
+  1. Ad-hoc `fetch('/api/auth/token')` inline in every single component. (Rejected: duplication, no caching, causes burst traffic).
+  2. Monolithic auth token utility combining server and client helpers. (Rejected: `src/lib/auth.ts` imports native `mongodb` driver, which breaks Turbopack client bundling if imported by Client Components).
+  3. Strict client/server separation with bounded client-side TTL caching:
+     - [`src/lib/auth-token-client.ts`](src/lib/auth-token-client.ts): Uses client fetch to `/api/auth/token`. Caches token in memory with 10-minute TTL and 30-second expiry clock skew. Exposes `clearClientJwtToken()`, `getClientAuthHeaders(customHeaders)`, and `clientAuthFetch(url, init)`.
+     - [`src/lib/auth-token-server.ts`](src/lib/auth-token-server.ts): Uses `auth.api.getToken({ headers: await headers() })` directly on Node/RSC runtime. Exposes `getServerAuthHeaders(customHeaders)` and `serverAuthFetch(url, init)`.
+     - [`src/lib/auth-token.ts`](src/lib/auth-token.ts): Client-safe barrel export.
+- **Outcome:** Adopted Option 3. Attached `getClientAuthHeaders()` into all private endpoints (`POST /api/studios`, `DELETE /api/studios/:id`, `POST /api/bookings`, `PATCH /api/bookings/:id`, `GET /api/users/me/studios`, and `GET /api/users/me/bookings`). Wired `clearClientJwtToken()` to `signOut()` across Navbar and Profile page.
+
+
 ## 2026-11-15: Architecture of My Listings & My Bookings Management Views
 - **Context:** Need dedicated, production-grade management experiences for space hosts (`/my-listings`) and creators (`/my-bookings`) aligned with existing design system (Syne headings, borderless dark mode, solid semantic neutral tokens, corner-rounded `rounded-lg`/`rounded-2xl`, responsive mobile bottom sheets).
 - **Alternatives Considered:**

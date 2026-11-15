@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { getTokenFromClient } from '@/lib/getTokenFromClient';
 import type { Studio } from '@/types';
 
 interface DeleteStudioDialogProps {
@@ -33,8 +34,12 @@ export function DeleteStudioDialog({ studio, isOpen, onClose, onDeleted }: Delet
 			const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 			if (apiUrl) {
+				const token = await getTokenFromClient();
 				const res = await fetch(`${apiUrl}/api/studios/${studio._id}`, {
 					method: 'DELETE',
+					headers: {
+						authorization: `Bearer ${token}`,
+					},
 				});
 
 				if (!res.ok) {

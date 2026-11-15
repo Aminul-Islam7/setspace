@@ -13,6 +13,7 @@ import type { BookedSlot, CreateBookingPayload, Studio, StudioAvailabilityRespon
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useSession } from '@/lib/auth-client';
+import { getTokenFromClient } from '@/lib/getTokenFromClient';
 
 export interface StudioBookingDialogProps {
 	studio: Studio;
@@ -297,9 +298,13 @@ export function StudioBookingDialog({ studio, trigger }: StudioBookingDialogProp
 		};
 
 		try {
+			const token = await getTokenFromClient();
 			const res = await fetch(`${apiUrl}/api/bookings`, {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					'Content-Type': 'application/json',
+					authorization: `Bearer ${token}`,
+				},
 				body: JSON.stringify(payload),
 			});
 

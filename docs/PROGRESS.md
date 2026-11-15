@@ -2,6 +2,63 @@
 
 Record daily or milestone progress entries. Keep concise and chronological.
 
+## 2026-11-15: Direct Instructor-Style JWT Retrieval (`getTokenFromClient` & `getTokenFromServer`)
+- **What Changed:**
+  1. Replaced complex token caching wrappers with direct instructor pattern:
+     - [`src/lib/getTokenFromClient.ts`](src/lib/getTokenFromClient.ts): Straightforward `await authClient.token()` returning `data?.token`.
+     - [`src/lib/getTokenFromServer.ts`](src/lib/getTokenFromServer.ts): Straightforward `await auth.api.getToken({ headers: await headers() })` returning `jwtToken?.token`.
+  2. Applied `const token = await getTokenFromClient()` with `authorization: `Bearer ${token}`` directly at all private API fetch calls:
+     - [`src/components/studios/create/create-studio-form.tsx`](src/components/studios/create/create-studio-form.tsx)
+     - [`src/components/listings/delete-studio-dialog.tsx`](src/components/listings/delete-studio-dialog.tsx)
+     - [`src/components/studios/studio-booking-dialog.tsx`](src/components/studios/studio-booking-dialog.tsx)
+     - [`src/components/bookings/cancel-booking-dialog.tsx`](src/components/bookings/cancel-booking-dialog.tsx)
+     - [`src/components/listings/my-listings-view.tsx`](src/components/listings/my-listings-view.tsx)
+     - [`src/components/bookings/my-bookings-view.tsx`](src/components/bookings/my-bookings-view.tsx)
+  3. Cleaned up extraneous signout cache purges from [`src/components/layout/navbar.tsx`](src/components/layout/navbar.tsx) and [`src/app/profile/page.tsx`](src/app/profile/page.tsx).
+- **Files Touched:**
+  - `src/lib/getTokenFromClient.ts`
+  - `src/lib/getTokenFromServer.ts`
+  - `src/components/studios/create/create-studio-form.tsx`
+  - `src/components/listings/delete-studio-dialog.tsx`
+  - `src/components/studios/studio-booking-dialog.tsx`
+  - `src/components/bookings/cancel-booking-dialog.tsx`
+  - `src/components/listings/my-listings-view.tsx`
+  - `src/components/bookings/my-bookings-view.tsx`
+  - `src/components/layout/navbar.tsx`
+  - `src/app/profile/page.tsx`
+  - `docs/PROGRESS.md`
+  - `docs/DECISIONS.md`
+
+## 2026-11-15: Modular JWT Retrieval & Bearer Authorization Headers Across App
+- **What Changed:**
+  1. Created modular JWT token utilities:
+     - [`src/lib/auth-token-client.ts`](src/lib/auth-token-client.ts): Client-side JWT fetcher hitting `/api/auth/token` with 10-minute in-memory caching and 30s expiry skew buffer, `clearClientJwtToken()`, `getClientAuthHeaders()`, and `clientAuthFetch()`.
+     - [`src/lib/auth-token-server.ts`](src/lib/auth-token-server.ts): Server-side JWT helper querying `auth.api.getToken({ headers: await headers() })`, `getServerAuthHeaders()`, and `serverAuthFetch()`.
+     - [`src/lib/auth-token.ts`](src/lib/auth-token.ts): Client-safe barrel export re-exporting client helpers.
+  2. Injected Bearer JWT Authorization headers into all private fetch call sites:
+     - [`src/components/studios/create/create-studio-form.tsx`](src/components/studios/create/create-studio-form.tsx): `POST /api/studios`.
+     - [`src/components/listings/delete-studio-dialog.tsx`](src/components/listings/delete-studio-dialog.tsx): `DELETE /api/studios/:id`.
+     - [`src/components/studios/studio-booking-dialog.tsx`](src/components/studios/studio-booking-dialog.tsx): `POST /api/bookings`.
+     - [`src/components/bookings/cancel-booking-dialog.tsx`](src/components/bookings/cancel-booking-dialog.tsx): `PATCH /api/bookings/:id` & `/api/bookings/:id/status`.
+     - [`src/components/listings/my-listings-view.tsx`](src/components/listings/my-listings-view.tsx): `GET /api/users/me/studios`.
+     - [`src/components/bookings/my-bookings-view.tsx`](src/components/bookings/my-bookings-view.tsx): `GET /api/users/me/bookings`.
+  3. Hooked `clearClientJwtToken()` to user sign-out handlers in [`src/components/layout/navbar.tsx`](src/components/layout/navbar.tsx) and [`src/app/profile/page.tsx`](src/app/profile/page.tsx).
+- **Files Touched:**
+  - `src/lib/auth-token-client.ts`
+  - `src/lib/auth-token-server.ts`
+  - `src/lib/auth-token.ts`
+  - `src/components/studios/create/create-studio-form.tsx`
+  - `src/components/listings/delete-studio-dialog.tsx`
+  - `src/components/studios/studio-booking-dialog.tsx`
+  - `src/components/bookings/cancel-booking-dialog.tsx`
+  - `src/components/listings/my-listings-view.tsx`
+  - `src/components/bookings/my-bookings-view.tsx`
+  - `src/components/layout/navbar.tsx`
+  - `src/app/profile/page.tsx`
+  - `docs/PROGRESS.md`
+  - `docs/DECISIONS.md`
+
+
 ## 2026-11-15: Streamline My Listings & My Bookings (Remove Stat Cards, Clean Headers & Update Skeletons)
 - **What Changed:**
   1. Updated [`src/app/my-listings/page.tsx`](src/app/my-listings/page.tsx) & [`src/app/my-listings/loading.tsx`](src/app/my-listings/loading.tsx):

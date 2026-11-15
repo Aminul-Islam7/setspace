@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { getTokenFromClient } from '@/lib/getTokenFromClient';
 import type { Booking } from '@/types';
 
 interface CancelBookingDialogProps {
@@ -33,10 +34,16 @@ export function CancelBookingDialog({ booking, isOpen, onClose, onCancelled }: C
 			const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 			if (apiUrl) {
+				const token = await getTokenFromClient();
+				const headers = {
+					'Content-Type': 'application/json',
+					authorization: `Bearer ${token}`,
+				};
+
 				// Call status update endpoint
 				const res = await fetch(`${apiUrl}/api/bookings/${booking._id}`, {
 					method: 'PATCH',
-					headers: { 'Content-Type': 'application/json' },
+					headers,
 					body: JSON.stringify({ status: 'Cancelled' }),
 				});
 
@@ -44,7 +51,7 @@ export function CancelBookingDialog({ booking, isOpen, onClose, onCancelled }: C
 					// Fallback to explicit status route
 					const fallbackRes = await fetch(`${apiUrl}/api/bookings/${booking._id}/status`, {
 						method: 'PATCH',
-						headers: { 'Content-Type': 'application/json' },
+						headers,
 						body: JSON.stringify({ status: 'Cancelled' }),
 					});
 
