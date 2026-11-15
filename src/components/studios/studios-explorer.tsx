@@ -266,21 +266,21 @@ export function StudiosExplorer() {
 				<div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
 					{/* Search Bar */}
 					<form onSubmit={handleSearchSubmit} className="relative flex-1 flex items-center">
-						<div className="relative flex-1 flex items-center bg-secondary/80 border border-border/40 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/30 transition-all overflow-hidden rounded-full">
+						<div className="relative flex-1 flex items-center bg-secondary dark:bg-card focus-within:ring-2 focus-within:ring-primary/20 transition-all overflow-hidden rounded-full">
 							<Input type="text" value={searchInput} onChange={e => setSearchInput(e.target.value)} placeholder="Search by title, city, or equipment..." className="h-10 sm:h-11 border-0 bg-transparent px-4 pr-10 text-sm focus-visible:ring-0 shadow-none rounded-none" aria-label="Search studios" />
 							{searchInput && (
 								<Button type="button" variant="ghost" size="icon-xs" onClick={handleClearSearch} className="absolute right-16 text-muted-foreground hover:text-foreground hover:bg-transparent" aria-label="Clear search query">
 									<X className="size-5" />
 								</Button>
 							)}
-							<Button flat3d type="submit" variant="ghost" shape="none" className="h-10 sm:h-11 px-4 sm:px-5 bg-foreground/5 hover:bg-foreground/10 border-0 border-l border-border/40 text-muted-foreground hover:text-foreground shrink-0 rounded-none shadow-none" aria-label="Submit search">
+							<Button flat3d type="submit" variant="ghost" shape="none" className="h-10 sm:h-11 px-4 sm:px-5 bg-foreground/5 hover:bg-foreground/10 border-0 text-muted-foreground hover:text-foreground shrink-0 rounded-none shadow-none" aria-label="Submit search">
 								<Search className="size-4" />
 							</Button>
 						</div>
 					</form>
 
 					{/* Filter Toggle */}
-					<Button type="button" variant="secondary" flat3d onClick={() => setIsFilterOpen(prev => !prev)} className="h-10 sm:h-11 px-4 gap-2 shrink-0 text-xs sm:text-sm font-medium border border-border/40 rounded-full" aria-expanded={isFilterOpen}>
+					<Button type="button" variant="secondary" flat3d onClick={() => setIsFilterOpen(prev => !prev)} className="h-10 sm:h-11 px-4 gap-2 shrink-0 text-xs sm:text-sm font-medium rounded-full" aria-expanded={isFilterOpen}>
 						<SlidersHorizontal className="size-3.5 sm:size-4" />
 						<span className="truncate max-w-45 sm:max-w-none">
 							{selectedCategory === 'All' ? 'All Spaces' : selectedCategory} / {currentSortLabel}
@@ -291,7 +291,7 @@ export function StudiosExplorer() {
 
 				{/* Filter Panel */}
 				{isFilterOpen && (
-					<div className="rounded-2xl bg-secondary/35 dark:bg-card/25 p-4 sm:p-6 space-y-5 border border-border/40 transition-all">
+					<div className="rounded-2xl bg-secondary dark:bg-card p-4 sm:p-6 space-y-5 transition-all">
 						{/* Categories */}
 						<div className="space-y-2">
 							<span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Category</span>
@@ -299,7 +299,7 @@ export function StudiosExplorer() {
 								{CATEGORIES.map(category => {
 									const isActive = selectedCategory === category;
 									return (
-										<Button key={category} type="button" flat3d size="sm" variant="secondary" onClick={() => handleCategoryChange(category)} className={cn('text-xs sm:text-sm font-medium transition-colors', isActive ? 'bg-foreground text-background hover:bg-foreground/90 font-semibold shadow-xs' : 'bg-secondary text-secondary-foreground hover:bg-secondary/80')}>
+										<Button key={category} type="button" flat3d size="sm" variant="secondary" onClick={() => handleCategoryChange(category)} className={cn('text-xs sm:text-sm font-medium transition-colors', isActive ? 'bg-foreground text-background hover:bg-foreground/90 font-semibold shadow-xs' : 'bg-secondary text-secondary-foreground hover:bg-muted')}>
 											{category === 'All' ? 'All' : category}
 										</Button>
 									);
@@ -308,7 +308,7 @@ export function StudiosExplorer() {
 						</div>
 
 						{/* Sort & Price */}
-						<div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pt-2 border-t border-border/40">
+						<div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pt-2 border-t border-border/20">
 							{/* Sort Options */}
 							<div className="space-y-2">
 								<span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sort By</span>
@@ -316,7 +316,7 @@ export function StudiosExplorer() {
 									{SORT_OPTIONS.map(opt => {
 										const isActive = selectedSort === opt.id;
 										return (
-											<Button key={opt.id} type="button" flat3d size="sm" variant="secondary" onClick={() => handleSortChange(opt.id)} className={cn('text-xs sm:text-sm font-medium transition-colors', isActive ? 'bg-foreground text-background hover:bg-foreground/90 font-semibold shadow-xs' : 'bg-secondary text-secondary-foreground hover:bg-secondary/80')}>
+											<Button key={opt.id} type="button" flat3d size="sm" variant="secondary" onClick={() => handleSortChange(opt.id)} className={cn('text-xs sm:text-sm font-medium transition-colors', isActive ? 'bg-foreground text-background hover:bg-foreground/90 font-semibold shadow-xs' : 'bg-secondary text-secondary-foreground hover:bg-muted')}>
 												{opt.label}
 											</Button>
 										);
@@ -391,8 +391,8 @@ export function StudiosExplorer() {
 				</div>
 			) : (
 				/* Empty State */
-				<div className="rounded-3xl bg-secondary/35 dark:bg-card/25 p-12 sm:p-16 text-center space-y-4 max-w-xl mx-auto">
-					<div className="size-14 rounded-2xl bg-secondary/70 dark:bg-card mx-auto flex items-center justify-center text-muted-foreground">
+				<div className="rounded-3xl bg-secondary dark:bg-card p-12 sm:p-16 text-center space-y-4 max-w-xl mx-auto">
+					<div className="size-14 rounded-2xl bg-card dark:bg-secondary mx-auto flex items-center justify-center text-muted-foreground">
 						<SlidersHorizontal className="size-6" />
 					</div>
 					<div className="space-y-1.5">

@@ -22,7 +22,7 @@ const STUDIO_CATEGORIES = [
 
 const PLATFORM_LINKS = [
 	{ label: 'Explore Studios', href: '/studios' },
-	{ label: 'Host Your Space', href: '/add-studio' },
+	{ label: 'Host Your Space', href: '/studios/create' },
 	{ label: 'How It Works', href: '/#how-it-works' },
 	{ label: 'Host Guarantee', href: '/#host-guarantee' },
 	{ label: 'Verified Spaces', href: '/studios?sort=rankingScore' },
@@ -63,7 +63,7 @@ export function Footer() {
 	};
 
 	return (
-		<footer className="w-full bg-secondary/35 dark:bg-card/25 text-foreground transition-colors" aria-label="SetSpace Footer">
+		<footer className="w-full bg-secondary dark:bg-card text-foreground transition-colors" aria-label="SetSpace Footer">
 			<div className="container py-12 sm:py-16 lg:py-20 space-y-12 sm:space-y-16">
 				{/* Brand & Newsletter */}
 				<div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
@@ -80,7 +80,7 @@ export function Footer() {
 							{SOCIAL_LINKS.map(item => {
 								const Icon = item.icon;
 								return (
-									<a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer" className="size-9 rounded-full bg-secondary/70 dark:bg-card hover:bg-secondary dark:hover:bg-card/80 text-muted-foreground hover:text-foreground inline-flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label={item.label}>
+									<a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer" className="size-9 rounded-full bg-card dark:bg-secondary text-muted-foreground hover:text-foreground inline-flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label={item.label}>
 										<Icon className="size-4" />
 									</a>
 								);
@@ -90,7 +90,7 @@ export function Footer() {
 
 					{/* Newsletter */}
 					<div className="lg:col-span-7 flex flex-col justify-center">
-						<div className="rounded-2xl p-6 sm:p-8 bg-card text-card-foreground shadow-xs space-y-4">
+						<div className="rounded-2xl p-6 sm:p-8 bg-card dark:bg-secondary text-card-foreground shadow-xs space-y-4">
 							<div className="space-y-1.5">
 								<h3 className="font-display text-lg sm:text-xl font-bold tracking-tight text-foreground">Studio Dispatch (Newsletter)</h3>
 								<p className="text-xs sm:text-sm text-muted-foreground font-body leading-relaxed">Weekly curated space drops, host insights, and hourly rate spotlights for creative teams.</p>
@@ -105,7 +105,7 @@ export function Footer() {
 								</div>
 							) : (
 								<form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2.5">
-									<Input name="email" type="email" required placeholder="creator@production.com" className="h-10 text-sm bg-muted dark:bg-background/60" aria-label="Email address for newsletter" />
+									<Input name="email" type="email" required placeholder="creator@production.com" className="h-10 text-sm bg-muted dark:bg-card" aria-label="Email address for newsletter" />
 									<Button type="submit" size="lg" className="sm:shrink-0 gap-1.5">
 										<span>Subscribe</span>
 										<ArrowRight className="size-4" />

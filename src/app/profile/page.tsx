@@ -179,7 +179,7 @@ export default function ProfilePage() {
 			<div className="container py-8 sm:py-12">
 				<div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
 					<div className="hidden md:block md:col-span-4 lg:col-span-3 space-y-4">
-						<div className="rounded-2xl bg-secondary/50 p-5 space-y-4 animate-pulse shadow-sm dark:shadow-none">
+						<div className="rounded-2xl bg-secondary p-5 space-y-4 animate-pulse">
 							<div className="flex items-center gap-3">
 								<Skeleton className="size-12 rounded-full" />
 								<div className="space-y-1.5 flex-1">
@@ -196,8 +196,8 @@ export default function ProfilePage() {
 					</div>
 
 					<div className="w-full md:col-span-8 lg:col-span-9 space-y-6">
-						<div className="flex md:hidden h-10 w-full rounded-xl bg-secondary/50 animate-pulse" />
-						<div className="rounded-2xl bg-secondary/50 p-6 sm:p-8 space-y-6 animate-pulse shadow-sm dark:shadow-none">
+						<div className="flex md:hidden h-10 w-full rounded-xl bg-secondary animate-pulse" />
+						<div className="rounded-2xl bg-secondary p-6 sm:p-8 space-y-6 animate-pulse">
 							<div className="flex items-center gap-5">
 								<Skeleton className="size-24 rounded-full" />
 								<div className="space-y-2 flex-1">
@@ -206,7 +206,7 @@ export default function ProfilePage() {
 								</div>
 							</div>
 						</div>
-						<div className="rounded-2xl bg-secondary/50 p-6 sm:p-8 space-y-4 animate-pulse shadow-sm dark:shadow-none">
+						<div className="rounded-2xl bg-secondary p-6 sm:p-8 space-y-4 animate-pulse">
 							<Skeleton className="h-6 w-40 rounded" />
 							<Skeleton className="h-10 w-full rounded-lg" />
 							<Skeleton className="h-10 w-full rounded-lg" />
@@ -221,7 +221,7 @@ export default function ProfilePage() {
 	if (!user) {
 		return (
 			<div className="container py-16 max-w-md text-center space-y-6">
-				<div className="size-16 mx-auto rounded-full bg-secondary/70 flex items-center justify-center text-muted-foreground">
+				<div className="size-16 mx-auto rounded-full bg-secondary flex items-center justify-center text-muted-foreground">
 					<UserIcon className="size-8" />
 				</div>
 				<div className="space-y-2">
@@ -241,7 +241,7 @@ export default function ProfilePage() {
 				{/* Left Sidebar (Desktop) */}
 				<aside className="hidden md:block md:col-span-4 lg:col-span-3 space-y-4 md:sticky md:top-24">
 					{/* Sidebar Card */}
-					<div className="rounded-2xl bg-secondary/60 p-4 sm:p-5 space-y-5 shadow-sm dark:shadow-none">
+					<div className="rounded-2xl bg-secondary p-4 sm:p-5 space-y-5">
 						{/* User Summary */}
 						<div className="flex items-center gap-3">
 							<Avatar className="size-12 shrink-0">
@@ -307,13 +307,13 @@ export default function ProfilePage() {
 				{/* Main Content */}
 				<main className="w-full md:col-span-8 lg:col-span-9 space-y-6 sm:space-y-8">
 					{/* Mobile Segmented Tab Switcher */}
-					<div className="flex md:hidden items-center p-1 rounded-xl bg-secondary/80 gap-1 shadow-sm dark:shadow-none">
-						<button type="button" onClick={() => setActiveSection('profile')} className={cn('flex-1 flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer', activeSection === 'profile' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground')}>
+					<div className="flex md:hidden items-center p-1 rounded-xl bg-secondary gap-1">
+						<button type="button" onClick={() => setActiveSection('profile')} className={cn('flex-1 flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer', activeSection === 'profile' ? 'bg-background text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground')}>
 							<UserIcon className="size-3.5" />
 							<span>Account Settings</span>
 						</button>
 
-						<button type="button" onClick={() => setActiveSection('security')} className={cn('flex-1 flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer', activeSection === 'security' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground')}>
+						<button type="button" onClick={() => setActiveSection('security')} className={cn('flex-1 flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer', activeSection === 'security' ? 'bg-background text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground')}>
 							<KeyRound className="size-3.5" />
 							<span>Update Password</span>
 						</button>
@@ -326,7 +326,7 @@ export default function ProfilePage() {
 							</div>
 
 							{/* Profile Card */}
-							<div className="rounded-2xl bg-secondary/60 p-6 sm:p-8 space-y-8 shadow-sm dark:shadow-none">
+							<div className="rounded-2xl bg-secondary p-6 sm:p-8 space-y-8">
 								{/* Avatar & Basic Info */}
 								<div className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
 									{/* Avatar with Camera Hover Overlay */}
@@ -355,9 +355,9 @@ export default function ProfilePage() {
 										</Avatar>
 
 										{/* Camera Hover Overlay */}
-										<div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-200">
-											<Camera className="size-6 text-white" />
-											<span className="text-[11px] font-semibold text-white tracking-wide mt-1">Change</span>
+										<div className="absolute inset-0 bg-background/80 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-200">
+											<Camera className="size-6 text-foreground" />
+											<span className="text-[11px] font-semibold text-foreground tracking-wide mt-1">Change</span>
 										</div>
 									</div>
 
@@ -379,7 +379,7 @@ export default function ProfilePage() {
 
 									<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 										{/* Full Name Row */}
-										<div className="rounded-xl bg-background dark:bg-background/50 p-4 space-y-1.5 flex items-center justify-between">
+										<div className="rounded-xl bg-card p-4 space-y-1.5 flex items-center justify-between">
 											<div className="min-w-0 flex-1 pr-3">
 												<p className="text-xs font-medium text-muted-foreground">Display Name</p>
 												<p className="text-sm font-semibold text-foreground truncate">{user.name || 'Not set'}</p>
@@ -400,12 +400,12 @@ export default function ProfilePage() {
 										</div>
 
 										{/* Email Row */}
-										<div className="rounded-xl  bg-background dark:bg-background/50 p-4 space-y-1.5 flex items-center justify-between">
+										<div className="rounded-xl bg-card p-4 space-y-1.5 flex items-center justify-between">
 											<div className="min-w-0 flex-1">
 												<p className="text-xs font-medium text-muted-foreground">Email Address</p>
 												<p className="text-sm font-semibold text-foreground truncate">{user.email}</p>
 											</div>
-											<span className="text-xs px-2 py-0.5 rounded-full bg-foreground/10 text-muted-foreground font-medium shrink-0">Primary</span>
+											<span className="text-xs px-2.5 py-0.5 rounded-full bg-muted text-foreground font-medium shrink-0">Primary</span>
 										</div>
 									</div>
 								</div>
@@ -419,7 +419,7 @@ export default function ProfilePage() {
 							</div>
 
 							{/* Password Form Card */}
-							<div className="rounded-2xl bg-secondary/60 p-6 sm:p-8 space-y-6 shadow-sm dark:shadow-none">
+							<div className="rounded-2xl bg-secondary p-6 sm:p-8 space-y-6">
 								{/* In-UI Status Message */}
 								{passwordSuccess && (
 									<div role="status" className="flex items-center gap-2.5 p-3.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-sm font-medium">
@@ -442,7 +442,7 @@ export default function ProfilePage() {
 											Current Password
 										</label>
 										<div className="relative">
-											<Input id="currentPassword" type={showCurrentPassword ? 'text' : 'password'} value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} placeholder="Enter your current password" className="pr-10  bg-background dark:bg-background/50" required />
+											<Input id="currentPassword" type={showCurrentPassword ? 'text' : 'password'} value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} placeholder="Enter your current password" className="pr-10" required />
 											<button type="button" onClick={() => setShowCurrentPassword(!showCurrentPassword)} aria-label={showCurrentPassword ? 'Hide current password' : 'Show current password'} className="absolute right-2.5 inset-y-0 my-auto active:translate-y-0 size-7 flex items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer rounded-md transition-colors">
 												{showCurrentPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
 											</button>
@@ -455,7 +455,7 @@ export default function ProfilePage() {
 											New Password
 										</label>
 										<div className="relative">
-											<Input id="newPassword" type={showNewPassword ? 'text' : 'password'} value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="At least 6 characters" className="pr-10  bg-background dark:bg-background/50" required />
+											<Input id="newPassword" type={showNewPassword ? 'text' : 'password'} value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="At least 6 characters" className="pr-10" required />
 											<button type="button" onClick={() => setShowNewPassword(!showNewPassword)} aria-label={showNewPassword ? 'Hide new password' : 'Show new password'} className="absolute right-2.5 inset-y-0 my-auto active:translate-y-0 size-7 flex items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer rounded-md transition-colors">
 												{showNewPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
 											</button>
@@ -469,7 +469,7 @@ export default function ProfilePage() {
 											Confirm New Password
 										</label>
 										<div className="relative">
-											<Input id="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Repeat your new password" className="pr-10  bg-background dark:bg-background/50" required />
+											<Input id="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Repeat your new password" className="pr-10" required />
 											<button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'} className="absolute right-2.5 inset-y-0 my-auto active:translate-y-0 size-7 flex items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer rounded-md transition-colors">
 												{showConfirmPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
 											</button>
@@ -492,7 +492,7 @@ export default function ProfilePage() {
 					)}
 
 					{/* Mobile Quick Links & Sign Out */}
-					<div className="block md:hidden rounded-2xl bg-secondary/60 p-4 space-y-3 shadow-sm dark:shadow-none">
+					<div className="block md:hidden rounded-2xl bg-secondary p-4 space-y-3">
 						<p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground px-1">Quick Navigation</p>
 						<div className="space-y-1">
 							<Link href="/my-bookings" className="flex items-center gap-3 w-full px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-foreground/5 rounded-lg transition-colors">

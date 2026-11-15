@@ -21,7 +21,7 @@ export default function NotFound() {
 					<div className="flex size-20 sm:size-24 items-center justify-center text-primary">
 						<Clapperboard className="size-16 sm:size-20" />
 					</div>
-					<span className="inline-flex items-center gap-1.5 rounded-full bg-secondary/70 px-3.5 py-1 text-xs sm:text-sm font-semibold text-muted-foreground">404 &bull; STUDIO NOT FOUND</span>
+					<span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3.5 py-1 text-xs sm:text-sm font-semibold text-muted-foreground">404 &bull; STUDIO NOT FOUND</span>
 				</div>
 
 				{/* Headings */}

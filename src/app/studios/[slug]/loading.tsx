@@ -40,7 +40,7 @@ export default function StudioLoading() {
 					</div>
 
 					{/* Pricing & Booking */}
-					<div className="rounded-2xl sm:rounded-3xl bg-secondary/70 dark:bg-card p-5 sm:p-6">
+					<div className="rounded-2xl sm:rounded-3xl bg-secondary dark:bg-card p-5 sm:p-6">
 						<div className="grid grid-cols-2 sm:grid-cols-4 gap-4 items-center">
 							{Array.from({ length: 3 }).map((_, i) => (
 								<div key={i} className="space-y-1.5">
@@ -82,7 +82,7 @@ export default function StudioLoading() {
 					</div>
 
 					{/* Reviews */}
-					<div className="space-y-4 pt-6 border-t border-border/40">
+					<div className="space-y-4 pt-6 border-t border-border/20">
 						<div className="h-7 w-40 rounded bg-muted" />
 						<div className="space-y-3">
 							{Array.from({ length: 2 }).map((_, i) => (

@@ -30,7 +30,7 @@ export default function LoginPage() {
 				],
 			}}
 		>
-			<Suspense fallback={<div className="h-64 animate-pulse rounded-lg bg-secondary/50" />}>
+			<Suspense fallback={<div className="h-64 animate-pulse rounded-lg bg-secondary" />}>
 				<LoginForm />
 			</Suspense>
 		</AuthSplitLayout>

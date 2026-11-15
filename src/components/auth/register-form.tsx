@@ -27,6 +27,7 @@ export function RegisterForm() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const callbackUrl = searchParams.get('callbackUrl') || '/';
+	const loginHref = callbackUrl && callbackUrl !== '/' ? `/login?callbackUrl=${encodeURIComponent(callbackUrl)}` : '/login';
 
 	const [showPassword, setShowPassword] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -152,7 +153,7 @@ export function RegisterForm() {
 			{/* Switch to Login */}
 			<p className="text-center text-sm text-muted-foreground">
 				Already have an account?{' '}
-				<Link href="/login" className="font-semibold text-primary hover:underline underline-offset-4">
+				<Link href={loginHref} className="font-semibold text-primary hover:underline underline-offset-4">
 					Sign in
 				</Link>
 			</p>

@@ -43,9 +43,9 @@ export function HostGuaranteeSection() {
 					const Icon = item.icon;
 
 					return (
-						<div key={item.title} className="rounded-2xl bg-secondary/70 dark:bg-card p-6 flex flex-col gap-3">
+						<div key={item.title} className="rounded-2xl bg-secondary dark:bg-card p-6 flex flex-col gap-3">
 							<div className="flex items-center gap-3">
-								<div className="size-9 rounded-xl bg-foreground/5 dark:bg-foreground/10 text-muted-foreground flex items-center justify-center shrink-0">
+								<div className="size-9 rounded-xl bg-card dark:bg-secondary text-foreground flex items-center justify-center shrink-0">
 									<Icon className="size-5" />
 								</div>
 								<h3 className="text-lg sm:text-xl font-semibold text-foreground leading-snug">{item.title}</h3>

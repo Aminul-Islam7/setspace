@@ -342,7 +342,7 @@ export function StudioBookingDialog({ studio, trigger }: StudioBookingDialogProp
 
 				<form onSubmit={handleSubmit} className="space-y-5 pt-1">
 					{/* Authenticated User Badge */}
-					<div className="flex items-center gap-3 p-3 rounded-xl bg-secondary/50 dark:bg-muted/40">
+					<div className="flex items-center gap-3 p-3 rounded-xl bg-secondary dark:bg-card">
 						<Avatar className="size-9 shrink-0">
 							{user?.image ? <AvatarImage src={user.image} alt={user.name || 'User'} /> : null}
 							<AvatarFallback className="text-xs font-semibold">{user?.name ? user.name.slice(0, 2).toUpperCase() : <User className="size-4" />}</AvatarFallback>
@@ -382,7 +382,7 @@ export function StudioBookingDialog({ studio, trigger }: StudioBookingDialogProp
 					</div>
 
 					{/* Availability Slots Grid */}
-					<div className="space-y-2.5 rounded-xl bg-secondary/40 p-3.5">
+					<div className="space-y-2.5 rounded-xl bg-secondary p-3.5">
 						<div className="flex flex-wrap items-center justify-between gap-2 text-xs">
 							<span className="font-semibold text-foreground flex items-center gap-1.5">
 								<Clock className="size-3.5 text-muted-foreground" />
@@ -391,15 +391,15 @@ export function StudioBookingDialog({ studio, trigger }: StudioBookingDialogProp
 							{!isDateTooEarly && !slotError && (
 								<div className="flex items-center gap-3 text-[11px] text-muted-foreground">
 									<span className="flex items-center gap-1.5">
-										<span className="size-2.5 rounded-xs bg-card ring-1 ring-border/60" />
+										<span className="size-2.5 rounded-xs bg-card" />
 										<span>Free</span>
 									</span>
 									<span className="flex items-center gap-1.5">
-										<span className="size-2.5 rounded-xs bg-destructive/20 ring-1 ring-destructive/30" />
+										<span className="size-2.5 rounded-xs bg-muted" />
 										<span>Booked</span>
 									</span>
 									<span className="flex items-center gap-1.5">
-										<span className="size-2.5 rounded-xs bg-primary ring-1 ring-primary" />
+										<span className="size-2.5 rounded-xs bg-primary" />
 										<span>Selected</span>
 									</span>
 								</div>
@@ -407,12 +407,12 @@ export function StudioBookingDialog({ studio, trigger }: StudioBookingDialogProp
 						</div>
 
 						{isDateTooEarly ? (
-							<div role="alert" className="p-3.5 rounded-xl bg-destructive/10 text-destructive text-xs flex items-center gap-2 font-medium">
+							<div role="alert" className="p-3.5 rounded-xl bg-destructive/10 text-destructive text-xs flex items-center gap-2 font-medium border border-destructive/20">
 								<AlertCircle className="size-4 shrink-0" />
 								<span>Bookings are only available from tomorrow onwards. Current date or past dates cannot be reserved.</span>
 							</div>
 						) : slotError ? (
-							<div role="alert" className="p-3.5 rounded-xl bg-destructive/10 text-destructive text-xs space-y-1">
+							<div role="alert" className="p-3.5 rounded-xl bg-destructive/10 text-destructive text-xs space-y-1 border border-destructive/20">
 								<div className="flex items-center gap-2 font-semibold">
 									<AlertCircle className="size-4 shrink-0" />
 									<span>Live availability unavailable</span>
@@ -461,10 +461,10 @@ export function StudioBookingDialog({ studio, trigger }: StudioBookingDialogProp
 												className={cn(
 													'flex flex-col items-center justify-center py-2 px-1 rounded-lg text-[11px] font-medium transition-all duration-150',
 													booked
-														? 'bg-destructive/15 text-destructive/80 ring-1 ring-destructive/25 cursor-not-allowed opacity-90'
+														? 'bg-muted text-muted-foreground cursor-not-allowed'
 														: isSelected
-															? 'bg-primary text-primary-foreground font-semibold shadow-xs ring-1 ring-primary cursor-pointer'
-															: 'bg-card text-foreground ring-1 ring-border/50 hover:bg-muted/70 cursor-pointer'
+															? 'bg-primary text-primary-foreground font-semibold shadow-xs cursor-pointer'
+															: 'bg-card text-foreground hover:bg-muted cursor-pointer border border-border/50 dark:border-0'
 												)}
 												title={
 													booked
@@ -475,7 +475,7 @@ export function StudioBookingDialog({ studio, trigger }: StudioBookingDialogProp
 												}
 											>
 												<span>{formatTime12h(hour).replace(':00', '')}</span>
-												<span className="text-[9px] opacity-80 font-normal">{label}</span>
+												<span className="text-[9px] font-normal">{label}</span>
 											</button>
 										);
 									})}
@@ -510,7 +510,7 @@ export function StudioBookingDialog({ studio, trigger }: StudioBookingDialogProp
 					</div>
 
 					{/* Time Window Summary */}
-					<div className="flex items-center justify-between p-3.5 rounded-xl bg-secondary/50 dark:bg-muted/40">
+					<div className="flex items-center justify-between p-3.5 rounded-xl bg-card border border-border/50 dark:border-0">
 						<div className="space-y-0.5 min-w-0">
 							<p className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
 								<span>Selected Window</span>
@@ -559,7 +559,7 @@ export function StudioBookingDialog({ studio, trigger }: StudioBookingDialogProp
 					)}
 
 					{/* Price Breakdown */}
-					<div className="rounded-xl bg-secondary/70 dark:bg-muted/40 p-3.5 space-y-2 text-xs">
+					<div className="rounded-xl bg-secondary dark:bg-card p-3.5 space-y-2 text-xs">
 						<div className="flex justify-between text-muted-foreground">
 							<span>
 								${studio.hourlyRate} × {totalHours} hour{totalHours !== 1 ? 's' : ''}

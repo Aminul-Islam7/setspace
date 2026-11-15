@@ -2,6 +2,92 @@
 
 Record daily or milestone progress entries. Keep concise and chronological.
 
+## 2026-11-15: Gallery & Card Nav Buttons High-Contrast Fix & Preservation of Handcrafted flat-3d
+- **What Changed:**
+  1. Updated [`src/components/studios/studio-gallery.tsx`](src/components/studios/studio-gallery.tsx) & [`src/components/studios/studio-card.tsx`](src/components/studios/studio-card.tsx):
+     - Restored explicit high-contrast white text (`!text-white`) and translucent white background (`!bg-white/20 hover:!bg-white/30`) on photo overlay carousel navigation buttons.
+     - Ensures crisp visibility and strong contrast across both light and dark themes over photographic media and dark gradient overlays.
+  2. Preserved User Custom Styling:
+     - Confirmed and kept user's handcrafted `@utility flat-3d` in [`src/app/globals.css`](src/app/globals.css) completely intact.
+- **Files Touched:**
+  - `src/components/studios/studio-gallery.tsx`
+  - `src/components/studios/studio-card.tsx`
+  - `docs/PROGRESS.md`
+
+
+## 2026-11-15: Footer Newsletter Contrast, StudioCard Reusability & Form Simplification
+- **What Changed:**
+  1. Updated [`src/components/layout/footer.tsx`](src/components/layout/footer.tsx):
+     - Fixed dark mode contrast on newsletter card: changed container from `bg-card` to `bg-card dark:bg-secondary`. Tonal surface elevates cleanly (0.22) above footer base (0.18).
+     - Styled newsletter email input with `bg-muted dark:bg-card` for crisp multi-level contrast.
+  2. Removed Redundant Field Descriptions across Studio Creation Form:
+     - [`src/components/studios/create/studio-basic-details.tsx`](src/components/studios/create/studio-basic-details.tsx): Removed self-explanatory descriptions from Title, Category, Location, and Description.
+     - [`src/components/studios/create/studio-pricing-capacity.tsx`](src/components/studios/create/studio-pricing-capacity.tsx): Removed descriptions from Hourly Rate, Security Deposit, and Max Capacity.
+     - [`src/components/studios/create/studio-media-upload.tsx`](src/components/studios/create/studio-media-upload.tsx): Removed descriptions from Cover Photo and Additional Photos.
+     - [`src/components/studios/create/studio-host-info.tsx`](src/components/studios/create/studio-host-info.tsx): Removed descriptions from Host Name and Host Email.
+  3. Reused Canonical `StudioCard` Component for Live Preview:
+     - [`src/components/studios/studio-card.tsx`](src/components/studios/studio-card.tsx): Added `interactive?: boolean` prop (default `true`) allowing disabled route navigation while preserving carousel swipe/arrows. Added graceful empty photo placeholder fallback.
+     - [`src/components/studios/create/studio-live-preview.tsx`](src/components/studios/create/studio-live-preview.tsx): Eliminated 130 lines of duplicated custom card and carousel markup. Replaced with `<StudioCard studio={previewStudio} interactive={false} />`.
+- **Files Touched:**
+  - `src/components/layout/footer.tsx`
+  - `src/components/studios/studio-card.tsx`
+  - `src/components/studios/create/studio-live-preview.tsx`
+  - `src/components/studios/create/studio-basic-details.tsx`
+  - `src/components/studios/create/studio-pricing-capacity.tsx`
+  - `src/components/studios/create/studio-media-upload.tsx`
+  - `src/components/studios/create/studio-host-info.tsx`
+  - `docs/PROGRESS.md`
+
+## 2026-11-15: Design System Refactoring: Semantic Tokens, Borderless Dark Mode, and Linear Syntax
+- **What Changed:**
+  1. Updated `src/app/globals.css`:
+     - Standardized `:root` and `.dark` with solid, high-contrast OKLCH neutral tokens.
+     - Extracted `@utility text-linear-primary` and refactored `@utility flat-3d` to use semantic neutral `color-mix`.
+  2. Enhanced Form Primitives Contrast:
+     - `src/components/ui/input.tsx`, `textarea.tsx`, `select.tsx`: High-contrast text, clear placeholders, crisp light mode borders (`border-border/60`), and borderless elevated surfaces in dark mode (`dark:border-0 dark:bg-card`).
+  3. Enforced Borderless Dark Mode & Sparing Light Mode Borders:
+     - Removed redundant custom borders across cards, sections, pills, and dialog surfaces (`studio-card`, `studio-gallery`, `studio-booking-dialog`, `create-studio-form` modules, `profile`, `host-guarantee`, `how-it-works`, `studios-explorer`).
+     - Relied on tonal surface shifts (`bg-background` -> `bg-card` -> `bg-secondary` -> `bg-muted`) for visual hierarchy.
+  4. Eliminated Arbitrary Opacity Modifiers & Non-Semantic Colors:
+     - Replaced `/70`, `/60`, `/50`, `/80` background modifiers with solid semantic tokens.
+     - Replaced hardcoded `bg-black/60`, `text-white`, `bg-white/15` with semantic tokens.
+     - Replaced all legacy `bg-gradient-to-*` with modern Tailwind v4 `bg-linear-to-*`.
+  5. Updated Living Documentation:
+     - `AGENTS.md`, `docs/DESIGN.md`, `docs/DECISIONS.md`, `docs/PROGRESS.md`, `docs/TASKS.md`.
+- **Files Touched:**
+  - `src/app/globals.css`
+  - `src/components/ui/input.tsx`
+  - `src/components/ui/textarea.tsx`
+  - `src/components/ui/select.tsx`
+  - `src/components/ui/button.tsx`
+  - `src/components/ui/dialog.tsx`
+  - `src/components/ui/sheet.tsx`
+  - `src/components/studios/studio-card.tsx`
+  - `src/components/studios/studio-gallery.tsx`
+  - `src/components/studios/studio-details.tsx`
+  - `src/components/studios/studio-reviews.tsx`
+  - `src/components/studios/studio-booking-dialog.tsx`
+  - `src/components/studios/studios-explorer.tsx`
+  - `src/components/studios/create/studio-basic-details.tsx`
+  - `src/components/studios/create/studio-pricing-capacity.tsx`
+  - `src/components/studios/create/studio-media-upload.tsx`
+  - `src/components/studios/create/studio-amenities-picker.tsx`
+  - `src/components/studios/create/studio-host-info.tsx`
+  - `src/components/studios/create/studio-live-preview.tsx`
+  - `src/app/profile/page.tsx`
+  - `src/app/not-found.tsx`
+  - `src/app/studios/(explorer)/loading.tsx`
+  - `src/app/studios/[slug]/loading.tsx`
+  - `src/app/(auth)/login/page.tsx`
+  - `src/app/(auth)/register/page.tsx`
+  - `src/components/home/host-guarantee-section.tsx`
+  - `src/components/home/how-it-works-section.tsx`
+  - `src/components/layout/footer.tsx`
+  - `AGENTS.md`
+  - `docs/DESIGN.md`
+  - `docs/DECISIONS.md`
+  - `docs/PROGRESS.md`
+
 ## 2026-11-15: Update Availability Endpoint to /api/bookings/availability
 - **What Changed:**
   1. Updated [`src/components/studios/studio-booking-dialog.tsx`](src/components/studios/studio-booking-dialog.tsx):

@@ -1,7 +1,7 @@
 'use client';
 
 import { Carousel, type CarouselApi, CarouselContent, CarouselItem } from '@/components/ui/carousel';
-import { ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Image as ImageIcon, MapPin } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -17,9 +17,10 @@ export interface StudioCardProps {
 	studio: Studio;
 	className?: string;
 	priority?: boolean;
+	interactive?: boolean;
 }
 
-export function StudioCard({ studio, className, priority = false }: StudioCardProps) {
+export function StudioCard({ studio, className, priority = false, interactive = true }: StudioCardProps) {
 	const router = useRouter();
 	const [api, setApi] = useState<CarouselApi>();
 	const [canScrollPrev, setCanScrollPrev] = useState(false);
@@ -47,6 +48,7 @@ export function StudioCard({ studio, className, priority = false }: StudioCardPr
 	}, [api]);
 
 	const handleCardClick = (e: React.MouseEvent) => {
+		if (!interactive) return;
 		const target = e.target as HTMLElement;
 		if (target.closest('button') || target.closest('a')) {
 			return;
@@ -55,96 +57,103 @@ export function StudioCard({ studio, className, priority = false }: StudioCardPr
 	};
 
 	return (
-		<article onClick={handleCardClick} className={cn('group relative flex flex-col space-y-3 cursor-pointer', className)}>
+		<article onClick={handleCardClick} className={cn('group relative flex flex-col space-y-3', interactive ? 'cursor-pointer' : 'cursor-default', className)}>
 			{/* Media Carousel */}
 			<div className="relative w-full aspect-video overflow-hidden rounded-2xl bg-muted">
-				<Carousel setApi={setApi} opts={{ loop: false }} className="w-full h-full">
-					<CarouselContent className="h-full ml-0">
-						{images.map((src, index) => (
-							<CarouselItem key={index} className="relative w-full h-full pl-0 aspect-video">
-								<Image
-									src={src}
-									alt={studio.title}
-									fill
-									priority={priority && index === 0}
-									sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-									className="object-cover"
-								/>
-							</CarouselItem>
-						))}
-					</CarouselContent>
+				{images.length > 0 ? (
+					<Carousel setApi={setApi} opts={{ loop: false }} className="w-full h-full">
+						<CarouselContent className="h-full ml-0">
+							{images.map((src, index) => (
+								<CarouselItem key={index} className="relative w-full h-full pl-0 aspect-video">
+									<Image
+										src={src}
+										alt={studio.title}
+										fill
+										priority={priority && index === 0}
+										sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+										className="object-cover"
+									/>
+								</CarouselItem>
+							))}
+						</CarouselContent>
 
-					{/* Navigation Arrows with Clickable Gradient Bars */}
-					{hasGallery && images.length > 1 && (
-						<>
-							{canScrollPrev && (
-								<div
-									onClick={e => {
-										e.preventDefault();
-										e.stopPropagation();
-										api?.scrollPrev();
-									}}
-									className="group/nav-prev absolute inset-y-0 left-0 z-20 flex w-12 sm:w-16 items-center justify-start pl-2 sm:pl-2.5 bg-gradient-to-r from-neutral-950/85 via-neutral-950/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
-								>
-									<Button
-										type="button"
-										variant="glass"
-										flat3d
-										shape="full"
-										size="icon-sm"
-										aria-label="Previous image"
+						{/* Navigation Arrows with Clickable Gradient Bars */}
+						{hasGallery && images.length > 1 && (
+							<>
+								{canScrollPrev && (
+									<div
 										onClick={e => {
 											e.preventDefault();
 											e.stopPropagation();
 											api?.scrollPrev();
-											if (e.detail > 0) {
-												e.currentTarget.blur();
-											}
 										}}
-										className="shadow-sm !bg-white/20 !text-white transform-gpu transition-transform duration-200 group-hover/nav-prev:scale-105 group-hover/nav-prev:!bg-white/30 group-active/nav-prev:scale-95"
+										className="group/nav-prev absolute inset-y-0 left-0 z-20 flex w-12 sm:w-16 items-center justify-start pl-2 sm:pl-2.5 bg-linear-to-r from-neutral-950 via-neutral-950/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
 									>
-										<ChevronLeft className="size-4" />
-									</Button>
-								</div>
-							)}
+										<Button
+											type="button"
+											variant="glass"
+											flat3d
+											shape="full"
+											size="icon-sm"
+											aria-label="Previous image"
+											onClick={e => {
+												e.preventDefault();
+												e.stopPropagation();
+												api?.scrollPrev();
+												if (e.detail > 0) {
+													e.currentTarget.blur();
+												}
+											}}
+											className="shadow-sm !bg-white/20 !text-white transform-gpu transition-transform duration-200 group-hover/nav-prev:scale-105 group-hover/nav-prev:!bg-white/30 group-active/nav-prev:scale-95"
+										>
+											<ChevronLeft className="size-4" />
+										</Button>
+									</div>
+								)}
 
-							{canScrollNext && (
-								<div
-									onClick={e => {
-										e.preventDefault();
-										e.stopPropagation();
-										api?.scrollNext();
-									}}
-									className="group/nav-next absolute inset-y-0 right-0 z-20 flex w-12 sm:w-16 items-center justify-end pr-2 sm:pr-2.5 bg-gradient-to-l from-neutral-950/85 via-neutral-950/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
-								>
-									<Button
-										type="button"
-										variant="glass"
-										flat3d
-										shape="full"
-										size="icon-sm"
-										aria-label="Next image"
+								{canScrollNext && (
+									<div
 										onClick={e => {
 											e.preventDefault();
 											e.stopPropagation();
 											api?.scrollNext();
-											if (e.detail > 0) {
-												e.currentTarget.blur();
-											}
 										}}
-										className="shadow-sm !bg-white/20 !text-white transform-gpu transition-transform duration-200 group-hover/nav-next:scale-105 group-hover/nav-next:!bg-white/30 group-active/nav-next:scale-95"
+										className="group/nav-next absolute inset-y-0 right-0 z-20 flex w-12 sm:w-16 items-center justify-end pr-2 sm:pr-2.5 bg-linear-to-l from-neutral-950 via-neutral-950/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
 									>
-										<ChevronRight className="size-4" />
-									</Button>
-								</div>
-							)}
-						</>
-					)}
-				</Carousel>
+										<Button
+											type="button"
+											variant="glass"
+											flat3d
+											shape="full"
+											size="icon-sm"
+											aria-label="Next image"
+											onClick={e => {
+												e.preventDefault();
+												e.stopPropagation();
+												api?.scrollNext();
+												if (e.detail > 0) {
+													e.currentTarget.blur();
+												}
+											}}
+											className="shadow-sm !bg-white/20 !text-white transform-gpu transition-transform duration-200 group-hover/nav-next:scale-105 group-hover/nav-next:!bg-white/30 group-active/nav-next:scale-95"
+										>
+											<ChevronRight className="size-4" />
+										</Button>
+									</div>
+								)}
+							</>
+						)}
+					</Carousel>
+				) : (
+					<div className="flex flex-col items-center justify-center w-full h-full text-muted-foreground p-4 text-center">
+						<ImageIcon className="size-8 opacity-40 mb-1" />
+						<span className="text-xs">No Cover Added Yet</span>
+					</div>
+				)}
 
 				{/* Category Badge */}
 				<div className="absolute top-3 left-3 z-30 pointer-events-none">
-					<span className="rounded-full bg-background/85 px-3 py-1 text-xs sm:text-sm font-semibold text-foreground backdrop-blur-md shadow-xs">{studio.category}</span>
+					<span className="rounded-full bg-card px-3 py-1 text-xs sm:text-sm font-semibold text-foreground backdrop-blur-md shadow-xs">{studio.category}</span>
 				</div>
 			</div>
 

@@ -88,7 +88,7 @@ export function StudioGallery({ title, image, gallery = [], category }: StudioGa
 							{canScrollPrev && (
 								<div
 									onClick={handlePrev}
-									className="group/nav-prev absolute inset-y-0 left-0 z-20 flex w-16 sm:w-20 md:w-24 items-center justify-start pl-3 sm:pl-4 bg-gradient-to-r from-neutral-950/85 via-neutral-950/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
+									className="group/nav-prev absolute inset-y-0 left-0 z-20 flex w-16 sm:w-20 md:w-24 items-center justify-start pl-3 sm:pl-4 bg-linear-to-r from-neutral-950 via-neutral-950/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
 								>
 									<Button
 										type="button"
@@ -109,7 +109,7 @@ export function StudioGallery({ title, image, gallery = [], category }: StudioGa
 							{canScrollNext && (
 								<div
 									onClick={handleNext}
-									className="group/nav-next absolute inset-y-0 right-0 z-20 flex w-16 sm:w-20 md:w-24 items-center justify-end pr-3 sm:pr-4 bg-gradient-to-l from-neutral-950/85 via-neutral-950/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
+									className="group/nav-next absolute inset-y-0 right-0 z-20 flex w-16 sm:w-20 md:w-24 items-center justify-end pr-3 sm:pr-4 bg-linear-to-l from-neutral-950 via-neutral-950/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
 								>
 									<Button
 										type="button"
@@ -131,13 +131,13 @@ export function StudioGallery({ title, image, gallery = [], category }: StudioGa
 
 				{/* Category Pill */}
 				<div className="absolute top-3.5 left-3.5 sm:top-4 sm:left-4 z-30 pointer-events-none">
-					<span className="rounded-full bg-background/85 px-3 py-1 text-xs sm:text-sm font-semibold text-foreground backdrop-blur-md shadow-xs">{category}</span>
+					<span className="rounded-full bg-card px-3 py-1 text-xs sm:text-sm font-semibold text-foreground backdrop-blur-md shadow-xs">{category}</span>
 				</div>
 
 				{/* Counter Pill */}
 				{images.length > 1 && (
 					<div className="absolute bottom-3.5 right-3.5 sm:bottom-4 sm:right-4 z-30 pointer-events-none">
-						<span className="rounded-lg bg-background/80 px-2.5 py-1 text-xs font-medium text-foreground backdrop-blur-md">
+						<span className="rounded-lg bg-card px-2.5 py-1 text-xs font-medium text-foreground backdrop-blur-md">
 							{currentIndex + 1} / {images.length}
 						</span>
 					</div>

@@ -99,7 +99,7 @@ export function HeroSection() {
 							</Button>
 
 							<Button flat3d className="w-full sm:w-auto" size="xl" variant="glass">
-								<Link href="/add-studio">
+								<Link href="/studios/create">
 									<span>Host Your Space</span>
 								</Link>
 							</Button>

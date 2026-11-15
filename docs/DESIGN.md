@@ -25,7 +25,11 @@ SetSpace uses a warm, energetic creative-space theme with high contrast and mode
 
 ### UI Primitives & Styling Rules
 - **Strict Shadcn-First Architecture:** Always use official Shadcn / Base UI components (Button, Carousel, Dialog, Field, Input, etc.). Never write custom ad-hoc sliders, carousels, or basic primitives from scratch when an official Shadcn component exists. Add via `npx shadcn add <component>`.
-- **No Custom Borders Standard:** Do not use custom borders anywhere unless absolutely necessary. Rely on background-foreground contrast, surface color shifts, and tonal contrast for visual separation and hierarchy rather than adding borders.
+- **Primary & Neutral Colors Only Standard:** Only use theme-defined primary and neutral tokens. Never hardcode arbitrary `white`, `black`, `#fff`, or `#000` (reserved strictly for video overlays).
+- **Zero Arbitrary Opacity Modifiers Standard:** Do not use arbitrary `/70`, `/60`, `/50`, `/40`, `/30`, `/20` opacity modifiers on backgrounds. Rely on solid semantic tokens (`--background`, `--card`, `--secondary`, `--muted`, `--accent`) so surfaces remain crisp, solid, and accessible.
+- **Borderless Dark Mode & Sparing Light Mode Borders Standard:** Never overuse borders. In dark mode, render all cards, panels, badges, and modal dialogs borderless, relying purely on tonal shifts (`bg-background` -> `bg-card` -> `bg-secondary` -> `bg-muted`). In light mode, use borders sparingly (`border-border/50 dark:border-0`) only when essential to distinguish white/light surfaces.
+- **Modern Tailwind v4 Linear Syntax:** Strictly use Tailwind v4 `linear` utilities (`bg-linear-to-r`, `bg-linear-to-l`, `bg-linear-to-b`, `text-linear-primary`). Never use legacy `bg-gradient-to-*`.
+- **High-Contrast Form Fields Standard:** Input fields, textareas, and select triggers must guarantee strong visual contrast in both light and dark themes with clear text (`text-foreground`), high-contrast placeholders (`placeholder:text-muted-foreground`), and legible disabled states.
 - **No Custom Designs for Basic Components:** Never use custom designs, inline overrides, ad-hoc borders, or glows on basic components (e.g., buttons, badges, inputs). Use component-provided variants only (`variant="default"`, `variant="secondary"`, `variant="outline"`, etc.).
 - **Button Component Specifications:**
   - **Default Shape:** Slightly rounded (`rounded-lg`) by default. Full rounded (`shape="full"` / `rounded-full`) available when requested.

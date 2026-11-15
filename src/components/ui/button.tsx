@@ -9,10 +9,10 @@ const buttonVariants = cva("group/button inline-flex shrink-0 items-center justi
 			default: 'bg-primary text-primary-foreground hover:bg-primary/80',
 			outline: 'border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:bg-transparent dark:hover:bg-input/30',
 			secondary: 'bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground',
-			ghost: 'hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50',
+			ghost: 'hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground',
 			destructive: 'bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40',
 			link: 'text-primary underline-offset-4 hover:underline',
-			glass: 'border-none bg-foreground/5 text-foreground backdrop-blur-md hover:bg-foreground/10 active:bg-foreground/15 dark:bg-white/15 dark:text-white dark:hover:bg-white/25 dark:active:bg-white/35',
+			glass: 'border-none bg-foreground/5 text-foreground backdrop-blur-md hover:bg-foreground/10 active:bg-foreground/15 dark:bg-foreground/15 dark:text-foreground dark:hover:bg-foreground/25 dark:active:bg-foreground/35',
 		},
 		size: {
 			default: 'h-9 gap-1.5 px-3 has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5',

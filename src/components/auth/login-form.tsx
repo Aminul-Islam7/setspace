@@ -25,6 +25,7 @@ export function LoginForm() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const callbackUrl = searchParams.get('callbackUrl') || '/';
+	const registerHref = callbackUrl && callbackUrl !== '/' ? `/register?callbackUrl=${encodeURIComponent(callbackUrl)}` : '/register';
 
 	const [showPassword, setShowPassword] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -86,7 +87,7 @@ export function LoginForm() {
 			)}
 
 			{formInfo && (
-				<div role="status" className="flex items-start gap-2.5 rounded-lg bg-secondary/80 px-3.5 py-2.5 text-xs text-muted-foreground">
+				<div role="status" className="flex items-start gap-2.5 rounded-lg bg-secondary px-3.5 py-2.5 text-xs text-muted-foreground">
 					<Info className="size-4 shrink-0 mt-0.5 text-foreground" />
 					<span>{formInfo}</span>
 				</div>
@@ -136,7 +137,7 @@ export function LoginForm() {
 			{/* Switch to Register */}
 			<p className="text-center text-sm text-muted-foreground">
 				Don&apos;t have an account?{' '}
-				<Link href="/register" className="font-semibold text-primary hover:underline underline-offset-4">
+				<Link href={registerHref} className="font-semibold text-primary hover:underline underline-offset-4">
 					Create account
 				</Link>
 			</p>

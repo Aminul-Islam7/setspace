@@ -13,8 +13,8 @@ export default function StudiosLoading() {
 			{/* Search & Filter Controls */}
 			<div className="space-y-3">
 				<div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
-					<div className="h-10 sm:h-11 flex-1 rounded-lg bg-secondary/80 border border-border/40" />
-					<div className="h-10 sm:h-11 w-44 sm:w-56 rounded-lg bg-secondary border border-border/40" />
+					<div className="h-10 sm:h-11 flex-1 rounded-lg bg-secondary" />
+					<div className="h-10 sm:h-11 w-44 sm:w-56 rounded-lg bg-secondary" />
 				</div>
 			</div>
 

@@ -2,6 +2,18 @@
 
 Record of architectural, design, and structural decisions. Add dated entries in reverse-chronological order.
 
+## 2026-11-15: Semantic OKLCH Theming, Borderless Dark Mode, and Linear Syntax Refactoring
+- **Context:** Form fields had muddy, unreadable contrast in light mode due to transparent borders and faint opacity overlays. Arbitrary opacity modifiers (`/70`, `/60`, `/50`, etc.) and deprecated `bg-gradient-to-*` syntax were scattered across components. In addition, cards and sections were cluttered with excessive border boxes.
+- **Alternatives Considered:**
+  1. Patch individual input components locally with one-off Tailwind classes.
+  2. System-wide overhaul following `tailwind-design-system` skill:
+     - Standardized `:root` and `.dark` with solid, high-contrast OKLCH neutral tokens (`--background`, `--foreground`, `--card`, `--secondary`, `--muted`, `--accent`, `--border`).
+     - Upgraded `Input`, `Textarea`, and `SelectTrigger` to solid backgrounds with sharp borders in light mode (`border-border/60`) and borderless, elevated surfaces in dark mode (`dark:border-0 dark:bg-card`).
+     - Enforced borderless dark mode across cards, sections, badges, and modals, relying strictly on tonal elevation shifts (`bg-background` -> `bg-card` -> `bg-secondary` -> `bg-muted`).
+     - Replaced all legacy `bg-gradient-to-*` with modern Tailwind v4 `bg-linear-to-*`.
+     - Eliminated arbitrary opacity modifiers on surface backgrounds across all components.
+- **Outcome:** Adopted Option 2 across `globals.css`, UI primitives, studio creation modules, and layout components. Guarantees WCAG-compliant form readability, modern CSS-first theme architecture, and clean, uncluttered visuals in both light and dark modes.
+
 ## 2026-11-14: Zero-Fallback Live Studio Availability & Strict Next-Day Booking Window
 - **Context:** User commanded removing all mock data seeds, local storage fallback previews, and simulated offline success states. Availability must strictly be live or an explicit error, with zero in-between. Additionally, reservations must only be available from the next day forward (current day and past dates cannot show available slots).
 - **Alternatives Considered:**

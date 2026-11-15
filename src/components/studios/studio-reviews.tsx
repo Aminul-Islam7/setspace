@@ -93,7 +93,7 @@ export function StudioReviews({ studio }: StudioReviewsProps) {
 
 			{/* Review Form */}
 			{/* {showForm && (
-				<form onSubmit={handleSubmit} className="rounded-2xl bg-secondary/70 dark:bg-card p-5 sm:p-6 space-y-4">
+				<form onSubmit={handleSubmit} className="rounded-2xl bg-secondary dark:bg-card p-5 sm:p-6 space-y-4">
 					<h4 className="font-display text-base font-semibold text-foreground">
 						Share Your On-Set Experience
 					</h4>
@@ -166,7 +166,7 @@ export function StudioReviews({ studio }: StudioReviewsProps) {
 			{reviews.length > 0 ? (
 				<div className="space-y-4">
 					{visibleReviews.map((review, idx) => (
-						<article key={review._id || idx} className="rounded-2xl bg-secondary/70 dark:bg-card/60 p-4 sm:p-5 space-y-2.5">
+						<article key={review._id || idx} className="rounded-2xl bg-secondary dark:bg-card p-4 sm:p-5 space-y-2.5">
 							<div className="flex items-center justify-between gap-2">
 								<div className="flex items-center gap-2.5">
 									<Avatar size="sm" className="size-7 shrink-0">
@@ -217,7 +217,7 @@ export function StudioReviews({ studio }: StudioReviewsProps) {
 					)}
 				</div>
 			) : (
-				<div className="rounded-2xl bg-secondary/70 dark:bg-card/40 p-8 text-center text-muted-foreground">
+				<div className="rounded-2xl bg-secondary dark:bg-card p-8 text-center text-muted-foreground">
 					<p className="text-sm font-medium">No reviews yet for this workspace. Be the first to share your on-set experience!</p>
 				</div>
 			)}

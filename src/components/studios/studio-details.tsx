@@ -33,7 +33,7 @@ export function StudioDetails({ studio }: StudioDetailsProps) {
 			</div>
 
 			{/* Pricing & CTA Card */}
-			<div className="rounded-2xl sm:rounded-3xl bg-secondary/70 dark:bg-card p-5 sm:p-6">
+			<div className="rounded-2xl sm:rounded-3xl bg-secondary dark:bg-card p-5 sm:p-6">
 				<div className="grid grid-cols-2 sm:grid-cols-4 gap-4 items-center">
 					{/* Hourly Rate */}
 					<div className="space-y-0.5">
@@ -116,7 +116,7 @@ export function StudioDetails({ studio }: StudioDetailsProps) {
 			)}
 
 			{/* Host Card */}
-			<div className="rounded-2xl bg-secondary/70 dark:bg-card/50 p-4 sm:p-5 flex items-center justify-between gap-4">
+			<div className="rounded-2xl bg-secondary dark:bg-card p-4 sm:p-5 flex items-center justify-between gap-4">
 				<div className="flex items-center gap-3 min-w-0">
 					<Avatar size="default" className="size-11 sm:size-12 shrink-0">
 						<AvatarImage src={studio.ownerAvatar} alt={studio.ownerName} />
@@ -133,7 +133,7 @@ export function StudioDetails({ studio }: StudioDetailsProps) {
 					</div>
 				</div>
 
-				<span className="hidden sm:inline-flex text-xs font-semibold px-2.5 py-1 rounded-md bg-primary-400/15 dark:bg-primary-700/15 text-primary shrink-0">Verified Host</span>
+				<span className="hidden sm:inline-flex text-xs font-semibold px-2.5 py-1 rounded-md bg-primary-100 dark:bg-primary-950 text-primary shrink-0">Verified Host</span>
 			</div>
 		</div>
 	);

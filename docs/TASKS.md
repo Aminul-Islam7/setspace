@@ -3,11 +3,12 @@
 Track ongoing, planned, and completed tasks. Check off items as they finish.
 
 ## Active & Upcoming
-- [ ] Implement Add Studio listing form (`/add-studio`) with multi-step/rich media inputs
 - [ ] Implement My Listings page (`/my-listings`) with edit/delete actions
 - [ ] Implement My Bookings page (`/my-bookings`) with cancellation and status indicators
 
 ## Completed
+- [x] Design System Refactoring: Semantic OKLCH tokens, borderless dark mode, high-contrast form fields, and modern Tailwind v4 `linear` syntax (2026-11-15)
+- [x] Build Add Studio page (`/studios/create`) with modular section cards, Base UI Select & Textarea, live real-time search card preview, cover & gallery photo managers, production amenities picker, session-bound host details, and proxy redirect for legacy `/add-studio` (2026-11-14)
 - [x] Build split-design authentication pages (`/login` & `/register`) with Better Auth, Google OAuth, Email/Password, Zod + RHF validation, and session-reactive Navbar (2026-11-12)
 - [x] Configure Base UI / Shadcn form primitives (`components/ui/field.tsx`) (2026-11-12)
 - [x] Build studios explore page (`/studios`) with 12-per-page pagination, live search bar, flat3d one-button category & sort switches with active states, and empty state (2026-11-12)

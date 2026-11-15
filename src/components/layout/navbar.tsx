@@ -125,7 +125,7 @@ export function Navbar() {
 									/>
 									<DropdownMenuItem
 										render={
-											<Link href="/add-studio" className="flex items-center gap-2.5 w-full">
+											<Link href="/studios/create" className="flex items-center gap-2.5 w-full">
 												<PlusCircle className="size-4" />
 												<span>Host My Studio</span>
 											</Link>
@@ -220,7 +220,7 @@ export function Navbar() {
 												<Building2 className="size-4" />
 												<span>My Studios Listings</span>
 											</SheetClose>
-											<SheetClose render={<Link href="/add-studio" className="flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg" />}>
+											<SheetClose render={<Link href="/studios/create" className="flex items-center gap-2.5 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg" />}>
 												<PlusCircle className="size-4" />
 												<span>Host My Studio</span>
 											</SheetClose>
