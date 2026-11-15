@@ -37,6 +37,7 @@ The backend API (`../setspace-api`) is strictly external and user-managed. The f
 - `PATCH /api/studios/:id` — Update listing (Protected; owner match)
 - `DELETE /api/studios/:id` — Delete listing (Protected; owner match)
 - `POST /api/studios/:id/reviews` — Add rating & review comment
+- `GET /api/bookings/availability` — Query studio availability (`studioId`, `date`; returns booked time slots)
 - `POST /api/bookings` — Create reservation (checks double-booking collision, saves with status `"Pending"`)
 - `GET /api/users/me/studios` — Fetch listings owned by logged-in user (`ownerEmail` match)
 - `GET /api/users/me/bookings` — Fetch reservations made by logged-in user (`userEmail` match)

@@ -1,4 +1,4 @@
-import type { Studio } from '@/types';
+import type { PaginatedResponse, Studio } from '@/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -8,7 +8,8 @@ export async function fetchStudioById(id: string): Promise<Studio | null> {
 			next: { revalidate: 60, tags: [`studio-${id}`] },
 		});
 		if (!res.ok) return null;
-		return await res.json();
+		const studio: Studio = await res.json();
+		return studio;
 	} catch (error) {
 		console.error(`Failed to fetch studio by id ${id}:`, error);
 		return null;
@@ -28,9 +29,8 @@ export async function fetchStudioBySlug(slug: string): Promise<Studio | null> {
 		});
 		if (!res.ok) return null;
 
-		const json = await res.json();
-		const list: Studio[] = Array.isArray(json) ? json : json.data || [];
-		const matched = list.find(s => s.slug === slug);
+		const json: PaginatedResponse<Studio> = await res.json();
+		const matched = json.data.find(s => s.slug === slug);
 		if (!matched) return null;
 
 		// Fetch full studio details internally by ID
@@ -48,9 +48,8 @@ export async function fetchRelatedStudios(category: string, currentId: string): 
 		});
 		if (!res.ok) return [];
 
-		const json = await res.json();
-		const list: Studio[] = Array.isArray(json) ? json : json.data || [];
-		return list.filter(s => s._id !== currentId).slice(0, 6);
+		const json: PaginatedResponse<Studio> = await res.json();
+		return json.data.filter(s => s._id !== currentId).slice(0, 6);
 	} catch (error) {
 		console.error(`Failed to fetch related studios for category ${category}:`, error);
 		return [];
@@ -64,9 +63,8 @@ export async function fetchAllStudioSlugs(): Promise<string[]> {
 		});
 		if (!res.ok) return [];
 
-		const json = await res.json();
-		const list: Studio[] = Array.isArray(json) ? json : json.data || [];
-		return list.map(s => s.slug).filter(Boolean);
+		const json: PaginatedResponse<Studio> = await res.json();
+		return json.data.map(s => s.slug).filter(Boolean);
 	} catch {
 		return [];
 	}

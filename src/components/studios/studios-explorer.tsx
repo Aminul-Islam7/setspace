@@ -2,7 +2,7 @@
 
 import { ChevronDown, RotateCcw, Search, SlidersHorizontal, X } from 'lucide-react';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-import type { Studio, StudioCategory } from '@/types';
+import type { PaginatedResponse, Studio, StudioCategory } from '@/types';
 import { StudioCard, StudioCardSkeleton } from '@/components/studios/studio-card';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -177,23 +177,16 @@ export function StudiosExplorer() {
 
 		fetch(endpoint)
 			.then(res => {
-				if (!res.ok) throw new Error('Failed to fetch studios');
-				return res.json();
+				if (!res.ok) throw new Error(`Failed to fetch studios (${res.status})`);
+				return res.json() as Promise<PaginatedResponse<Studio>>;
 			})
 			.then(json => {
 				if (!isMounted) return;
-				const list: Studio[] = Array.isArray(json) ? json : json.data || json.studios || [];
-				setStudios(list);
-
-				if (json && typeof json === 'object') {
-					if (typeof json.totalPages === 'number') {
-						setTotalPages(Math.max(1, json.totalPages));
-					} else if (typeof json.totalCount === 'number') {
-						setTotalPages(Math.max(1, Math.ceil(json.totalCount / PAGE_SIZE)));
-					} else {
-						setTotalPages(Math.max(1, Math.ceil(list.length / PAGE_SIZE)));
-					}
+				if (!json.success || !Array.isArray(json.data)) {
+					throw new Error(json.message || 'Invalid studios response format');
 				}
+				setStudios(json.data);
+				setTotalPages(Math.max(1, json.totalPages));
 			})
 			.catch(err => {
 				if (isMounted) {

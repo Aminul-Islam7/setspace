@@ -2,6 +2,37 @@
 
 Record of architectural, design, and structural decisions. Add dated entries in reverse-chronological order.
 
+## 2026-11-14: Zero-Fallback Live Studio Availability & Strict Next-Day Booking Window
+- **Context:** User commanded removing all mock data seeds, local storage fallback previews, and simulated offline success states. Availability must strictly be live or an explicit error, with zero in-between. Additionally, reservations must only be available from the next day forward (current day and past dates cannot show available slots).
+- **Alternatives Considered:**
+  1. Retain local preview seeds when offline or when backend endpoint is not yet created.
+  2. Pure live or error architecture:
+     - Availability grid queries `${apiUrl}/api/studios/${id}/availability?date=${date}`.
+     - While loading, displays a dedicated schedule loader.
+     - On failure or missing service, shows an explicit error alert ("Live availability unavailable") and disables reservation submission.
+     - Strictly enforces `bookingDate >= minBookingDate` (tomorrow). When current date or past date is selected, blocks slot rendering and shows guidance notice.
+     - Submissions fail with explicit error toasts on server error without recording fake local bookings.
+- **Outcome:** Adopted Option 2 across [`src/components/studios/studio-booking-dialog.tsx`](src/components/studios/studio-booking-dialog.tsx). Eliminates phantom data desynchronization and guarantees bookings are scheduled with required advance notice.
+
+## 2026-11-14: Modular Studio Creation Architecture at `/studios/create` with Live Interactive Preview
+- **Context:** Required a dedicated, production-grade page for creators and space hosts to list workspaces at `/studios/create`, matching the aesthetic vibe of existing pages (Syne typography, neutral secondary card surfaces, zero custom borders, corner-rounded `rounded-lg` elements) with high modularity, minimal ad-hoc styling, and clean responsive UX across mobile and desktop.
+- **Alternatives Considered:**
+  1. Monolithic 800-line single-component form with inlined controls and unpreviewed submission.
+  2. Multi-step wizard modal hiding earlier fields behind next/previous stepper buttons.
+  3. Modular 2-column architecture (`CreateStudioForm`):
+     - Left column (`lg:col-span-8`): Dedicated section cards with `bg-secondary/70 rounded-2xl` surfaces for Basic Details, Pricing & Specs, Media & Gallery Manager, Production Amenities Picker, and Read-Only Host Profile.
+     - Right column (`lg:col-span-4`): Sticky real-time `StudioLivePreview` updating live with user inputs (cover, category pill, rate badge, specs, tags, host guarantees) alongside primary submission trigger.
+     - Official Base UI primitives: Added `Textarea` and `Select` with corner-rounded `rounded-lg` standards.
+     - Next.js 16 Proxy redirection: Automatically rewrites and redirects legacy `/add-studio` and `/studios/add` to `/studios/create`.
+- **Outcome:** Adopted Option 3 across [`src/app/studios/create/page.tsx`](src/app/studios/create/page.tsx), [`src/app/studios/create/loading.tsx`](src/app/studios/create/loading.tsx), and [`src/components/studios/create/`](src/components/studios/create/). Provides instant visual confirmation of search card appearance, clean validation with Zod + RHF, and eliminates layout shift via matching skeleton.
+
+## 2026-11-14: Mobile Bottom-Sheet Modal Architecture & 3-Click Direct Slot Selection
+- **Context:** User requested modern mobile bottom-sheet interaction for all modal dialogs (sliding up from and into the bottom with drag handle), fixing Windows Chromium scrollbars rendering outside dialog rounded corners, matching exact legend chip colors with slot buttons (no line-through), and replacing start/end time `<select>` dropdowns with direct 3-click slot selection (Click 1: start, Click 2: end, Click 3: reset to new start).
+- **Alternatives Considered:**
+  1. Separate custom `BottomSheet` component requiring consumers to branch code between mobile and desktop dialogs.
+  2. Responsive unified `DialogContent` in `src/components/ui/dialog.tsx`: Renders as sliding bottom sheet with top drag handle on `< sm`, and centered modal on `sm:`. Enforces `overflow-hidden` on outer popup and handles vertical scrolling in an inner wrapper (`flex-1 overflow-y-auto overflow-x-hidden p-6`). Direct 3-click slot state machine with real-time overlap validation in `src/components/studios/studio-booking-dialog.tsx`.
+- **Outcome:** Adopted Option 2. Automatically enhances every dialog across the application without breaking API compatibility. Direct slot selection streamlines booking flow, visual chips match 100%, and scrollbar clipping is eliminated.
+
 ## 2026-11-13: Icon-Driven Auth Showcase Highlights Replacing Paragraph Testimonials
 - **Context:** Wordy quotes took too much visual weight and felt passive. Following modern creator/ticketing reference designs (e.g. tickify), the split-screen auth showcase needed shorter, punchier text with primary color headline accents and clear icon bullet points.
 - **Alternatives Considered:**

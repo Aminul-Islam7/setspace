@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import type { Studio } from '@/types';
+import type { PaginatedResponse, Studio } from '@/types';
 
 export function FeaturedStudiosSection() {
 	const [studios, setStudios] = useState<Studio[]>([]);
@@ -19,17 +19,22 @@ export function FeaturedStudiosSection() {
 		let isMounted = true;
 		fetch(endpoint)
 			.then(res => {
-				if (!res.ok) throw new Error('Failed to fetch studios');
-				return res.json();
+				if (!res.ok) throw new Error(`Failed to fetch studios (${res.status})`);
+				return res.json() as Promise<PaginatedResponse<Studio>>;
 			})
-			.then(data => {
+			.then(json => {
 				if (isMounted) {
-					const list = Array.isArray(data) ? data : data.data || data.studios || [];
-					setStudios(list.slice(0, 6));
+					if (!json.success || !Array.isArray(json.data)) {
+						throw new Error(json.message || 'Invalid studios response format');
+					}
+					setStudios(json.data.slice(0, 6));
 				}
 			})
-			.catch(() => {
-				if (isMounted) setStudios([]);
+			.catch(err => {
+				if (isMounted) {
+					console.error('Failed to load featured studios:', err);
+					setStudios([]);
+				}
 			})
 			.finally(() => {
 				if (isMounted) setLoading(false);

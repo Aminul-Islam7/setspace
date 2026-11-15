@@ -23,3 +23,10 @@
 ## Data Flow
 - **Reads:** Server components fetch from external API where applicable; client fetches used for real-time/interactive filtering.
 - **Writes:** Direct client `fetch` calls to backend endpoints handling user interactions and forms.
+- **Type Integrity & Zero Fallbacks:** All network calls must strictly type their payloads and responses against `@/types` (`Booking`, `CreateBookingPayload`, `PaginatedResponse<T>`, `StudioAvailabilityResponse`, etc.). Ad-hoc property fallbacks (e.g. `s.date || s.bookingDate` or `res.data || res.studios || []`) are strictly banned. Fail explicitly on contract mismatches so bugs can be anticipated and fixed immediately at the root cause.
+
+## Modal Dialog & Bottom Sheet Architecture
+- **Responsive Presentation:** Standardized in `src/components/ui/dialog.tsx` (`DialogContent`).
+  - **Mobile (`< sm`):** Sliding bottom sheet docked to `inset-x-0 bottom-0` with `rounded-t-3xl rounded-b-none`, max height `92vh`, top drag handle indicator (`h-1.5 w-12 rounded-full bg-muted-foreground/20`), and slide animations (`slide-in-from-bottom` / `slide-out-to-bottom`).
+  - **Desktop (`sm:`):** Centered dialog (`sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl`) with zoom transition.
+- **Scrollbar Containment:** Outer popup strictly enforces `overflow-hidden`. Inner wrapper (`flex-1 overflow-y-auto overflow-x-hidden p-6`) manages vertical scrolling, preventing Windows Chromium rectangular scrollbar leak outside rounded borders.

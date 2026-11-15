@@ -2,6 +2,25 @@
 
 Log resolved issues, regressions, and lessons learned.
 
+## 2026-11-14: CSS Grid items-start Collapsing Column Height & Neutralizing position:sticky
+- **Symptom:** In `/studios/create`, the live studio preview panel on desktop (`lg:`) scrolled with the page instead of remaining sticky at `lg:top-24`.
+- **Root Cause:**
+  1. The parent `<form>` container was styled with `grid grid-cols-1 lg:grid-cols-12 items-start`. In CSS Grid, `items-start` prevents columns from stretching to equal track height. The right column (`<div className="lg:col-span-4">`) collapsed to the exact height of its child preview card.
+  2. Because the parent column had 0 remaining scrollable height and `lg:sticky` was applied inside a non-stretched child without track room, `position: sticky` had 0px of vertical travel space.
+- **Fix:**
+  1. In [`src/components/studios/create/create-studio-form.tsx`](src/components/studios/create/create-studio-form.tsx), removed `items-start` so the CSS Grid defaults to `items-stretch`. Both `lg:col-span-8` and `lg:col-span-4` now share the full height of the form.
+  2. Wrapped `StudioLivePreview` in an explicit sticky container: `<div className="lg:sticky lg:top-24">`.
+- **How to Avoid:** Never pair `items-start` on a CSS Grid container with a sticky sidebar child. Allow columns to stretch to full track height so the sticky child has travel room within its parent column.
+
+## 2026-11-14: Modal Scrollbar Bleeding Outside Rounded Popup Boundary on Windows Chromium
+- **Symptom:** When a dialog opened on Windows Chromium browsers, the vertical scrollbar rendered along the outermost bounding box, visually protruding outside the curved corners of the modal.
+- **Root Cause:** `DialogPrimitive.Popup` had `rounded-4xl` (32px radius) and `p-6` with `overflow-y-auto` placed directly on the root popup element. In Chromium, `overflow-y: auto` renders native scrollbars along the straight bounding box. Without `overflow-hidden` on the rounded parent, the scrollbar ignores border curves and overlaps adjacent backdrop space.
+- **Fix:** In [`src/components/ui/dialog.tsx`](src/components/ui/dialog.tsx):
+  1. Added `overflow-hidden` to `DialogPrimitive.Popup` with standard `sm:rounded-2xl` / mobile `rounded-t-3xl`.
+  2. Wrapped dialog contents in an inner scrolling viewport: `<div className="flex-1 overflow-y-auto overflow-x-hidden p-6 flex flex-col gap-5">`.
+  3. Cleaned consumer components (`studio-booking-dialog.tsx`) to remove redundant outer `p-6 max-h-[90vh] overflow-y-auto`.
+- **How to Avoid:** Never attach `overflow-y-auto` and large `border-radius` to the same HTML element. Always enforce `overflow-hidden` on the outer curved container and scroll within an inner block.
+
 ## 2026-11-13: Base UI MenuGroupContext Missing on DropdownMenuLabel Click
 - **Symptom:** Clicking the profile avatar dropdown button crashed the application with runtime error: `Base UI: MenuGroupContext is missing. Menu group parts must be used within <Menu.Group> or <Menu.RadioGroup> at DropdownMenuLabel`.
 - **Root Cause:** In Base UI (`@base-ui/react`), `MenuPrimitive.GroupLabel` requires an enclosing `MenuPrimitive.Group` providing `MenuGroupContext` for accessible `aria-labelledby` association. Using `DropdownMenuLabel` (mapped directly to `MenuPrimitive.GroupLabel`) outside `<DropdownMenuGroup>` caused Base UI's internal hook `useMenuGroupContext()` to throw.

@@ -47,12 +47,47 @@ export interface Booking {
 	studioTitle: string;
 	studioCategory: StudioCategory;
 	studioImage: string;
-	userEmail: string;
+	location: string;
+	hourlyRate: number;
+	securityDeposit: number;
+	userId?: string;
 	userName: string;
-	date: string;
+	userEmail: string;
+	ownerEmail: string;
+	bookingDate: string;
 	startTime: string;
-	durationHours: number;
+	endTime: string;
+	totalHours: number;
 	totalPrice: number;
 	status: BookingStatus;
-	createdAt: string;
+	createdAt?: string;
+	updatedAt?: string;
+}
+
+export type CreateBookingPayload = Omit<Booking, '_id' | 'createdAt' | 'updatedAt'>;
+
+export interface BookedSlot {
+	bookingDate: string;
+	startTime: string;
+	endTime: string;
+}
+
+export interface StudioAvailabilityResponse {
+	success: boolean;
+	data: BookedSlot[];
+	message?: string;
+}
+
+export interface PaginatedResponse<T> {
+	success: boolean;
+	data: T[];
+	totalCount: number;
+	totalPages: number;
+	message?: string;
+}
+
+export interface ApiResponse<T = unknown> {
+	success: boolean;
+	message: string;
+	data?: T;
 }

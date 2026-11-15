@@ -31,7 +31,7 @@ function DialogOverlay({
     <DialogPrimitive.Backdrop
       data-slot="dialog-overlay"
       className={cn(
-        "fixed inset-0 isolate z-50 bg-black/30 duration-100 supports-backdrop-filter:backdrop-blur-sm data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+        "fixed inset-0 isolate z-50 bg-black/40 duration-200 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
         className
       )}
       {...props}
@@ -53,25 +53,34 @@ function DialogContent({
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-6 rounded-4xl bg-popover p-6 text-sm text-popover-foreground shadow-xl ring-1 ring-foreground/5 duration-100 outline-none sm:max-w-md dark:ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "fixed inset-x-0 bottom-0 z-50 flex flex-col w-full max-h-[92vh] bg-popover text-sm text-popover-foreground shadow-2xl ring-1 ring-border/50 outline-none overflow-hidden rounded-t-3xl rounded-b-none duration-200",
+          "data-open:animate-in data-open:fade-in-0 data-open:slide-in-from-bottom data-closed:animate-out data-closed:fade-out-0 data-closed:slide-out-to-bottom",
+          "sm:inset-x-auto sm:bottom-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:max-w-md sm:max-h-[85vh] sm:rounded-2xl",
+          "sm:data-open:slide-in-from-bottom-0 sm:data-open:zoom-in-95 sm:data-closed:slide-out-to-bottom-0 sm:data-closed:zoom-out-95",
           className
         )}
         {...props}
       >
-        {children}
+        {/* Mobile Pull Handle */}
+        <div className="sm:hidden mx-auto mt-2.5 mb-1 h-1.5 w-12 rounded-full bg-muted-foreground/20 shrink-0" />
+
+        {/* Scrollable Container with contained scrollbar */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 flex flex-col gap-5">
+          {children}
+        </div>
+
         {showCloseButton && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
             render={
               <Button
                 variant="ghost"
-                className="absolute top-4 right-4 bg-secondary"
-                size="icon-sm"
+                className="absolute top-3.5 right-3.5 size-8 rounded-full bg-secondary/80 hover:bg-secondary text-muted-foreground hover:text-foreground cursor-pointer z-10"
+                size="icon-xs"
               />
             }
           >
-            <XIcon
-            />
+            <XIcon className="size-4" />
             <span className="sr-only">Close</span>
           </DialogPrimitive.Close>
         )}

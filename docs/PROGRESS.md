@@ -2,6 +2,232 @@
 
 Record daily or milestone progress entries. Keep concise and chronological.
 
+## 2026-11-15: Update Availability Endpoint to /api/bookings/availability
+- **What Changed:**
+  1. Updated [`src/components/studios/studio-booking-dialog.tsx`](src/components/studios/studio-booking-dialog.tsx):
+     - Switched availability request URL from `/api/studios/${studio._id}/availability?date=${bookingDate}` to `/api/bookings/availability?studioId=${studio._id}&date=${bookingDate}` matching backend route update.
+  2. Updated [`docs/PROJECT.md`](docs/PROJECT.md):
+     - Documented `GET /api/bookings/availability` endpoint and query params (`studioId`, `date`).
+- **Files Touched:**
+  - `src/components/studios/studio-booking-dialog.tsx`
+  - `docs/PROJECT.md`
+  - `docs/PROGRESS.md`
+
+## 2026-11-15: Standardize Booking Schema to bookingDate & Enforce Zero-Fallback Strict Typing Rule
+- **What Changed:**
+  1. Updated [`src/types/index.ts`](src/types/index.ts):
+     - Updated `Booking` interface from legacy `date: string` to canonical `bookingDate: string`, matching `docs/PROJECT.md` and MongoDB collection.
+     - Added and exported `CreateBookingPayload`, `BookedSlot`, `StudioAvailabilityResponse`, and `PaginatedResponse<T>`.
+  2. Updated [`src/components/studios/studio-booking-dialog.tsx`](src/components/studios/studio-booking-dialog.tsx):
+     - Removed ad-hoc inline `BookedSlot` definition. Imported canonical `BookedSlot`, `CreateBookingPayload`, and `StudioAvailabilityResponse` from `@/types`.
+     - Typed `payload` as `CreateBookingPayload`.
+     - Removed defensive property guessing (`s.date || s.bookingDate`); strictly checks `s.bookingDate === bookingDate`.
+  3. Cleaned Network Fetch Calls across Application:
+     - [`src/lib/studios.ts`](src/lib/studios.ts): Typed all endpoints with `PaginatedResponse<Studio>` and `Studio`. Removed guessing fallbacks (`Array.isArray(json) ? json : json.data || []`).
+     - [`src/components/studios/studios-explorer.tsx`](src/components/studios/studios-explorer.tsx): Typed fetch with `PaginatedResponse<Studio>` and removed fallbacks (`json.data || json.studios || []`).
+     - [`src/components/home/featured-studios-section.tsx`](src/components/home/featured-studios-section.tsx): Typed fetch with `PaginatedResponse<Studio>` and eliminated fallbacks.
+  4. Updated Guidelines & Living Docs:
+     - [`AGENTS.md`](AGENTS.md): Added "Strict Interface Typing Rule" and "Zero Fallbacks & Anti-Overfallbacking Rule".
+     - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): Documented Type Integrity & Zero Fallbacks principle.
+- **Files Touched:**
+  - `src/types/index.ts`
+  - `src/components/studios/studio-booking-dialog.tsx`
+  - `src/lib/studios.ts`
+  - `src/components/studios/studios-explorer.tsx`
+  - `src/components/home/featured-studios-section.tsx`
+  - `AGENTS.md`
+  - `docs/ARCHITECTURE.md`
+  - `docs/PROGRESS.md`
+
+## 2026-11-15: Align End Slot Semantics (Clicked Hour = Actual End Time)
+- **What Changed:**
+  1. Updated [`src/components/studios/studio-booking-dialog.tsx`](src/components/studios/studio-booking-dialog.tsx):
+     - Fixed slot semantic bug where clicking "8 PM" as the end slot previously added +1 hour via `getNextHour`, making the reservation end at 9:00 PM (3 hrs) while labeling the button "8 PM End".
+     - Aligned clicked hour directly with the actual end time: clicking "8 PM" now sets `endTime = '20:00'` (8:00 PM). A selection from 6 PM to 8 PM is strictly 2 hours (`6:00 PM – 8:00 PM`), with "6 PM" marked `Start`, "7 PM" marked `Selected`, and "8 PM" marked `End`.
+     - Rendered all 15 operating hour points (`08:00` to `22:00` / 8 AM to 10 PM) in a symmetrical 5-column grid (3 rows of 5 slots). 10:00 PM serves as the closing boundary end time.
+- **Files Touched:**
+  - `src/components/studios/studio-booking-dialog.tsx`
+  - `docs/PROGRESS.md`
+
+## 2026-11-15: Default Empty Slot Selection in Studio Booking Dialog
+- **What Changed:**
+  1. Updated [`src/components/studios/studio-booking-dialog.tsx`](src/components/studios/studio-booking-dialog.tsx):
+     - Initialized `startTime` and `endTime` to `null` with `selectionStep = 0`. No slots are highlighted or selected by default when opening the dialog.
+     - Selected window shows "No slots selected" and duration displays `0 hrs` until the user deliberately clicks a slot.
+     - Adjusted 3-click state machine:
+       - Step 0 / 1st click: selects clicked slot as start time and moves to Step 1.
+       - Step 1 / 2nd click: selects end time and confirms reservation window (Step 2).
+       - Step 2 / 3rd click: resets selection and starts fresh from clicked slot (Step 1).
+     - Resetting or changing dates resets selection back to `0` (empty selection).
+     - Submit button disabled when `selectionStep === 0` (no slots selected).
+- **Files Touched:**
+  - `src/components/studios/studio-booking-dialog.tsx`
+  - `docs/PROGRESS.md`
+
+## 2026-11-14: Remove Mock Previews, Enforce Strictly Live/Error Availability & Next-Day Booking Only
+- **What Changed:**
+  1. Updated [`src/components/studios/studio-booking-dialog.tsx`](src/components/studios/studio-booking-dialog.tsx):
+     - Completely removed local seed mock data (`defaultTomorrow: 14:00 - 17:00`), `localStorage` caching, and offline preview simulation.
+     - Implemented strictly live availability fetching from `${apiUrl}/api/studios/${studio._id}/availability?date=${bookingDate}`:
+       - Displays clean loading indicator while fetching schedule.
+       - If fetch fails, renders explicit error message: "Live availability unavailable" and disables booking submission. Zero fake fallbacks.
+     - Enforced next-day-only booking constraint:
+       - Set minimum booking date to strictly tomorrow (`min={minBookingDate}`).
+       - If user enters current day or past dates, blocks slot display with an alert: "Bookings must be scheduled at least 1 day in advance. Current date or past dates cannot be reserved."
+       - Disables booking submission for same-day or past reservations.
+     - Hardened submission handler:
+       - Fails with explicit error toast on server or network error. Does not record fake local reservations.
+- **Files Touched:**
+  - `src/components/studios/studio-booking-dialog.tsx`
+  - `docs/PROGRESS.md`
+
+## 2026-11-14: Fix Sticky Column in CSS Grid & Mirror StudioCard in Live Search Preview
+- **What Changed:**
+  1. Updated [`src/components/studios/create/create-studio-form.tsx`](src/components/studios/create/create-studio-form.tsx):
+     - Removed `items-start` from the grid container to allow equal-height column stretching.
+     - Placed `<div className="lg:sticky lg:top-24">` directly on the right column container, enabling sticky travel across the entire form height.
+     - Passed `user={user}` session profile into `StudioLivePreview`.
+  2. Updated [`src/components/studios/create/studio-live-preview.tsx`](src/components/studios/create/studio-live-preview.tsx):
+     - Completely redesigned the preview card to mirror [`StudioCard`](src/components/studios/studio-card.tsx) pixel-for-pixel:
+       - Media carousel with touch drag swipe and interactive next/prev gradient chevron overlays when multi-photo gallery exists.
+       - Category pill badge at `top-3 left-3` with `bg-background/85 px-3 py-1 text-xs sm:text-sm font-semibold backdrop-blur-md`.
+       - Host row with circular avatar (`<Avatar size="sm">`), host name, and star rating (`<FaStar className="text-amber-500" /> 5.0 (New)`).
+       - Typography: `font-body text-base sm:text-lg font-bold text-foreground line-clamp-2 leading-snug`.
+       - Rates & location footer: `$XX/hr` on left, `<MapPin /> {location}` on right.
+       - Quick specs footer: capacity and deposit.
+  3. Updated [`src/app/studios/create/loading.tsx`](src/app/studios/create/loading.tsx):
+     - Mirrored the new StudioCard replica layout in the sticky preview skeleton.
+  4. Updated Documentation: Logged sticky CSS Grid bug in [`docs/BUGS.md`](docs/BUGS.md).
+- **Files Touched:**
+  - `src/components/studios/create/create-studio-form.tsx`
+  - `src/components/studios/create/studio-live-preview.tsx`
+  - `src/app/studios/create/loading.tsx`
+  - `docs/BUGS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors) and `npm run lint` (0 errors, 0 warnings). Zero browser sessions opened.
+
+## 2026-11-14: Implement Studio Listing Creation Page (`/studios/create`) with Live Search Preview
+- **What Changed:**
+  1. Created [`src/app/studios/create/page.tsx`](src/app/studios/create/page.tsx):
+     - Mounted protected Studio Creation route at `/studios/create` with SEO metadata, breadcrumbs, and Suspense boundary.
+  2. Created [`src/app/studios/create/loading.tsx`](src/app/studios/create/loading.tsx):
+     - Engineered pixel-perfect skeleton loader mirroring all 5 section cards, inputs, amenities, and sticky preview.
+  3. Created Base UI Primitives:
+     - [`src/components/ui/textarea.tsx`](src/components/ui/textarea.tsx): Official Base UI text area with corner-rounded `rounded-lg` styling.
+     - [`src/components/ui/select.tsx`](src/components/ui/select.tsx): Official Base UI select primitive with `rounded-lg` triggers and item elements.
+  4. Created Modular Studio Creation Form Primitives in [`src/components/studios/create/`](src/components/studios/create/):
+     - `types.ts`: Zod schema (`createStudioSchema`) and TypeScript types for input and validation.
+     - `studio-basic-details.tsx`: Title, Select category, location address, and detailed description.
+     - `studio-pricing-capacity.tsx`: Hourly rate ($), refundable security deposit ($), and max capacity.
+     - `studio-media-upload.tsx`: Real-time primary cover URL preview and interactive gallery photo list (up to 6 photos with live thumbnails and removal).
+     - `studio-amenities-picker.tsx`: Production amenities checklist with clickable toggle badges, count badge, and custom gear adder.
+     - `studio-host-info.tsx`: Authenticated session host banner with verified host badge and read-only host fields.
+     - `studio-live-preview.tsx`: Real-time sticky explore card preview updating instantly with user inputs, host protection assurances, and submit trigger.
+     - `create-studio-form.tsx`: Master coordinator handling Zod validation, unique URL-friendly slug generation, API payload submission, Sonner toast notifications, and redirection.
+  5. Updated Navigation & Legacy Proxy:
+     - [`src/proxy.ts`](src/proxy.ts): Added automatic 308 redirect from legacy `/add-studio` and `/studios/add` to `/studios/create`.
+     - Updated all internal links across [`src/components/layout/navbar.tsx`](src/components/layout/navbar.tsx), [`src/app/profile/page.tsx`](src/app/profile/page.tsx), [`src/components/home/hero-section.tsx`](src/components/home/hero-section.tsx), and [`src/components/layout/footer.tsx`](src/components/layout/footer.tsx) to `/studios/create`.
+  6. Living Documentation: Updated [`docs/TASKS.md`](docs/TASKS.md), [`docs/DECISIONS.md`](docs/DECISIONS.md), and [`docs/PROGRESS.md`](docs/PROGRESS.md).
+- **Files Touched:**
+  - `src/app/studios/create/page.tsx`
+  - `src/app/studios/create/loading.tsx`
+  - `src/components/ui/textarea.tsx`
+  - `src/components/ui/select.tsx`
+  - `src/components/studios/create/types.ts`
+  - `src/components/studios/create/studio-basic-details.tsx`
+  - `src/components/studios/create/studio-pricing-capacity.tsx`
+  - `src/components/studios/create/studio-media-upload.tsx`
+  - `src/components/studios/create/studio-amenities-picker.tsx`
+  - `src/components/studios/create/studio-host-info.tsx`
+  - `src/components/studios/create/studio-live-preview.tsx`
+  - `src/components/studios/create/create-studio-form.tsx`
+  - `src/lib/studio-constants.ts`
+  - `src/proxy.ts`
+  - `src/components/layout/navbar.tsx`
+  - `src/app/profile/page.tsx`
+  - `src/components/home/hero-section.tsx`
+  - `src/components/layout/footer.tsx`
+  - `docs/TASKS.md`
+  - `docs/DECISIONS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build` (34/34 routes successfully generated). Zero browser sessions opened.
+
+## 2026-11-14: Responsive Mobile Bottom-Sheet Dialogs, Contained Scrollbars & 3-Click Direct Slot Selection
+- **What Changed:**
+  1. Updated [`src/components/ui/dialog.tsx`](src/components/ui/dialog.tsx):
+     - Implemented responsive mobile bottom sheet: docks to `inset-x-0 bottom-0` on `< sm` with `rounded-t-3xl rounded-b-none`, top drag handle indicator (`h-1.5 w-12 rounded-full bg-muted-foreground/20`), and smooth slide in/out animations (`slide-in-from-bottom` / `slide-out-to-bottom`).
+     - Centered modal on desktop (`sm:`) with zoom transition.
+     - Enforced `overflow-hidden` on outer popup and wrapped dialog children inside an inner scrolling container (`flex-1 overflow-y-auto overflow-x-hidden p-6`), completely fixing Windows Chromium scrollbars protruding outside rounded corners.
+  2. Updated [`src/components/studios/studio-booking-dialog.tsx`](src/components/studios/studio-booking-dialog.tsx):
+     - Synchronized availability legend colors (Free: `bg-card ring-1 ring-border/60`, Booked: `bg-destructive/20 ring-1 ring-destructive/30`, Selected: `bg-primary ring-1 ring-primary`) to match 100% with the slot buttons.
+     - Removed `line-through` from booked slots.
+     - Replaced start and end time dropdown selectors with direct 3-click slot selection (1st click = start time, 2nd click = end time, 3rd click = reset to new start time).
+     - Added real-time span overlap protection during multi-hour selection.
+     - Replaced dropdowns with an interactive reservation summary card showing selected window, duration badge, and selection status.
+  3. Updated Living Docs:
+     - [`AGENTS.md`](AGENTS.md): Added "Responsive Bottom Sheet & Scrollbar Containment Rule".
+     - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): Added "Modal Dialog & Bottom Sheet Architecture".
+     - [`docs/DECISIONS.md`](docs/DECISIONS.md): Recorded mobile bottom sheet and slot state machine decision.
+     - [`docs/BUGS.md`](docs/BUGS.md): Documented Windows Chromium scrollbar root cause and prevention.
+- **Files Touched:**
+  - `src/components/ui/dialog.tsx`
+  - `src/components/studios/studio-booking-dialog.tsx`
+  - `AGENTS.md`
+  - `docs/ARCHITECTURE.md`
+  - `docs/DECISIONS.md`
+  - `docs/BUGS.md`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build`. Zero browser sessions opened.
+
+## 2026-11-13: Enhance Studio Booking Dialog with Real-Time Availability & Overlap Protection
+- **What Changed:**
+  1. Updated [`src/components/studios/studio-booking-dialog.tsx`](src/components/studios/studio-booking-dialog.tsx):
+     - Removed redundant manual name and email input fields. Automatically binds `userName` and `userEmail` from the active authenticated session with an authenticated creator badge.
+     - Implemented an hourly timeline availability preview for the selected date, visualizing "Free" vs "Booked" slots in real time.
+     - Upgraded start/end time selectors to standard operating hour intervals (`08:00` to `22:00`), dynamically marking and disabling booked hours.
+     - Added real-time frontend overlap detection (`checkOverlap`), displaying an in-UI warning alert and disabling submission if a user chooses a range that collides with an existing booking.
+     - Persisted confirmed reservations to local state and storage so newly booked slots immediately become unavailable on the frontend.
+- **Files Touched:**
+  - `src/components/studios/studio-booking-dialog.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build`. Zero browser sessions opened.
+
+## 2026-11-13: Preserve CallbackUrl Across Auth Route Changes & Legacy Redirects
+- **What Changed:**
+  1. Updated [`src/components/auth/login-form.tsx`](src/components/auth/login-form.tsx):
+     - Dynamically appended `callbackUrl` to the "Create account" register link (`/register?callbackUrl=...`) so intent is preserved when an unregistered user toggles to the sign-up page.
+  2. Updated [`src/components/auth/register-form.tsx`](src/components/auth/register-form.tsx):
+     - Dynamically appended `callbackUrl` to the "Sign in" login link (`/login?callbackUrl=...`) ensuring users toggling to sign-in retain their destination.
+  3. Updated [`src/proxy.ts`](src/proxy.ts):
+     - Added query parameter preservation for legacy `/sign-in` and `/sign-up` routes (`/login${search}` and `/register${search}`).
+     - Included `/studios/add/:path*` in proxy matcher and protected routes.
+  4. Updated [`src/app/profile/page.tsx`](src/app/profile/page.tsx):
+     - Added `callbackUrl=/profile` to unauthenticated fallback sign-in button.
+- **Files Touched:**
+  - `src/components/auth/login-form.tsx`
+  - `src/components/auth/register-form.tsx`
+  - `src/proxy.ts`
+  - `src/app/profile/page.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build`. Zero browser sessions opened.
+
+## 2026-11-13: Next.js 16 Proxy Implementation & Book Now Authentication Guard
+- **What Changed:**
+  1. Created [`src/proxy.ts`](src/proxy.ts):
+     - Implemented Next.js 16 Proxy convention (`export function proxy(request)`) replacing deprecated `middleware.ts`.
+     - Validates Better Auth session token via `getSessionCookie` / cookies.
+     - Unauthenticated users attempting to access protected routes (`/profile`, `/my-bookings`, `/my-listings`, `/add-studio`, `/studios/add`, etc.) are redirected to `/login?callbackUrl=...`.
+     - Authenticated users attempting to visit auth pages (`/login`, `/register`, `/sign-in`, `/sign-up`) are redirected to their `callbackUrl` (if safe) or `/`.
+     - Configured targeted route matcher avoiding unnecessary proxy execution on static / asset routes.
+  2. Updated [`src/components/studios/studio-booking-dialog.tsx`](src/components/studios/studio-booking-dialog.tsx):
+     - Intercepted unauthenticated clicks on "Book Now" CTA and redirected to `/login?callbackUrl=${currentPath}`.
+     - Automatically prefilled user name and email from active session for authenticated users.
+- **Files Touched:**
+  - `src/proxy.ts`
+  - `src/components/studios/studio-booking-dialog.tsx`
+  - `docs/PROGRESS.md`
+- **Verification Done:** Verified via `npx tsc --noEmit` (0 errors), `npm run lint` (0 errors), and `npm run build`. Zero browser sessions opened.
+
 ## 2026-11-13: Align Password Change Validation with Registration Criteria
 - **What Changed:**
   1. Updated [`src/app/profile/page.tsx`](src/app/profile/page.tsx):
