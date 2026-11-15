@@ -1,8 +1,9 @@
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { CheckCircle2, Lock } from 'lucide-react';
+import { Lock } from 'lucide-react';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
+
 import { Input } from '@/components/ui/input';
 
 interface StudioHostInfoProps {
@@ -31,10 +32,6 @@ export function StudioHostInfo({ user }: StudioHostInfoProps) {
 					<h2 className="font-display text-lg sm:text-xl font-bold tracking-tight text-foreground">Host Identity & Ownership</h2>
 					<p className="text-sm text-muted-foreground">Listing ownership is automatically bound to your authenticated SetSpace creator profile.</p>
 				</div>
-				<span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-100 dark:bg-primary-950 text-primary font-semibold text-xs">
-					<CheckCircle2 className="size-3.5" />
-					<span>Verified Host</span>
-				</span>
 			</div>
 
 			{/* Host Profile Card */}
@@ -57,25 +54,16 @@ export function StudioHostInfo({ user }: StudioHostInfoProps) {
 				<div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
 					<Field>
 						<FieldLabel htmlFor="ownerName">Host Display Name</FieldLabel>
-						<Input
-							id="ownerName"
-							value={user?.name || ''}
-							readOnly
-							className="cursor-default bg-card font-medium text-foreground border border-border/50 dark:border-0"
-						/>
+						<Input id="ownerName" value={user?.name || ''} readOnly className="cursor-default bg-card font-medium text-foreground border border-border/50 dark:border-0" />
 					</Field>
 
 					<Field>
 						<FieldLabel htmlFor="ownerEmail">Host Contact Email</FieldLabel>
-						<Input
-							id="ownerEmail"
-							value={user?.email || ''}
-							readOnly
-							className="cursor-default bg-card font-medium text-foreground border border-border/50 dark:border-0"
-						/>
+						<Input id="ownerEmail" value={user?.email || ''} readOnly className="cursor-default bg-card font-medium text-foreground border border-border/50 dark:border-0" />
 					</Field>
 				</div>
 			</FieldGroup>
 		</div>
 	);
 }
+

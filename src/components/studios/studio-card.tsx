@@ -26,8 +26,16 @@ export function StudioCard({ studio, className, priority = false, interactive = 
 	const [canScrollPrev, setCanScrollPrev] = useState(false);
 	const [canScrollNext, setCanScrollNext] = useState(false);
 
-	const hasGallery = Boolean(studio.gallery && studio.gallery.length > 0);
-	const images = [studio.image, ...(studio.gallery || [])].filter(Boolean);
+	const images = [studio.image, ...(studio.gallery || [])].filter((src): src is string => {
+		if (!src || typeof src !== 'string' || !src.trim()) return false;
+		try {
+			const parsed = new URL(src.trim());
+			return parsed.protocol === 'https:' && (parsed.hostname === 'i.ibb.co' || parsed.hostname === 'i.ibb.co.com');
+		} catch {
+			return false;
+		}
+	});
+	const hasGallery = images.length > 1;
 
 	useEffect(() => {
 		if (!api) return;
@@ -177,8 +185,8 @@ export function StudioCard({ studio, className, priority = false, interactive = 
 				</div>
 
 				{/* Title */}
-				<h3 className="font-body text-base sm:text-lg font-bold text-foreground line-clamp-2 leading-snug group-hover:text-primary transition-colors">
-					<Link href={`/studios/${studio.slug || studio._id}`}>{studio.title}</Link>
+				<h3 className={cn('font-body text-base sm:text-lg font-bold text-foreground line-clamp-2 leading-snug', interactive && 'group-hover:text-primary transition-colors')}>
+					{interactive ? <Link href={`/studios/${studio.slug || studio._id}`}>{studio.title}</Link> : <span>{studio.title}</span>}
 				</h3>
 
 				{/* Rate & Location */}

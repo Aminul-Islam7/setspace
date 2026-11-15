@@ -4,7 +4,7 @@ import { AlertCircle, ChevronRight, Eye, Loader2 } from 'lucide-react';
 import { Control, useWatch } from 'react-hook-form';
 import { StudioCard } from '@/components/studios/studio-card';
 import { Button } from '@/components/ui/button';
-import type { CreateStudioFormValues } from './types';
+import { isImgbbUrl, type CreateStudioFormValues } from './types';
 import type { Studio, StudioCategory } from '@/types';
 import { useMemo } from 'react';
 
@@ -22,8 +22,33 @@ interface StudioLivePreviewProps {
 export function StudioLivePreview({ control, isSubmitting, formError, user }: StudioLivePreviewProps) {
 	const values = useWatch({ control });
 
-	const previewStudio: Studio = useMemo(
-		() => ({
+	const coverError = useMemo(() => {
+		const raw = values.image?.trim();
+		if (!raw) return null;
+		if (!isImgbbUrl(raw)) {
+			return 'Cover photo must be an i.ibb.co link (only imgbb uploads supported).';
+		}
+		return null;
+	}, [values.image]);
+
+	const previewStudio: Studio = useMemo(() => {
+		let safeCover = '';
+		try {
+			if (values.image && isImgbbUrl(values.image)) {
+				safeCover = values.image.trim();
+			}
+		} catch {
+			safeCover = '';
+		}
+
+		let safeGallery: string[] = [];
+		try {
+			safeGallery = (values.gallery || []).filter(item => Boolean(item && isImgbbUrl(item)));
+		} catch {
+			safeGallery = [];
+		}
+
+		return {
 			_id: 'preview-studio',
 			title: values.title?.trim() || 'Your Creative Studio Title',
 			slug: 'preview',
@@ -33,8 +58,8 @@ export function StudioLivePreview({ control, isSubmitting, formError, user }: St
 			securityDeposit: values.securityDeposit || 0,
 			maxCapacity: values.maxCapacity || 1,
 			location: values.location?.trim() || 'SoHo, New York, NY',
-			image: values.image?.trim() || '',
-			gallery: values.gallery?.filter((item): item is string => Boolean(item && item.trim())) || [],
+			image: safeCover,
+			gallery: safeGallery,
 			amenities: values.amenities || [],
 			rating: 5.0,
 			reviewCount: 0,
@@ -44,9 +69,8 @@ export function StudioLivePreview({ control, isSubmitting, formError, user }: St
 			ownerEmail: user?.email || '',
 			ownerAvatar: user?.image || undefined,
 			createdAt: new Date().toISOString(),
-		}),
-		[values, user]
-	);
+		};
+	}, [values, user]);
 
 	return (
 		<aside className="space-y-5">
@@ -60,9 +84,17 @@ export function StudioLivePreview({ control, isSubmitting, formError, user }: St
 				</div>
 
 				{/* Reusable StudioCard Preview */}
-				<div className="rounded-2xl bg-card p-3 shadow-xs">
+				<div className="rounded-2xl bg-card p-3 shadow-xs pointer-events-none select-none">
 					<StudioCard studio={previewStudio} interactive={false} />
 				</div>
+
+				{/* Invalid Cover Error Notice */}
+				{coverError && (
+					<div className="p-3.5 rounded-xl bg-destructive/10 text-destructive text-xs flex items-start gap-2 leading-relaxed">
+						<AlertCircle className="size-4 shrink-0 mt-0.5" />
+						<span>{coverError}</span>
+					</div>
+				)}
 
 				{/* Form Submission Error Alert */}
 				{formError && (

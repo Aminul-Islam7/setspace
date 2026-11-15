@@ -14,8 +14,6 @@ import { StudioMediaUpload } from './studio-media-upload';
 import { StudioAmenitiesPicker } from './studio-amenities-picker';
 import { StudioHostInfo } from './studio-host-info';
 import { StudioLivePreview } from './studio-live-preview';
-import { Button } from '@/components/ui/button';
-import { ChevronRight, Loader2 } from 'lucide-react';
 
 function generateUniqueSlug(title: string): string {
 	const cleanBase = title
@@ -40,6 +38,8 @@ export function CreateStudioForm() {
 		control,
 		handleSubmit,
 		setValue,
+		setError,
+		clearErrors,
 		formState: { errors },
 	} = useForm<CreateStudioFormValues>({
 		resolver: zodResolver(createStudioSchema),
@@ -125,52 +125,22 @@ export function CreateStudioForm() {
 				<StudioPricingCapacity register={register} errors={errors} />
 
 				{/* Media & Showcase */}
-				<StudioMediaUpload register={register} control={control} setValue={setValue} errors={errors} />
+				<StudioMediaUpload register={register} control={control} setValue={setValue} setError={setError} clearErrors={clearErrors} errors={errors} />
 
 				{/* Amenities Checklist */}
 				<StudioAmenitiesPicker control={control} setValue={setValue} errors={errors} />
 
 				{/* Host Profile & Ownership */}
 				<StudioHostInfo user={user} />
-
-				{/* Mobile Submission Action */}
-				<div className="block lg:hidden pt-2">
-					{formError && (
-						<p className="text-xs text-destructive mb-3">{formError}</p>
-					)}
-					<Button
-						type="submit"
-						variant="default"
-						size="lg"
-						disabled={isSubmitting}
-						className="w-full font-semibold cursor-pointer"
-					>
-						{isSubmitting ? (
-							<>
-								<Loader2 className="size-4 animate-spin" />
-								<span>Publishing Studio...</span>
-							</>
-						) : (
-							<>
-								<span>Publish Studio Listing</span>
-								<ChevronRight className="size-4" />
-							</>
-						)}
-					</Button>
-				</div>
 			</div>
 
 			{/* Sticky Live Preview (Desktop) */}
 			<div className="lg:col-span-4">
 				<div className="lg:sticky lg:top-24">
-					<StudioLivePreview
-						control={control}
-						isSubmitting={isSubmitting}
-						formError={formError}
-						user={user}
-					/>
+					<StudioLivePreview control={control} isSubmitting={isSubmitting} formError={formError} user={user} />
 				</div>
 			</div>
 		</form>
 	);
 }
+

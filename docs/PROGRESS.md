@@ -2,6 +2,113 @@
 
 Record daily or milestone progress entries. Keep concise and chronological.
 
+## 2026-11-15: Streamline My Listings & My Bookings (Remove Stat Cards, Clean Headers & Update Skeletons)
+- **What Changed:**
+  1. Updated [`src/app/my-listings/page.tsx`](src/app/my-listings/page.tsx) & [`src/app/my-listings/loading.tsx`](src/app/my-listings/loading.tsx):
+     - Simplified page header: removed `<p>` description paragraph and top "+ Host New Studio" button below title.
+     - Updated loading skeleton to mirror the clean single-title header pixel-for-pixel.
+  2. Updated [`src/app/my-bookings/page.tsx`](src/app/my-bookings/page.tsx) & [`src/app/my-bookings/loading.tsx`](src/app/my-bookings/loading.tsx):
+     - Cleaned unused imports and stripped dead containers.
+     - Aligned skeleton header with `currentTitle="Bookings"` and single-title skeleton bar.
+  3. Updated [`src/components/listings/my-listings-view.tsx`](src/components/listings/my-listings-view.tsx):
+     - Removed 4 top stat cards (Workspaces, Avg Rate, Total Capacity, Host Rating) and associated metrics calculations.
+     - Aligned `MyListingsSkeletonContent` by removing KPI cards skeleton to keep layout shifts at 0.
+  4. Updated [`src/components/bookings/my-bookings-view.tsx`](src/components/bookings/my-bookings-view.tsx):
+     - Removed 4 top stat cards (Total Bookings, Confirmed, Pending, Total Invested) and associated metrics calculations.
+     - Aligned `MyBookingsSkeletonContent` by removing KPI cards skeleton.
+- **Files Touched:**
+  - `src/app/my-listings/page.tsx`
+  - `src/app/my-listings/loading.tsx`
+  - `src/components/listings/my-listings-view.tsx`
+  - `src/app/my-bookings/page.tsx`
+  - `src/app/my-bookings/loading.tsx`
+  - `src/components/bookings/my-bookings-view.tsx`
+  - `docs/PROGRESS.md`
+
+## 2026-11-15: Implement My Bookings (`/my-bookings`) and My Studio Listings (`/my-listings`) Pages
+- **What Changed:**
+  1. Created [`src/app/my-listings/page.tsx`](src/app/my-listings/page.tsx) & [`src/app/my-listings/loading.tsx`](src/app/my-listings/loading.tsx):
+     - Protected route for space hosts to monitor and manage their workspaces.
+     - StudioBreadcrumb header, display title, subtitle, and primary "+ Host New Studio" action button.
+     - Pixel-perfect loading skeleton mirroring KPI cards, search bar, and listing rows.
+  2. Created [`src/components/listings/my-listings-view.tsx`](src/components/listings/my-listings-view.tsx):
+     - Displays 4 KPI summary cards: Total Workspaces, Average Hourly Rate, Total Capacity, and Host Rating.
+     - Real-time client-side search bar filtering user's workspaces by title, category, or location.
+     - Responsive listing cards: 16:9 thumbnail, category pill, studio title with link, location with MapPin, rate, deposit, crew capacity, star rating, and actions.
+     - Action buttons: "View" studio, "Edit" listing, and "Delete" with accessible dialog confirmation.
+     - Empty state with direct CTA to `/studios/create`.
+  3. Created [`src/components/listings/delete-studio-dialog.tsx`](src/components/listings/delete-studio-dialog.tsx):
+     - Mobile sliding bottom sheet (`< sm`) / desktop centered modal (`sm:`) confirmation dialog.
+     - Destructive confirmation calling `DELETE /api/studios/:id` with Sonner toast feedback and optimistic list removal.
+  4. Created [`src/app/my-bookings/page.tsx`](src/app/my-bookings/page.tsx) & [`src/app/my-bookings/loading.tsx`](src/app/my-bookings/loading.tsx):
+     - Protected route for creators to track shoot reservations and review session times.
+     - StudioBreadcrumb header, display title, subtitle, and "Explore Workspaces" action button.
+     - Pixel-perfect loading skeleton mirroring KPI cards, filter tabs, and reservation cards.
+  5. Created [`src/components/bookings/my-bookings-view.tsx`](src/components/bookings/my-bookings-view.tsx):
+     - 4 KPI summary cards: Total Bookings, Confirmed / Upcoming, Pending Approval, and Total Investment.
+     - Segmented filter tabs with live counters: All, Pending, Confirmed, Completed, Cancelled.
+     - Responsive booking cards: 16:9 thumbnail, category badge, status badge (`Pending` in amber, `Confirmed` in emerald, `Cancelled` in destructive, `Completed` in secondary), formatted shoot date (`Sat, Nov 22, 2026`), 12h time window (`10:00 AM – 2:00 PM`), and total price.
+     - Action buttons: "Cancel" (strictly on Pending bookings), "Receipt" (opens invoice modal), and "Studio" (links to studio).
+     - Empty state with CTA to `/studios`.
+  6. Created [`src/components/bookings/cancel-booking-dialog.tsx`](src/components/bookings/cancel-booking-dialog.tsx):
+     - Accessible modal dialog confirming reservation cancellation.
+     - Calls `PATCH /api/bookings/:id` with `{ status: 'Cancelled' }`, optimistic status transition, and toast notification.
+  7. Created [`src/components/bookings/booking-receipt-dialog.tsx`](src/components/bookings/booking-receipt-dialog.tsx):
+     - Professional invoice modal displaying SetSpace invoice header, reference ID (`#SS-...`), creator details, workspace details, shoot timeline, itemized charges (hours x rate + deposit), and "Print Receipt" trigger.
+- **Files Touched:**
+  - `src/app/my-listings/page.tsx`
+  - `src/app/my-listings/loading.tsx`
+  - `src/components/listings/my-listings-view.tsx`
+  - `src/components/listings/delete-studio-dialog.tsx`
+  - `src/app/my-bookings/page.tsx`
+  - `src/app/my-bookings/loading.tsx`
+  - `src/components/bookings/my-bookings-view.tsx`
+  - `src/components/bookings/cancel-booking-dialog.tsx`
+  - `src/components/bookings/booking-receipt-dialog.tsx`
+  - `docs/TASKS.md`
+  - `docs/PROGRESS.md`
+  - `docs/DECISIONS.md`
+
+## 2026-11-15: Make Live Search Preview Completely Non-Clickable
+- **What Changed:**
+  1. Updated [`src/components/studios/create/studio-live-preview.tsx`](src/components/studios/create/studio-live-preview.tsx):
+     - Added `pointer-events-none select-none` to the preview card wrapper to disable all click/drag/touch events.
+  2. Updated [`src/components/studios/studio-card.tsx`](src/components/studios/studio-card.tsx):
+     - When `interactive={false}`, renders plain text `<span>{studio.title}</span>` without `<Link>` and removes hover highlight styling, ensuring zero interactive anchors exist in preview mode.
+- **Files Touched:**
+  - `src/components/studios/create/studio-live-preview.tsx`
+  - `src/components/studios/studio-card.tsx`
+  - `docs/PROGRESS.md`
+
+## 2026-11-15: Try-Catch Hostname Safety & ImgBB Validation on Studio Creation Media & Live Preview
+- **What Changed:**
+  1. Updated [`src/components/studios/create/types.ts`](src/components/studios/create/types.ts):
+     - Exported `isImgbbUrl` helper wrapping `new URL(url)` in a `try...catch` and validating `hostname === 'i.ibb.co'`.
+     - Refined `createStudioSchema` for `image` and `gallery` fields using `.refine(isImgbbUrl)` to guarantee only ImgBB links pass form validation.
+  2. Updated [`src/components/studios/create/studio-media-upload.tsx`](src/components/studios/create/studio-media-upload.tsx):
+     - Added synchronous `try...catch` validation on `coverImage` via `useMemo` and connected to RHF `setError` / `clearErrors`.
+     - When an invalid or non-ImgBB URL is typed/pasted, displays an immediate `<FieldError>` notice: `"Only i.ibb.co image links are supported (e.g. https://i.ibb.co/...)"`.
+     - Blocks `<Image>` preview rendering whenever URL is not a valid `i.ibb.co` host, completely preventing Next.js runtime crashes.
+     - Added try-catch check in `handleAddGalleryPhoto` and in gallery thumbnail rendering.
+  3. Updated [`src/components/studios/create/studio-live-preview.tsx`](src/components/studios/create/studio-live-preview.tsx):
+     - Wrapped cover image and gallery items in `try...catch` blocks (`isImgbbUrl`).
+     - Replaces invalid/non-ImgBB cover with safe empty string so `StudioCard` renders `"No Cover Added Yet"` without crashing Next.js `<Image>`.
+     - Displays in-UI notice banner in preview container when non-ImgBB cover photo is entered.
+  4. Updated [`src/components/studios/studio-card.tsx`](src/components/studios/studio-card.tsx):
+     - Added defensive try-catch hostname check to ensure any image passed into the carousel is verified against `i.ibb.co` before Next `<Image>` renders.
+  5. Cleaned Unused Imports:
+     - Cleaned unused imports across `create-studio-form.tsx`, `studio-amenities-picker.tsx`, and `studio-host-info.tsx`.
+- **Files Touched:**
+  - `src/components/studios/create/types.ts`
+  - `src/components/studios/create/studio-media-upload.tsx`
+  - `src/components/studios/create/studio-live-preview.tsx`
+  - `src/components/studios/create/create-studio-form.tsx`
+  - `src/components/studios/studio-card.tsx`
+  - `src/components/studios/create/studio-amenities-picker.tsx`
+  - `src/components/studios/create/studio-host-info.tsx`
+  - `docs/PROGRESS.md`
+  - `docs/DECISIONS.md`
+
 ## 2026-11-15: Gallery & Card Nav Buttons High-Contrast Fix & Preservation of Handcrafted flat-3d
 - **What Changed:**
   1. Updated [`src/components/studios/studio-gallery.tsx`](src/components/studios/studio-gallery.tsx) & [`src/components/studios/studio-card.tsx`](src/components/studios/studio-card.tsx):

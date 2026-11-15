@@ -3,10 +3,11 @@
 Track ongoing, planned, and completed tasks. Check off items as they finish.
 
 ## Active & Upcoming
-- [ ] Implement My Listings page (`/my-listings`) with edit/delete actions
-- [ ] Implement My Bookings page (`/my-bookings`) with cancellation and status indicators
+- [ ] Implement Update Studio page (`/studios/edit/[id]`) with pre-filled form and patch submission
 
 ## Completed
+- [x] Implement My Studio Listings page (`/my-listings`) with KPI summary cards, instant search filtering, accessible delete confirmation dialog, and pixel-perfect loading skeleton (2026-11-15)
+- [x] Implement My Bookings page (`/my-bookings`) with KPI metrics, status filtering tabs, cancellation confirmation modal, printable invoice receipt modal, and pixel-perfect loading skeleton (2026-11-15)
 - [x] Design System Refactoring: Semantic OKLCH tokens, borderless dark mode, high-contrast form fields, and modern Tailwind v4 `linear` syntax (2026-11-15)
 - [x] Build Add Studio page (`/studios/create`) with modular section cards, Base UI Select & Textarea, live real-time search card preview, cover & gallery photo managers, production amenities picker, session-bound host details, and proxy redirect for legacy `/add-studio` (2026-11-14)
 - [x] Build split-design authentication pages (`/login` & `/register`) with Better Auth, Google OAuth, Email/Password, Zod + RHF validation, and session-reactive Navbar (2026-11-12)

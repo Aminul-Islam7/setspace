@@ -3,10 +3,11 @@
 import { Control, Controller, FieldErrors, UseFormRegister } from 'react-hook-form';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { STUDIO_CATEGORIES } from '@/lib/studio-constants';
+
 import type { CreateStudioFormValues } from './types';
+import { Input } from '@/components/ui/input';
+import { STUDIO_CATEGORIES } from '@/lib/studio-constants';
+import { Textarea } from '@/components/ui/textarea';
 
 interface StudioBasicDetailsProps {
 	register: UseFormRegister<CreateStudioFormValues>;
@@ -28,12 +29,7 @@ export function StudioBasicDetails({ register, control, errors }: StudioBasicDet
 				{/* Studio Title */}
 				<Field>
 					<FieldLabel htmlFor="title">Studio Title *</FieldLabel>
-					<Input
-						id="title"
-						placeholder="e.g. EchoChamber Minimalist Creator Pod"
-						aria-invalid={!!errors.title}
-						{...register('title')}
-					/>
+					<Input id="title" placeholder="e.g. EchoChamber Minimalist Creator Pod" aria-invalid={!!errors.title} {...register('title')} />
 					{errors.title && <FieldError>{errors.title.message}</FieldError>}
 				</Field>
 
@@ -74,12 +70,7 @@ export function StudioBasicDetails({ register, control, errors }: StudioBasicDet
 					{/* Location Address */}
 					<Field>
 						<FieldLabel htmlFor="location">Location / Address *</FieldLabel>
-						<Input
-							id="location"
-							placeholder="e.g. 482 Broadway, Soho, New York, NY"
-							aria-invalid={!!errors.location}
-							{...register('location')}
-						/>
+						<Input id="location" placeholder="e.g. 482 Broadway, Soho, New York, NY" aria-invalid={!!errors.location} {...register('location')} />
 						{errors.location && <FieldError>{errors.location.message}</FieldError>}
 					</Field>
 				</div>
@@ -87,16 +78,11 @@ export function StudioBasicDetails({ register, control, errors }: StudioBasicDet
 				{/* Detailed Description */}
 				<Field>
 					<FieldLabel htmlFor="description">Workspace Description *</FieldLabel>
-					<Textarea
-						id="description"
-						rows={4}
-						placeholder="Describe the aesthetic, ceiling heights, acoustic damping, natural lighting orientation, power specs, freight elevator access, and ideal productions..."
-						aria-invalid={!!errors.description}
-						{...register('description')}
-					/>
+					<Textarea id="description" rows={4} placeholder="Describe the aesthetic, ceiling heights, acoustic damping, natural lighting orientation, power specs, freight elevator access, and ideal productions..." aria-invalid={!!errors.description} {...register('description')} />
 					{errors.description && <FieldError>{errors.description.message}</FieldError>}
 				</Field>
 			</FieldGroup>
 		</div>
 	);
 }
+

@@ -1,28 +1,53 @@
 'use client';
 
-import { Control, FieldErrors, UseFormRegister, UseFormSetValue, useWatch } from 'react-hook-form';
+import { Control, FieldErrors, UseFormClearErrors, UseFormRegister, UseFormSetError, UseFormSetValue, useWatch } from 'react-hook-form';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Image as ImageIcon, Plus, Trash2 } from 'lucide-react';
-
+import { isImgbbUrl, type CreateStudioFormValues } from './types';
 import { Button } from '@/components/ui/button';
-import type { CreateStudioFormValues } from './types';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 interface StudioMediaUploadProps {
 	register: UseFormRegister<CreateStudioFormValues>;
 	control: Control<CreateStudioFormValues>;
 	setValue: UseFormSetValue<CreateStudioFormValues>;
+	setError?: UseFormSetError<CreateStudioFormValues>;
+	clearErrors?: UseFormClearErrors<CreateStudioFormValues>;
 	errors: FieldErrors<CreateStudioFormValues>;
 }
 
-export function StudioMediaUpload({ register, control, setValue, errors }: StudioMediaUploadProps) {
+export function StudioMediaUpload({ register, control, setValue, setError, clearErrors, errors }: StudioMediaUploadProps) {
 	const coverImage = useWatch({ control, name: 'image' });
 	const gallery = useWatch({ control, name: 'gallery' }) || [];
 
 	const [galleryInput, setGalleryInput] = useState('');
 	const [galleryInputError, setGalleryInputError] = useState<string | null>(null);
+
+	const isCoverValid = useMemo(() => isImgbbUrl(coverImage), [coverImage]);
+
+	const coverFormatError = useMemo(() => {
+		const trimmed = coverImage?.trim();
+		if (!trimmed) return null;
+		if (!isCoverValid) {
+			return 'Only i.ibb.co image links are supported (e.g. https://i.ibb.co/...).';
+		}
+		return null;
+	}, [coverImage, isCoverValid]);
+
+	useEffect(() => {
+		if (!coverImage || !coverImage.trim()) {
+			clearErrors?.('image');
+			return;
+		}
+
+		if (coverFormatError) {
+			setError?.('image', { type: 'manual', message: coverFormatError });
+		} else {
+			clearErrors?.('image');
+		}
+	}, [coverImage, coverFormatError, setError, clearErrors]);
 
 	const handleAddGalleryPhoto = () => {
 		setGalleryInputError(null);
@@ -33,10 +58,8 @@ export function StudioMediaUpload({ register, control, setValue, errors }: Studi
 			return;
 		}
 
-		try {
-			new URL(trimmed);
-		} catch {
-			setGalleryInputError('Please enter a valid URL (e.g. https://...).');
+		if (!isImgbbUrl(trimmed)) {
+			setGalleryInputError('Only i.ibb.co image links are supported (e.g. https://i.ibb.co/...).');
 			return;
 		}
 
@@ -60,6 +83,8 @@ export function StudioMediaUpload({ register, control, setValue, errors }: Studi
 		setValue('gallery', updated, { shouldValidate: true, shouldDirty: true });
 	};
 
+	const displayedImageError = errors.image?.message || coverFormatError;
+
 	return (
 		<div className="rounded-2xl bg-secondary p-5 sm:p-7 space-y-6 shadow-xs">
 			<div className="space-y-1">
@@ -73,21 +98,20 @@ export function StudioMediaUpload({ register, control, setValue, errors }: Studi
 					<FieldLabel htmlFor="image">Primary Cover Photo URL *</FieldLabel>
 					<div className="flex flex-col sm:flex-row gap-4 items-start">
 						<div className="flex-1 w-full space-y-2">
-							<Input id="image" type="url" placeholder="https://i.ibb.co/..." aria-invalid={!!errors.image} {...register('image')} />
-							{errors.image && <FieldError>{errors.image.message}</FieldError>}
+							<Input id="image" type="url" placeholder="https://i.ibb.co/..." aria-invalid={!!displayedImageError} {...register('image')} />
+							{displayedImageError && <FieldError>{displayedImageError}</FieldError>}
 						</div>
 
 						{/* Live Cover Preview */}
 						<div className="relative w-full sm:w-40 aspect-video rounded-xl bg-card overflow-hidden shrink-0 flex items-center justify-center">
-							{coverImage ? (
+							{isCoverValid && coverImage ? (
 								<Image
-									src={coverImage}
+									src={coverImage.trim()}
 									alt="Cover Preview"
 									fill
 									unoptimized
 									className="object-cover"
 									onError={e => {
-										// Fallback if image URL is broken
 										(e.target as HTMLElement).style.display = 'none';
 									}}
 								/>
@@ -134,17 +158,28 @@ export function StudioMediaUpload({ register, control, setValue, errors }: Studi
 					{/* Gallery Thumbnails Grid */}
 					{gallery.length > 0 && (
 						<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 pt-2">
-							{gallery.map((url, index) => (
-								<div key={index} className="group relative aspect-video rounded-xl overflow-hidden bg-card">
-									<Image src={url} alt={`Gallery ${index + 1}`} fill unoptimized className="object-cover" />
-									<div className="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-2">
-										<Button type="button" variant="destructive" size="icon-sm" onClick={() => handleRemoveGalleryPhoto(index)} aria-label={`Remove photo ${index + 1}`} className="size-7 rounded-lg cursor-pointer">
-											<Trash2 className="size-3.5" />
-										</Button>
+							{gallery.map((url, index) => {
+								const isValidPhoto = isImgbbUrl(url);
+
+								return (
+									<div key={index} className="group relative aspect-video rounded-xl overflow-hidden bg-card">
+										{isValidPhoto ? (
+											<Image src={url} alt={`Gallery ${index + 1}`} fill unoptimized className="object-cover" />
+										) : (
+											<div className="flex flex-col items-center justify-center w-full h-full text-muted-foreground p-2 text-center">
+												<ImageIcon className="size-5 mb-1 opacity-50" />
+												<span className="text-[10px]">Invalid link</span>
+											</div>
+										)}
+										<div className="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-2">
+											<Button type="button" variant="destructive" size="icon-sm" onClick={() => handleRemoveGalleryPhoto(index)} aria-label={`Remove photo ${index + 1}`} className="size-7 rounded-lg cursor-pointer">
+												<Trash2 className="size-3.5" />
+											</Button>
+										</div>
+										<span className="absolute bottom-1 left-1.5 px-1.5 py-0.5 rounded-md bg-foreground text-[10px] font-semibold text-background pointer-events-none">#{index + 1}</span>
 									</div>
-									<span className="absolute bottom-1 left-1.5 px-1.5 py-0.5 rounded-md bg-foreground text-[10px] font-semibold text-background pointer-events-none">#{index + 1}</span>
-								</div>
-							))}
+								);
+							})}
 						</div>
 					)}
 				</div>

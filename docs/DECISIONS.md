@@ -2,6 +2,28 @@
 
 Record of architectural, design, and structural decisions. Add dated entries in reverse-chronological order.
 
+## 2026-11-15: Architecture of My Listings & My Bookings Management Views
+- **Context:** Need dedicated, production-grade management experiences for space hosts (`/my-listings`) and creators (`/my-bookings`) aligned with existing design system (Syne headings, borderless dark mode, solid semantic neutral tokens, corner-rounded `rounded-lg`/`rounded-2xl`, responsive mobile bottom sheets).
+- **Alternatives Considered:**
+  1. Dense text-only raw database table with browser confirm alerts.
+  2. Responsive hybrid card/table layout with KPI metrics row, accessible confirmation dialogs, and instant tab/search filters:
+     - `/my-listings`: 4-card host metrics row (Total Workspaces, Avg Hourly Rate, Total Capacity, Host Rating). Real-time client filter. Accessible `DeleteStudioDialog` calling `DELETE /api/studios/:id`.
+     - `/my-bookings`: 4-card creator metrics row (Total Bookings, Confirmed, Pending, Total Spent). Status tabs with live counts (All, Pending, Confirmed, Completed, Cancelled). Semantic color badges. Accessible `CancelBookingDialog` and branded `BookingReceiptDialog` with itemized invoice and print action.
+     - Asynchronous non-cascading fetch pattern (`fetch().then().catch().finally()`) avoiding React 19 Compiler cascading render warnings.
+- **Outcome:** Adopted Option 2 across `src/app/my-listings/`, `src/app/my-bookings/`, `src/components/listings/`, and `src/components/bookings/`. Guarantees WCAG accessibility, zero UI drift, and pixel-perfect skeleton transitions.
+
+## 2026-11-15: Try-Catch ImgBB Hostname Validation & Next.js Image Crash Prevention
+- **Context:** `next.config.ts` enforces `remotePatterns: [{ protocol: 'https', hostname: 'i.ibb.co' }]`. Typing or pasting any URL with a different host (e.g., Unsplash, Cloudinary, Imgur, or malformed text) triggered fatal Next.js `<Image>` runtime crashes in Live Search Preview and Media Showcase, bringing down the whole component tree.
+- **Alternatives Considered:**
+  1. Add wildcard `remotePatterns` in `next.config.ts`. (Rejected: platform currently only supports imgbb uploads).
+  2. Multi-tier defensive validation with try-catch and inline field errors:
+     - Implemented `isImgbbUrl` helper using `try...catch` with `new URL(url).hostname === 'i.ibb.co'`.
+     - In `StudioMediaUpload`: reactive `useMemo` validation on `coverImage` connected to RHF `setError` / `clearErrors`. Shows inline `<FieldError>` immediately upon typing/pasting invalid or non-ImgBB links, and suppresses preview `<Image>` rendering until valid.
+     - In `StudioLivePreview`: sanitizes `image` and `gallery` through `try...catch`. Replaces invalid/non-ImgBB cover with safe empty string, preventing `StudioCard` crash and displaying an in-UI error alert.
+     - In `StudioCard`: defensively verifies image URLs through `try...catch` before sending to Next.js `<Image>`.
+     - In Zod schema (`types.ts`): enforces `.refine(isImgbbUrl)` for form submission.
+- **Outcome:** Adopted Option 2. Guarantees zero crashes on non-ImgBB or invalid link input while providing instant, helpful feedback via `<FieldError>` to the user.
+
 ## 2026-11-15: Semantic OKLCH Theming, Borderless Dark Mode, and Linear Syntax Refactoring
 - **Context:** Form fields had muddy, unreadable contrast in light mode due to transparent borders and faint opacity overlays. Arbitrary opacity modifiers (`/70`, `/60`, `/50`, etc.) and deprecated `bg-gradient-to-*` syntax were scattered across components. In addition, cards and sections were cluttered with excessive border boxes.
 - **Alternatives Considered:**
