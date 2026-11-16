@@ -6,6 +6,9 @@ Track ongoing, planned, and completed tasks. Check off items as they finish.
 - [ ] Production Smoke Testing & Final Review
 
 ## Completed
+- [x] Implement Host Client Requests Manager in `/my-listings` with dual view switcher, status filtering, Accept/Decline/Complete controls, and invoice receipts (2026-11-16)
+- [x] Implement Verified Reviews policy for completed bookings only and "Post Review" action on `/my-bookings` (2026-11-16)
+- [x] Implement dynamic CTA on `/studios/[slug]`: "Edit Studio" for studio hosts vs "Book Now" for creators (2026-11-16)
 - [x] Implement Update Studio page (`/studios/edit/[id]`) with pre-filled form, live preview, non-owner protection, and patch submission (2026-11-16)
 - [x] Implement My Studio Listings page (`/my-listings`) with KPI summary cards, instant search filtering, accessible delete confirmation dialog, and pixel-perfect loading skeleton (2026-11-15)
 - [x] Implement My Bookings page (`/my-bookings`) with KPI metrics, status filtering tabs, cancellation confirmation modal, printable invoice receipt modal, and pixel-perfect loading skeleton (2026-11-15)

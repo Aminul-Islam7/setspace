@@ -2,6 +2,33 @@
 
 Record daily or milestone progress entries. Keep concise and chronological.
 
+## 2026-11-16: Unified Pill Styling Across My Listings & My Bookings
+- **What Changed:**
+  1. Updated [`src/components/listings/my-listings-view.tsx`](src/components/listings/my-listings-view.tsx):
+     - Refactored top view switcher (`My Workspaces` vs `Client Requests`) from standard buttons to high-contrast segmented pill buttons matching `/my-bookings` (`rounded-lg px-3 py-1.5`, active: `bg-foreground text-background font-semibold shadow-xs`, inactive: `bg-secondary text-muted-foreground hover:text-foreground`).
+     - Refactored status filter pills in Client Requests view (`All`, `Pending`, `Confirmed`, `Completed`, `Cancelled`) to match the exact pill and count badge styling (`px-1.5 py-0.2 rounded-full text-[10px]`) used in `/my-bookings`.
+- **Files Touched:**
+  - `src/components/listings/my-listings-view.tsx`
+  - `docs/PROGRESS.md`
+
+## 2026-11-16: Host Client Requests Manager on My Studio Listings (`/my-listings`)
+- **What Changed:**
+  1. Updated [`src/components/listings/my-listings-view.tsx`](src/components/listings/my-listings-view.tsx):
+     - Added dual-view switcher tabs at top of page: **"My Workspaces ({count})"** and **"Client Requests ({count})"** with dynamic pending badge counter (`X new` in amber).
+     - Built dedicated Client Requests view allowing studio hosts to manage reservations booked on their workspaces.
+     - Added status filter tabs: `All`, `Pending`, `Confirmed`, `Completed`, `Cancelled`.
+     - Request cards display studio thumbnail, category badge, studio name link, client credentials (`Booked by {userName} ({userEmail})`), formatted shoot date, 12h time window, duration hours, total host payout, and status pill.
+     - Implemented direct status transitions via `PATCH /api/bookings/:id` with JWT bearer authorization:
+       - `Pending`: **"Accept"** (`Confirmed`) and **"Decline"** (`Cancelled`).
+       - `Confirmed`: **"Complete Shoot"** (`Completed`) and **"Cancel"** (`Cancelled`).
+       - `Completed` / `Cancelled`: Status badges + **"View Receipt"** modal button.
+     - Connected dual-source endpoint querying: primary `GET /api/users/me/bookings?role=host` with graceful fallback to `GET /api/bookings?limit=100` filtering by `b.ownerEmail === userEmail`.
+     - Mirrored view switcher in `MyListingsSkeletonContent` for zero layout shifts.
+- **Files Touched:**
+  - `src/components/listings/my-listings-view.tsx`
+  - `docs/PROGRESS.md`
+  - `docs/TASKS.md`
+
 ## 2026-11-16: Verified Reviews for Completed Bookings Only & "Post Review" on My Bookings Cards
 - **What Changed:**
   1. Updated [`src/types/index.ts`](src/types/index.ts):
