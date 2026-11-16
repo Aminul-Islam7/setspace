@@ -1,12 +1,13 @@
 'use client';
 
-import type { ApiResponse, Booking, BookingStatus } from '@/types';
-import { Calendar, CheckCircle2, Clock, Compass, ExternalLink, Image as ImageIcon, MapPin, Receipt, XCircle } from 'lucide-react';
+import type { ApiResponse, Booking, BookingStatus, Studio } from '@/types';
+import { Calendar, CheckCircle2, Clock, Compass, ExternalLink, Image as ImageIcon, MapPin, Receipt, Star, XCircle } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 import { BookingReceiptDialog } from './booking-receipt-dialog';
 import { Button } from '@/components/ui/button';
 import { CancelBookingDialog } from './cancel-booking-dialog';
+import { PostReviewDialog } from './post-review-dialog';
 import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -54,6 +55,7 @@ export function MyBookingsView() {
 	const { data: session, isPending: isSessionPending } = useSession();
 	const user = session?.user;
 	const userEmail = user?.email;
+	const userName = user?.name;
 
 	const [bookings, setBookings] = useState<Booking[]>([]);
 	const [isFetching, setIsFetching] = useState(true);
@@ -64,6 +66,8 @@ export function MyBookingsView() {
 	// Dialog states
 	const [bookingToCancel, setBookingToCancel] = useState<Booking | null>(null);
 	const [bookingForReceipt, setBookingForReceipt] = useState<Booking | null>(null);
+	const [bookingForReview, setBookingForReview] = useState<Booking | null>(null);
+	const [reviewedStudioIds, setReviewedStudioIds] = useState<Set<string>>(new Set());
 
 	useEffect(() => {
 		if (!userEmail) return;
@@ -117,10 +121,31 @@ export function MyBookingsView() {
 				}
 			});
 
+		// Check which studios the current user has already reviewed
+		fetch(`${apiUrl}/api/studios?limit=100`, { cache: 'no-store' })
+			.then(res => (res.ok ? res.json() : null))
+			.then(json => {
+				if (!isMounted || !json?.data) return;
+				const studios: Studio[] = json.data;
+				const reviewed = new Set<string>();
+				for (const s of studios) {
+					const hasReview = s.reviews?.some(
+						r =>
+							(r.userEmail && r.userEmail.toLowerCase() === userEmail.toLowerCase()) ||
+							(r.userName && userName && r.userName.toLowerCase() === userName.toLowerCase())
+					);
+					if (hasReview) {
+						reviewed.add(s._id);
+					}
+				}
+				setReviewedStudioIds(reviewed);
+			})
+			.catch(() => {});
+
 		return () => {
 			isMounted = false;
 		};
-	}, [userEmail, reloadKey]);
+	}, [userEmail, userName, reloadKey]);
 
 	const handleRetry = () => {
 		setIsFetching(true);
@@ -241,6 +266,28 @@ export function MyBookingsView() {
 
 								{/* Right: Actions */}
 								<div className="flex items-center gap-2 pt-2 md:pt-0 border-t md:border-t-0 border-border/40 shrink-0">
+									{/* Post Review: Only for Completed bookings */}
+									{booking.status === 'Completed' && (
+										reviewedStudioIds.has(booking.studioId) ? (
+											<span className="text-xs text-muted-foreground flex items-center gap-1 px-2.5 py-1 bg-muted rounded-lg font-medium" title="You have already reviewed this workspace">
+												<CheckCircle2 className="size-3.5 text-emerald-500" />
+												<span className="hidden sm:inline">Reviewed</span>
+											</span>
+										) : (
+											<Button
+												variant="default"
+												size="sm"
+												flat3d
+												onClick={() => setBookingForReview(booking)}
+												className="font-medium gap-1.5"
+												title="Rate & Review Workspace"
+											>
+												<Star className="size-3.5 fill-current" />
+												<span>Post Review</span>
+											</Button>
+										)
+									)}
+
 									{/* Receipt button */}
 									<Button variant="outline" size="sm" onClick={() => setBookingForReceipt(booking)} className="font-medium" title="View Invoice Receipt">
 										<Receipt className="size-3.5" />
@@ -295,6 +342,16 @@ export function MyBookingsView() {
 
 			{/* Receipt Dialog */}
 			<BookingReceiptDialog booking={bookingForReceipt} isOpen={Boolean(bookingForReceipt)} onClose={() => setBookingForReceipt(null)} />
+
+			{/* Review Dialog */}
+			<PostReviewDialog
+				booking={bookingForReview}
+				isOpen={Boolean(bookingForReview)}
+				onClose={() => setBookingForReview(null)}
+				onReviewed={(studioId) => {
+					setReviewedStudioIds(prev => new Set(prev).add(studioId));
+				}}
+			/>
 		</div>
 	);
 }

@@ -5,7 +5,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 export async function fetchStudioById(id: string): Promise<Studio | null> {
 	try {
 		const res = await fetch(`${API_URL}/api/studios/${id}`, {
-			next: { revalidate: 60, tags: [`studio-${id}`] },
+			cache: 'no-store',
 		});
 		if (!res.ok) return null;
 		const studio: Studio = await res.json();
@@ -23,18 +23,33 @@ export async function fetchStudioBySlug(slug: string): Promise<Studio | null> {
 	}
 
 	try {
-		// Look up studio ID by matching slug from studio list
-		const res = await fetch(`${API_URL}/api/studios?limit=100`, {
-			next: { revalidate: 60 },
+		// 1. Targeted lookup by slug via search param (instant match in MongoDB, no-store for immediate visibility)
+		const searchRes = await fetch(`${API_URL}/api/studios?search=${encodeURIComponent(slug)}&limit=10`, {
+			cache: 'no-store',
 		});
-		if (!res.ok) return null;
 
-		const json: PaginatedResponse<Studio> = await res.json();
-		const matched = json.data.find(s => s.slug === slug);
-		if (!matched) return null;
+		if (searchRes.ok) {
+			const json: PaginatedResponse<Studio> = await searchRes.json();
+			const matched = json.data.find(s => s.slug === slug);
+			if (matched) {
+				return await fetchStudioById(matched._id);
+			}
+		}
 
-		// Fetch full studio details internally by ID
-		return await fetchStudioById(matched._id);
+		// 2. Fallback: lookup across full studios list without stale cache
+		const listRes = await fetch(`${API_URL}/api/studios?limit=100`, {
+			cache: 'no-store',
+		});
+
+		if (listRes.ok) {
+			const json: PaginatedResponse<Studio> = await listRes.json();
+			const matched = json.data.find(s => s.slug === slug);
+			if (matched) {
+				return await fetchStudioById(matched._id);
+			}
+		}
+
+		return null;
 	} catch (error) {
 		console.error(`Failed to resolve studio for slug ${slug}:`, error);
 		return null;

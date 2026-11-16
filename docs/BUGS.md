@@ -2,6 +2,20 @@
 
 Log resolved issues, regressions, and lessons learned.
 
+## 2026-11-16: Stale 60s Data Cache in fetchStudioBySlug Causing 404 on Newly Published Studios
+- **Symptom:** Immediately after creating a studio in `/studios/create`, the client was redirected to `/studios/[slug]`, but saw the 404 Not Found page until the page was manually hard-reloaded.
+- **Root Cause:**
+  1. `fetchStudioBySlug(slug)` in `src/lib/studios.ts` fetched `${API_URL}/api/studios?limit=100` with `{ next: { revalidate: 60 } }`. Next.js server-side Data Cache held the old 100-studio list for up to 60 seconds. When the new studio was created 50ms prior, the cached response excluded the new studio, so `.find(s => s.slug === slug)` returned `undefined` and triggered `notFound()`.
+  2. `src/app/studios/[slug]/page.tsx` had `generateStaticParams()` attempting to pre-generate static HTML for an outdated slug list during build.
+  3. `create-studio-form.tsx` called `router.refresh()` immediately after `router.push()`, triggering an in-flight race condition on the client router.
+- **Fix:**
+  1. In [`src/lib/studios.ts`](src/lib/studios.ts), refactored `fetchStudioBySlug(slug)` to query targeted search `${API_URL}/api/studios?search=${encodeURIComponent(slug)}&limit=10` with `{ cache: 'no-store' }`. It hits MongoDB directly and resolves the new studio instantly.
+  2. Set `fetchStudioById` to `{ cache: 'no-store' }` so single studio lookups always reflect real-time database state.
+  3. Removed `generateStaticParams()` from `src/app/studios/[slug]/page.tsx` to enable true Next.js 16 Partial Prerendering (`◐`) on demand for all slugs.
+  4. Removed the redundant `router.refresh()` from `create-studio-form.tsx`.
+- **How to Avoid:** Never use long-lived cached lists (`revalidate: 60`) to perform slug-to-ID lookups for dynamic, newly created resources. Always resolve dynamic entity slugs with targeted uncached (`no-store`) queries.
+
+
 ## 2026-11-14: CSS Grid items-start Collapsing Column Height & Neutralizing position:sticky
 - **Symptom:** In `/studios/create`, the live studio preview panel on desktop (`lg:`) scrolled with the page instead of remaining sticky at `lg:top-24`.
 - **Root Cause:**

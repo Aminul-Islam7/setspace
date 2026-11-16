@@ -2,6 +2,83 @@
 
 Record daily or milestone progress entries. Keep concise and chronological.
 
+## 2026-11-16: Verified Reviews for Completed Bookings Only & "Post Review" on My Bookings Cards
+- **What Changed:**
+  1. Updated [`src/types/index.ts`](src/types/index.ts):
+     - Added `userEmail?: string` to `StudioReview` to track reviewer identity and enforce one-review-per-creator policy.
+  2. Created [`src/components/bookings/post-review-dialog.tsx`](src/components/bookings/post-review-dialog.tsx):
+     - Accessible modal dialog for submitting studio reviews with 1-5 star picker, handle input, and detailed feedback textarea (minimum 10 chars).
+     - Submits `POST /api/studios/:id/reviews` with JWT auth token and dispatches optimistic update.
+  3. Updated [`src/components/bookings/my-bookings-view.tsx`](src/components/bookings/my-bookings-view.tsx):
+     - Added real-time check for completed bookings: if the user has already reviewed the workspace, displays a "Reviewed" badge; otherwise displays a primary "Post Review" button with `Star` icon.
+     - Connected "Post Review" button to open `PostReviewDialog`.
+  4. Updated [`src/components/studios/studio-reviews.tsx`](src/components/studios/studio-reviews.tsx):
+     - Restored the review submission form.
+     - Subscribed to session and queries `/api/users/me/bookings` to verify the user has a booking with `status === 'Completed'` for this studio.
+     - Checks if user has already posted a review. If reviewed, shows "You reviewed this workspace" badge and blocks duplicate submissions ("only post once").
+     - If user is eligible (completed booker who has not reviewed yet), displays "Write a Review" button and allows posting review with instant state update.
+- **Files Touched:**
+  - `src/types/index.ts`
+  - `src/components/bookings/post-review-dialog.tsx`
+  - `src/components/bookings/my-bookings-view.tsx`
+  - `src/components/studios/studio-reviews.tsx`
+  - `docs/PROGRESS.md`
+
+
+## 2026-11-16: Studio Details Dynamic CTA: "Edit Studio" for Owner vs "Book Now" for Creators
+- **What Changed:**
+  1. Updated [`src/components/studios/studio-details.tsx`](src/components/studios/studio-details.tsx):
+     - Added `'use client'` and subscribed to Better Auth session via `useSession()`.
+     - Compared authenticated user email with `studio.ownerEmail` (case-insensitive).
+     - If authenticated user is the studio host, displays primary "Edit Studio" button linking directly to `/studios/edit/${studio._id}` with `Pencil` icon.
+     - For other users and unauthenticated visitors, preserves the "Book Now" button triggering `StudioBookingDialog`.
+- **Files Touched:**
+  - `src/components/studios/studio-details.tsx`
+  - `docs/PROGRESS.md`
+
+
+## 2026-11-16: Fix 404 on Newly Published Studios (Real-time Slug Resolution & Zero-Cache Lookups)
+- **What Changed:**
+  1. Updated [`src/lib/studios.ts`](src/lib/studios.ts):
+     - Changed `fetchStudioBySlug(slug)` from a 60-second cached 100-item array scan to a targeted `cache: 'no-store'` search query (`/api/studios?search=${slug}`) matching MongoDB's regex index instantly.
+     - Changed `fetchStudioById` to `cache: 'no-store'` so newly created and updated studios render immediately without waiting for 60s cache invalidation.
+  2. Updated [`src/app/studios/[slug]/page.tsx`](src/app/studios/[slug]/page.tsx):
+     - Removed `generateStaticParams()` to allow full Next.js 16 Partial Prerendering (`◐`) on demand for all dynamic slugs without build-time locking.
+  3. Updated [`src/components/studios/create/create-studio-form.tsx`](src/components/studios/create/create-studio-form.tsx):
+     - Removed redundant `router.refresh()` called right after `router.push()`, avoiding router transition race conditions.
+- **Files Touched:**
+  - `src/lib/studios.ts`
+  - `src/app/studios/[slug]/page.tsx`
+  - `src/components/studios/create/create-studio-form.tsx`
+  - `docs/BUGS.md`
+  - `docs/PROGRESS.md`
+
+
+## 2026-11-16: Implement Update Studio Page (`/studios/edit/[id]`) with Pre-filled Form & Patch Submission
+- **What Changed:**
+  1. Created [`src/components/studios/edit/edit-studio-form.tsx`](src/components/studios/edit/edit-studio-form.tsx):
+     - Reuses existing modular studio sections: `StudioBasicDetails`, `StudioPricingCapacity`, `StudioMediaUpload`, `StudioAmenitiesPicker`, `StudioHostInfo`, and `StudioLivePreview`.
+     - Pre-fills form fields with existing studio specs, rates, location, cover image, gallery, and amenities.
+     - Adds client-side ownership validation (`isOwner` check matching `user.email` against `studio.ownerEmail`) with an unauthorized warning alert.
+     - Submits updates via `PATCH /api/studios/:id` with `authorization: Bearer <token>`, provides Sonner toast feedback, and redirects to `/my-listings`.
+  2. Created [`src/app/studios/edit/[id]/page.tsx`](src/app/studios/edit/[id]/page.tsx) & [`src/app/studios/edit/[id]/loading.tsx`](src/app/studios/edit/[id]/loading.tsx):
+     - Dynamic server component resolving studio data by `id` with dynamic metadata generation.
+     - Pixel-perfect loading skeleton mirroring the form cards and live preview card to prevent layout shifts.
+  3. Updated [`src/components/studios/create/studio-live-preview.tsx`](src/components/studios/create/studio-live-preview.tsx):
+     - Added optional `submitLabel` and `submittingLabel` props to support "Save Changes" / "Saving Changes...".
+  4. Updated [`src/components/listings/my-listings-view.tsx`](src/components/listings/my-listings-view.tsx):
+     - Connected the "Edit" action button directly to `/studios/edit/${studio._id}`.
+- **Files Touched:**
+  - `src/components/studios/edit/edit-studio-form.tsx`
+  - `src/app/studios/edit/[id]/page.tsx`
+  - `src/app/studios/edit/[id]/loading.tsx`
+  - `src/components/studios/create/studio-live-preview.tsx`
+  - `src/components/listings/my-listings-view.tsx`
+  - `docs/TASKS.md`
+  - `docs/PROGRESS.md`
+  - `docs/DECISIONS.md`
+
+
 ## 2026-11-15: Direct Instructor-Style JWT Retrieval (`getTokenFromClient` & `getTokenFromServer`)
 - **What Changed:**
   1. Replaced complex token caching wrappers with direct instructor pattern:

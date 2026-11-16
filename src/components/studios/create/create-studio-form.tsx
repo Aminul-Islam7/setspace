@@ -108,7 +108,6 @@ export function CreateStudioForm() {
 
 			toast.success('Studio listing published successfully!');
 			router.push(`/studios/${generatedSlug}`);
-			router.refresh();
 		} catch (error: unknown) {
 			console.error('Create studio error:', error);
 			const message = error instanceof Error ? error.message : 'An unexpected error occurred while creating studio.';

@@ -2,6 +2,18 @@
 
 Record of architectural, design, and structural decisions. Add dated entries in reverse-chronological order.
 
+## 2026-11-16: Architecture of Update Studio (`/studios/edit/[id]`) Feature
+- **Context:** Space hosts need the ability to edit existing studio details (rates, capacity, amenities, description, and images) with pre-filled inputs while safeguarding against unauthorized modifications.
+- **Alternatives Considered:**
+  1. Build a separate, standalone duplicate form from scratch. (Rejected: duplication, drifts out of sync with create form).
+  2. Reuse existing modular form sections (`StudioBasicDetails`, `StudioPricingCapacity`, `StudioMediaUpload`, `StudioAmenitiesPicker`, `StudioHostInfo`, and `StudioLivePreview`):
+     - `EditStudioForm` handles pre-filled state initialization from fetched `studio`.
+     - Enforces ownership check against authenticated session user.
+     - Submits `PATCH /api/studios/:id` with JWT `authorization: Bearer <token>`.
+     - Parameterized `StudioLivePreview` to accept dynamic submit labels.
+- **Outcome:** Adopted Option 2. Guarantees 100% UI consistency, code reuse, and zero maintenance duplication.
+
+
 ## 2026-11-15: Direct Instructor-Style JWT Retrieval (`getTokenFromClient` & `getTokenFromServer`)
 - **Context:** Course specification and instructor reference require minimal, un-opinionated JWT extraction helpers directly using Better Auth's `authClient.token()` on the client and `auth.api.getToken({ headers: await headers() })` on the server.
 - **Alternatives Considered:**

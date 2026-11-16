@@ -9,6 +9,7 @@ export type StudioCategory =
 export interface StudioReview {
 	_id?: string;
 	userName: string;
+	userEmail?: string;
 	userAvatar?: string;
 	rating: number;
 	comment: string;

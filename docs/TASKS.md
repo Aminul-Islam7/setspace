@@ -3,9 +3,10 @@
 Track ongoing, planned, and completed tasks. Check off items as they finish.
 
 ## Active & Upcoming
-- [ ] Implement Update Studio page (`/studios/edit/[id]`) with pre-filled form and patch submission
+- [ ] Production Smoke Testing & Final Review
 
 ## Completed
+- [x] Implement Update Studio page (`/studios/edit/[id]`) with pre-filled form, live preview, non-owner protection, and patch submission (2026-11-16)
 - [x] Implement My Studio Listings page (`/my-listings`) with KPI summary cards, instant search filtering, accessible delete confirmation dialog, and pixel-perfect loading skeleton (2026-11-15)
 - [x] Implement My Bookings page (`/my-bookings`) with KPI metrics, status filtering tabs, cancellation confirmation modal, printable invoice receipt modal, and pixel-perfect loading skeleton (2026-11-15)
 - [x] Design System Refactoring: Semantic OKLCH tokens, borderless dark mode, high-contrast form fields, and modern Tailwind v4 `linear` syntax (2026-11-15)

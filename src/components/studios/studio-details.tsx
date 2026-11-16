@@ -1,16 +1,23 @@
+'use client';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Calendar, Check, MapPin } from 'lucide-react';
+import { Calendar, Check, MapPin, Pencil } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { FaStar } from 'react-icons/fa6';
+import Link from 'next/link';
 import type { Studio } from '@/types';
 import { StudioBookingDialog } from '@/components/studios/studio-booking-dialog';
+import { useSession } from '@/lib/auth-client';
 
 export interface StudioDetailsProps {
 	studio: Studio;
 }
 
 export function StudioDetails({ studio }: StudioDetailsProps) {
+	const { data: session } = useSession();
+	const user = session?.user;
+	const isOwner = Boolean(user?.email && studio.ownerEmail && user.email.toLowerCase() === studio.ownerEmail.toLowerCase());
 	return (
 		<div className="space-y-6 sm:space-y-8">
 			{/* Title & Location Header */}
@@ -76,17 +83,24 @@ export function StudioDetails({ studio }: StudioDetailsProps) {
 						<div className="text-xl font-bold text-foreground">Instant</div>
 					</div>
 
-					{/* Inline Book Now CTA */}
+					{/* Inline CTA: Edit Studio if owner, else Book Now */}
 					<div className="col-span-2 sm:col-span-1 pt-2 sm:pt-0">
-						<StudioBookingDialog
-							studio={studio}
-							trigger={
-								<Button flat3d size="lg" className="w-full font-semibold">
-									<Calendar />
-									Book Now
-								</Button>
-							}
-						/>
+						{isOwner ? (
+							<Button flat3d size="lg" className="w-full font-semibold" render={<Link href={`/studios/edit/${studio._id}`} />}>
+								<Pencil className="size-4" />
+								<span>Edit Studio</span>
+							</Button>
+						) : (
+							<StudioBookingDialog
+								studio={studio}
+								trigger={
+									<Button flat3d size="lg" className="w-full font-semibold">
+										<Calendar />
+										Book Now
+									</Button>
+								}
+							/>
+						)}
 					</div>
 				</div>
 			</div>

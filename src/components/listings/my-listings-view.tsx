@@ -193,7 +193,7 @@ export function MyListingsView() {
 										<span className="hidden sm:inline">View</span>
 									</Button>
 
-									<Button variant="secondary" size="sm" render={<Link href={`/studios/create`} />} className="font-medium" title="Update Studio">
+									<Button variant="secondary" size="sm" render={<Link href={`/studios/edit/${studio._id}`} />} className="font-medium" title="Update Studio">
 										<Pencil className="size-3.5" />
 										<span className="hidden sm:inline">Edit</span>
 									</Button>

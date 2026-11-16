@@ -12,6 +12,8 @@ interface StudioLivePreviewProps {
 	control: Control<CreateStudioFormValues>;
 	isSubmitting: boolean;
 	formError: string | null;
+	submitLabel?: string;
+	submittingLabel?: string;
 	user?: {
 		name?: string | null;
 		email?: string | null;
@@ -19,7 +21,7 @@ interface StudioLivePreviewProps {
 	} | null;
 }
 
-export function StudioLivePreview({ control, isSubmitting, formError, user }: StudioLivePreviewProps) {
+export function StudioLivePreview({ control, isSubmitting, formError, submitLabel, submittingLabel, user }: StudioLivePreviewProps) {
 	const values = useWatch({ control });
 
 	const coverError = useMemo(() => {
@@ -104,16 +106,16 @@ export function StudioLivePreview({ control, isSubmitting, formError, user }: St
 					</div>
 				)}
 
-				{/* Publish Button */}
+				{/* Submit Button */}
 				<Button type="submit" variant="default" size="lg" disabled={isSubmitting} className="w-full font-semibold cursor-pointer">
 					{isSubmitting ? (
 						<>
 							<Loader2 className="size-4 animate-spin" />
-							<span>Publishing Studio...</span>
+							<span>{submittingLabel || 'Publishing Studio...'}</span>
 						</>
 					) : (
 						<>
-							<span>Publish Studio Listing</span>
+							<span>{submitLabel || 'Publish Studio Listing'}</span>
 							<ChevronRight className="size-4" />
 						</>
 					)}
