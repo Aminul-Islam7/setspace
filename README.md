@@ -12,6 +12,10 @@ SetSpace is a high-performance, peer-to-peer marketplace designed for creators, 
 
 ---
 
+[![SetSpace Web Interface](./public/screenshot.jpg)](https://setspace-studios.vercel.app)
+
+---
+
 ## Live Links
 
 - **Web App**: [setspace-studios.vercel.app](https://setspace-studios.vercel.app/)
